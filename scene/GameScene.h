@@ -54,6 +54,8 @@ private: // メンバ変数
 
 	std::unique_ptr<Player> player;
 
+	uint32_t starTexture = 0;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
