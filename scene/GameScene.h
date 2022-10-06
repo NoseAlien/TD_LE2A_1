@@ -11,6 +11,8 @@
 #include "WorldTransform.h"
 
 #include "Player.h"
+#include "Enemy.h"
+#include "Star.h"
 #include <memory>
 
 /// <summary>
@@ -50,13 +52,16 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 
-	ViewProjection viewProjection_{};
-
-	std::unique_ptr<Player> player;
-
-
-
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	ViewProjection viewProjection_{};
+
+	std::unique_ptr<Player> player;
+	std::unique_ptr<Enemy> enemy;
+	std::list<std::unique_ptr<Star>> stars;
+	uint32_t starTexture = 0;			// 星テクスチャー
+
+	void GenerateStar(const Vector3 pos);
+public:
 };

@@ -3,7 +3,8 @@
 Player::Player() :
 	isAttack(false),
 	isWeakAttack(false), weakAttackMoveSpeed(5),
-	isHeavyAttack(false), heavyAttackMoveSpeed(5)
+	isHeavyAttack(false), heavyAttackMoveSpeed(5),
+	collisionRadius(1)
 {
 	trans = new WorldTransform();
 	trans->Initialize();
@@ -14,7 +15,7 @@ Player::Player() :
 	redPixel = TextureManager::Load("red1x1.png");
 
 	trans->translation_ = { 0,20,0 };
-
+	//trans->scale_ = { 2,2,2 };
 }
 
 Player::~Player()
@@ -34,10 +35,12 @@ void Player::Init()
 	heavyAttackMoveSpeed = 5;
 }
 
-static bool tempReverseFlag = false;
 void Player::Update()
 {
-	Vector3 pos = trans->translation_;
+	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
+	//if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
+	//if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
+	//if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
 
 	if (isAttack == false)
 	{
@@ -57,12 +60,10 @@ void Player::Update()
 			if (pushKeyFream < 30)
 			{
 				isWeakAttack = true;
-				weakAttackMoveSpeed = 8;
 			}
 			else if (pushKeyFream >= 30)
 			{
 				isHeavyAttack = true;
-				heavyAttackMoveSpeed = 8;
 			}
 		}
 	}
@@ -72,28 +73,22 @@ void Player::Update()
 		// ŽãUŒ‚
 		if (isWeakAttack == true)
 		{
-			if (tempReverseFlag == false)
+			if (isReverse == false)
 			{
 				trans->translation_.y -= weakAttackMoveSpeed;
-				//weakAttackMoveSpeed += 0.25;
-
-				if (trans->translation_.y <= -10)
-				{
-					tempReverseFlag = true;
-				}
 			}
 			else
 			{
 				trans->translation_.y += weakAttackMoveSpeed;
-				//weakAttackMoveSpeed += 0.25;
 
 				if (trans->translation_.y >= 20)
 				{
 					trans->translation_.y = 20;
-					tempReverseFlag = false;
+					isReverse = false;
 					isWeakAttack = false;
 					pushKeyFream = 0;
 					isAttack = false;
+					isHaveStar = false;
 				}
 			}
 		}
@@ -101,31 +96,27 @@ void Player::Update()
 		// ‹­UŒ‚
 		if (isHeavyAttack == true)
 		{
-			if (tempReverseFlag == false)
+			if (isReverse == false)
 			{
 				trans->translation_.y -= heavyAttackMoveSpeed;
-				if (trans->translation_.y <= -10)
-				{
-					tempReverseFlag = true;
-				}
 			}
 			else
 			{
 				trans->translation_.y += heavyAttackMoveSpeed;
-				//weakAttackMoveSpeed += 0.25;
 
 				if (trans->translation_.y >= 20)
 				{
 					trans->translation_.y = 20;
-					tempReverseFlag = false;
+					isReverse = false;
 					isHeavyAttack = false;
 					pushKeyFream = 0;
 					isAttack = false;
+					isHaveStar = false;
+
 				}
 			}
 		}
 	}
-	//player->translation_ = pos;
 	trans->UpdateMatrix();
 }
 

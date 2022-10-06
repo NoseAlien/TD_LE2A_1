@@ -1,6 +1,8 @@
 ﻿#include "GameScene.h"
 #include "TextureManager.h"
+#include "Collision.h"
 #include <cassert>
+#include <memory>
 using namespace std;
 
 double DegreeToRad(double num)
@@ -16,11 +18,13 @@ double RadToDegree(double num)
 GameScene::GameScene()
 {
 	player = move(make_unique<Player>());
-
+	enemy = move(make_unique<Enemy>());
+	starTexture = TextureManager::Load("star.png");
 }
 
-GameScene::~GameScene() {
-
+GameScene::~GameScene()
+{
+	collision->DestroyInstance();
 }
 
 void GameScene::Initialize() {
@@ -41,9 +45,53 @@ void GameScene::Initialize() {
 
 void GameScene::Update()
 {
+	if (collision->SphereHitSphere(
+		player->GetPos(), player->GetRadius(), enemy->GetPos(), enemy->GetRadius()))
+	{
+		Vector3 tempPos =
+		{
+			enemy->GetPos().x,
+			enemy->GetPos().y/* + 12*/,
+			enemy->GetPos().z
+		};
+		player->SetisReverse(true);
+
+		if (player->GetisHaveStar() == true)
+		{
+			enemy->Damage(5);
+		}
+		else
+		{
+			if (player->GetisHeavyAttack() == true)
+			{
+				GenerateStar(tempPos);
+			}
+			enemy->Damage(1);
+		}
+	}
+
+	for (const auto& temp : stars)
+	{
+		if (collision->SphereHitSphere(
+			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius()))
+		{
+			if (temp->GetisMove() == true)
+			{
+				player->SetisHaveStar(true);
+				stars.remove(temp);
+				break;
+			}
+		}
+	}
 
 	player->Update();
+	for (const auto& temp : stars)
+	{
+		temp->Update();
+	}
 
+	debugText_->SetPos(20, 20);
+	debugText_->Printf("EnemyHP = %d", enemy->GetHP());
 }
 
 void GameScene::Draw() {
@@ -74,6 +122,14 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player->Draw(viewProjection_);
+	if (enemy->GetHP() > 0)
+	{
+		enemy->Draw(viewProjection_);
+	}
+	for (const auto& temp : stars)
+	{
+		temp->Draw(viewProjection_, starTexture);
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -94,4 +150,20 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::GenerateStar(const Vector3 pos)
+{
+	for (int i = 0; i < 2; i++)
+	{
+		stars.emplace_back(move(make_unique<Star>()));
+		if (i == 0)
+		{
+			stars.back()->Generate({ pos.x,pos.y + 8,pos.z }, pos.y + 12, -1);
+		}
+		if (i == 1)
+		{
+			stars.back()->Generate({ pos.x,pos.y + 8,pos.z }, pos.y + 12, 1);
+		}
+	}
 }

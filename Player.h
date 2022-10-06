@@ -2,6 +2,7 @@
 #include "WorldTransform.h"
 #include "Model.h"
 #include "Input.h"
+#include "Vector3.h"
 
 class Player
 {
@@ -19,8 +20,11 @@ private:
 	float weakAttackMoveSpeed;	// ŽãUŒ‚Žž‚Ì‘¬“x
 	bool isHeavyAttack;	// ‹­UŒ‚
 	float heavyAttackMoveSpeed;	// ‹­UŒ‚Žž‚Ì‘¬“x
+	float collisionRadius;
+	bool isReverse;
 
 	int pushKeyFream;
+	bool isHaveStar;
 
 public:
 	Player();
@@ -28,5 +32,15 @@ public:
 	void Init();
 	void Update();
 	void Draw(const ViewProjection& viewProjection_);
+
+	inline Vector3 GetPos() { return trans->translation_; }
+	inline float GetRadius() { return collisionRadius; }
+	inline bool GetisHeavyAttack() { return isHeavyAttack; }
+	inline bool GetisHaveStar() { return isHaveStar; }
+
+	inline void SetisReverse(bool isReverse) { this->isReverse = isReverse; }
+	inline void SetisHaveStar(bool isHaveStar) { this->isHaveStar = isHaveStar; }
+
+
 };
 

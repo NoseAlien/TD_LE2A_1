@@ -127,8 +127,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//計測終了時間を計測開始時間に
 			timeStart = timeEnd;
 
-			std::string fps = std::to_string(frameTime) + "\n";
-			OutputDebugStringA(fps.c_str());
+			//std::string fps = std::to_string(frameTime) + "\n";
+			//OutputDebugStringA(fps.c_str());
 
 			//処理を中断しループへ
 			continue;
