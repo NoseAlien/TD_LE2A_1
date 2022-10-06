@@ -10,15 +10,18 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
+#include "Player.h"
+#include <memory>
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
 class GameScene {
 
-  public: // メンバ関数
-	/// <summary>
-	/// コンストクラタ
-	/// </summary>
+public: // メンバ関数
+  /// <summary>
+  /// コンストクラタ
+  /// </summary>
 	GameScene();
 
 	/// <summary>
@@ -41,7 +44,7 @@ class GameScene {
 	/// </summary>
 	void Draw();
 
-  private: // メンバ変数
+private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
@@ -49,10 +52,7 @@ class GameScene {
 
 	ViewProjection viewProjection_{};
 
-	WorldTransform* player = nullptr;
-	Model* playerModel = nullptr;
-
-	uint32_t playerTexture = 0;
+	std::unique_ptr<Player> player;
 
 	/// <summary>
 	/// ゲームシーン用

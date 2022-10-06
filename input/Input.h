@@ -15,14 +15,14 @@
 /// </summary>
 class Input {
 
-  public: // インナークラス
+public: // インナークラス
 	struct MouseMove {
 		LONG lX;
 		LONG lY;
 		LONG lZ;
 	};
 
-  public:
+public:
 	enum class PadType {
 		DirectInput,
 		XInput,
@@ -43,9 +43,9 @@ class Input {
 		State statePre_;
 	};
 
-  public: // メンバ関数
+public: // メンバ関数
 
-	static Input* GetInstance();	
+	static Input* GetInstance();
 
 	/// <summary>
 	/// 初期化
@@ -162,16 +162,16 @@ class Input {
 	/// <returns>接続されているジョイスティック数</returns>
 	size_t GetNumberOfJoysticks();
 
-  private:
+private:
 	static BOOL CALLBACK
-	  EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) noexcept;
+		EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) noexcept;
 	Input() = default;
 	~Input();
 	Input(const Input&) = delete;
 	const Input& operator=(const Input&) = delete;
 	void SetupJoysticks();
 
-  private: // メンバ変数
+private: // メンバ変数
 	Microsoft::WRL::ComPtr<IDirectInput8> dInput_;
 	Microsoft::WRL::ComPtr<IDirectInputDevice8> devKeyboard_;
 	Microsoft::WRL::ComPtr<IDirectInputDevice8> devMouse_;
@@ -182,4 +182,8 @@ class Input {
 	DIMOUSESTATE2 mousePre_;
 	HWND hwnd_;
 	Vector2 mousePosition_;
+
+public:
+	bool ReleasedKey(BYTE keyNumber) { return !key_[keyNumber] && keyPre_[keyNumber]; }
+
 };
