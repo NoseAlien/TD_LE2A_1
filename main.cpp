@@ -5,6 +5,7 @@
 #include "WinApp.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
+#include <string>
 
 #pragma comment(lib,"winmm.lib")
 
@@ -125,6 +126,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			timeEndPeriod(1);
 			//計測終了時間を計測開始時間に
 			timeStart = timeEnd;
+
+			std::string fps = std::to_string(frameTime) + "\n";
+			OutputDebugStringA(fps.c_str());
+
 			//処理を中断しループへ
 			continue;
 		}
