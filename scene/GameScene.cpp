@@ -2,9 +2,22 @@
 #include "TextureManager.h"
 #include <cassert>
 
+double DegreeToRad(double num)
+{
+	return num / 180 * MathUtility::PI;
+}
+
+double RadToDegree(double num)
+{
+	return num / MathUtility::PI * 180;
+}
+
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+	delete player;
+	delete playerModel;
+}
 
 void GameScene::Initialize() {
 
@@ -12,9 +25,28 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
+
+	player = new WorldTransform();
+	player->Initialize();
+
+	playerModel = Model::Create();
+
+	playerTexture = TextureManager::Load("white1x1.png");
+
+
+	viewProjection_.fovAngleY = DegreeToRad(50);
+
+	viewProjection_.eye = { 0,0,-25 };
+	viewProjection_.target = { 0,0,0 };
+	viewProjection_.up = { 0,1,0 };
+	viewProjection_.Initialize();
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+
+	player->UpdateMatrix();
+
+}
 
 void GameScene::Draw() {
 
@@ -42,6 +74,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	playerModel->Draw(*player, viewProjection_, playerTexture);
+
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
