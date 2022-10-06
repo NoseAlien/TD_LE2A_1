@@ -54,6 +54,8 @@ class GameScene {
 
 	uint32_t playerTexture = 0;
 
+	uint32_t starTexture = 0;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

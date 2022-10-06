@@ -33,6 +33,7 @@ void GameScene::Initialize() {
 
 	playerTexture = TextureManager::Load("white1x1.png");
 
+	starTexture = TextureManager::Load("star.png");
 
 	viewProjection_.fovAngleY = DegreeToRad(50);
 
