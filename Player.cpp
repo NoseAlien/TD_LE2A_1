@@ -38,6 +38,7 @@ void Player::Init()
 	isHaveStar = false;
 
 	isDamage = false;
+
 	damegeTimer = 0;
 }
 

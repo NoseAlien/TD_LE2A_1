@@ -14,9 +14,15 @@ private:
 	int hp;
 	bool isAddScale;		// 拡大のフラグ
 	float collisionRadius;	// 当たり判定の半径
+	int isAddScaleCountDown;
+	int addScaleCount;
+	float addScale;
+	float preScaleY;
 
 	int recoveryTimer;		// 回復するタイマー
 	int maxRecoveryTimer;	// 最大値
+
+	bool isSuctionStar;
 
 
 public:
@@ -31,8 +37,15 @@ public:
 	inline Vector3 GetScale() { return trans->scale_; }
 	inline float GetRadius() { return collisionRadius; }
 	inline int GetHP() { return hp; }
+	inline int GetAddScaleCount() { return addScaleCount; }
+	inline int GetisAddScaleCountDown() { return isAddScaleCountDown; }
+	inline bool GetisAddScale() { return isAddScale; }
+	inline bool GetisSuctionStar() { return isSuctionStar; }
 
 	inline void SetisAddScale(const bool& isAddScale) { this->isAddScale = isAddScale; }
+	inline void SetisAddScaleCountDown(const int& isAddScaleCountDown) { this->isAddScaleCountDown = isAddScaleCountDown; }
+	inline void SetAddScaleCount(const int& addScaleCount) { this->addScaleCount = addScaleCount; }
+	inline void SetisSuctionStar(const bool& isSuctionStar) { this->isSuctionStar = isSuctionStar; }
 
 public:
 	static Enemy* GetInstance();

@@ -31,13 +31,41 @@ void Enemy::Init()
 	isAddScale = false;
 	recoveryTimer = 0;
 	maxRecoveryTimer = 60;
+	addScaleCount = 240;
+	isAddScaleCountDown = false;
+	addScale = 0;
+	isSuctionStar = false;
 }
 
 void Enemy::Update()
 {
+	if (isAddScaleCountDown == 1)
+	{
+		addScaleCount--;
+		if (addScaleCount <= 0)
+		{
+			addScaleCount = 0;
+			preScaleY = trans->scale_.y;
+			isAddScale = true;
+			isSuctionStar = true;
+			isAddScaleCountDown = 2;
+		}
+	}
+
 	if (isAddScale == true)
 	{
-		trans->scale_.y += 0.01;
+		const float difference = 4;
+		addScale += 0.1;
+		trans->scale_.y += addScale;
+		if (trans->scale_.y - preScaleY >= difference)
+		{
+			trans->scale_.y = preScaleY + difference;
+			addScale = 0;
+			addScaleCount = 240;
+			isAddScaleCountDown = 0;
+			isAddScale = false;
+
+		}
 
 		recoveryTimer++;
 		if (recoveryTimer >= maxRecoveryTimer)

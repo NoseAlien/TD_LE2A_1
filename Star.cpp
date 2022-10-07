@@ -45,6 +45,10 @@ void Star::Update()
 	{
 		trans->translation_.y = floorPosY;
 	}
+	else
+	{
+		trans->translation_.y -= 0.5;
+	}
 
 	trans->UpdateMatrix();
 }

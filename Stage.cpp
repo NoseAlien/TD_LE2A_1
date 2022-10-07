@@ -27,14 +27,23 @@ void Stage::Init()
 	enemy->Init();
 	stars.clear();
 	thorns.clear();
+	gameClear = false;
+	gameOver = false;
 	//GenerateThorn(player->GetPos());
 }
 void Stage::Update()
 {
+	if (gameClear == true || gameOver == true) return;
+
 	PlayerUpdate();
 	StarUpdate();
 	FloorUpdate();
 	ThornUpdate();
+
+	if (enemy->GetScale().y >= 36.5)
+	{
+		gameOver = true;
+	}
 }
 void Stage::Draw(const ViewProjection& viewProjection_)
 {
@@ -129,14 +138,32 @@ void Stage::PlayerUpdate()
 void Stage::FloorUpdate()
 {
 	// ‘å‚«‚­‚È‚éˆ—
-	if (stars.size() >= 10)
+	if (stars.size() >= 10 && enemy->GetisAddScaleCountDown() == 0)
 	{
-		enemy->SetisAddScale(true);
+		enemy->SetisAddScaleCountDown(1);
 	}
-	else
+	if (enemy->GetisSuctionStar() == true)
 	{
-		enemy->SetisAddScale(false);
+		const int num = 5;
+		if (stars.size() < num)
+		{
+			stars.clear();
+			enemy->SetisSuctionStar(false);
+		}
+		else
+		{
+			for (int i = 0; i < num; i++)
+			{
+				stars.pop_front();
+			}
+			enemy->SetisSuctionStar(false);
+		}
 	}
+
+	//else
+	//{
+	//	enemy->SetisAddScale(false);
+	//}
 
 	enemy->Update();
 }

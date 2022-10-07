@@ -12,6 +12,9 @@ private:
 	static uint32_t starTexture;			// 星テクスチャー
 	static uint32_t thornTexture;		// トゲテクスチャー
 
+	bool gameClear;
+	bool gameOver;
+
 
 private:
 	void HitGenerateStar(const Vector3 pos);
