@@ -4,6 +4,9 @@
 #include "Vector3.h"
 #include "Matrix4.h"
 
+double DegreeToRad(double num);
+double RadToDegree(double num);
+
 namespace MathUtility {
 
 const float PI = 3.141592654f;

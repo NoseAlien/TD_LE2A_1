@@ -5,18 +5,10 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Collision.h"
+#include "Random.h"
 
 using namespace std;
-
-double DegreeToRad(double num)
-{
-	return num / 180 * MathUtility::PI;
-}
-
-double RadToDegree(double num)
-{
-	return num / MathUtility::PI * 180;
-}
+using namespace MathUtility;
 
 GameScene::GameScene()
 {
@@ -32,6 +24,8 @@ GameScene::~GameScene()
 
 void GameScene::Initialize()
 {
+	Random::Initialize();
+
 	Stage::Load();
 	player->Load();
 	enemy->Load();

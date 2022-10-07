@@ -142,6 +142,21 @@ void Stage::FloorUpdate()
 	{
 		enemy->SetisAddScaleCountDown(1);
 	}
+	if (enemy->GetisAddScaleCountDown() == 1)
+	{
+		for (const auto& temp : stars)
+		{
+			temp->SetisAngleShacke(true);
+		}
+	}
+	else
+	{
+		for (const auto& temp : stars)
+		{
+			temp->SetisAngleShacke(false);
+		}
+	}
+
 	if (enemy->GetisSuctionStar() == true)
 	{
 		const int num = 5;

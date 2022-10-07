@@ -1,4 +1,6 @@
 #include "Star.h"
+#include "Random.h"
+using namespace MathUtility;
 
 Star::Star() :
 	gravity(2), collisionRadius(1), floorPosY(-10.5), isCanHit(false)
@@ -14,11 +16,6 @@ Star::~Star()
 	delete starModel;
 }
 
-void Star::Init()
-{
-
-}
-
 void Star::Generate(const Vector3 pos, const int& dir)
 {
 	speed = 1.3;
@@ -29,10 +26,12 @@ void Star::Generate(const Vector3 pos, const int& dir)
 	collisionRadius = trans->scale_.x;
 	isNotGravity = false;
 	this->dir = dir;
+	isAngleShake = false;
 }
 
 void Star::Update()
 {
+
 	trans->translation_.x += dir * speed;
 	speed -= 0.1;
 	if (speed <= 0)
@@ -48,6 +47,24 @@ void Star::Update()
 	else
 	{
 		trans->translation_.y -= 0.5;
+	}
+
+	if (isAngleShake == true)
+	{
+		angleShakeValue =
+		{
+			Random::RangeF(-10, 10),
+			Random::RangeF(-10, 10),
+			Random::RangeF(-10, 10),
+		};
+
+		trans->rotation_.x = DegreeToRad(angleShakeValue.x);
+		trans->rotation_.y = DegreeToRad(angleShakeValue.y);
+		trans->rotation_.z = DegreeToRad(angleShakeValue.z);
+	}
+	else
+	{
+		trans->rotation_ = { 0,0,0 };
 	}
 
 	trans->UpdateMatrix();

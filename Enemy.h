@@ -12,6 +12,7 @@ private:
 	uint32_t enemyTexture2 = 0;			// テクスチャー
 
 	int hp;
+	int maxHp;
 	bool isAddScale;		// 拡大のフラグ
 	float collisionRadius;	// 当たり判定の半径
 	int isAddScaleCountDown;
@@ -19,7 +20,6 @@ private:
 	float addScale;
 	float preScaleY;
 
-	int recoveryTimer;		// 回復するタイマー
 	int maxRecoveryTimer;	// 最大値
 
 	bool isSuctionStar;

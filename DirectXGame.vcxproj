@@ -102,7 +102,9 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="math\MathUtility.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Star.cpp" />
@@ -141,6 +143,7 @@
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Star.h" />

@@ -1,7 +1,7 @@
 #include "Enemy.h"
 
 Enemy::Enemy() :
-	collisionRadius(10)
+	collisionRadius(10), maxHp(50)
 {
 }
 
@@ -27,9 +27,8 @@ void Enemy::Init()
 	trans->scale_ = { 50,10,5 };
 	trans->UpdateMatrix();
 
-	hp = 50;
+	hp = maxHp;
 	isAddScale = false;
-	recoveryTimer = 0;
 	maxRecoveryTimer = 60;
 	addScaleCount = 240;
 	isAddScaleCountDown = false;
@@ -59,28 +58,18 @@ void Enemy::Update()
 		trans->scale_.y += addScale;
 		if (trans->scale_.y - preScaleY >= difference)
 		{
+			hp += 10;
+			if (hp >= maxHp)
+			{
+				hp = maxHp;
+			}
+
 			trans->scale_.y = preScaleY + difference;
 			addScale = 0;
 			addScaleCount = 240;
 			isAddScaleCountDown = 0;
 			isAddScale = false;
-
 		}
-
-		recoveryTimer++;
-		if (recoveryTimer >= maxRecoveryTimer)
-		{
-			hp++;
-			if (hp >= 50)
-			{
-				hp = 50;
-			}
-			recoveryTimer = 0;
-		}
-	}
-	else
-	{
-		recoveryTimer = 0;
 	}
 
 	trans->UpdateMatrix();
