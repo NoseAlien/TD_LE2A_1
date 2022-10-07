@@ -1,8 +1,11 @@
 ﻿#include "GameScene.h"
 #include "TextureManager.h"
-#include "Collision.h"
 #include <cassert>
 #include <memory>
+#include "Player.h"
+#include "Enemy.h"
+#include "Collision.h"
+
 using namespace std;
 
 double DegreeToRad(double num)
@@ -17,85 +20,70 @@ double RadToDegree(double num)
 
 GameScene::GameScene()
 {
-	player = move(make_unique<Player>());
-	enemy = move(make_unique<Enemy>());
-	starTexture = TextureManager::Load("star.png");
+
 }
 
 GameScene::~GameScene()
 {
+	player->DestroyInstance();
+	enemy->DestroyInstance();
 	collision->DestroyInstance();
 }
 
-void GameScene::Initialize() {
+void GameScene::Initialize()
+{
+	Stage::Load();
+	player->Load();
+	enemy->Load();
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
-	player->Init();
 
 	viewProjection_.fovAngleY = DegreeToRad(50);
-
 	viewProjection_.eye = { 0,0,-50 };
 	viewProjection_.target = { 0,0,0 };
 	viewProjection_.up = { 0,1,0 };
 	viewProjection_.Initialize();
+
+	stages.emplace_back(move(make_unique<Stage>()));
+	stages.emplace_back(move(make_unique<Stage>()));
+
+	for (int i = 0; i < stages.size(); i++)
+	{
+		stages[i]->Init();
+	}
+
+	currentStage = 0;
 }
 
 void GameScene::Update()
 {
-	if (collision->SphereHitSphere(
-		player->GetPos(), player->GetRadius(), enemy->GetPos(), enemy->GetRadius()))
-	{
-		Vector3 tempPos =
-		{
-			enemy->GetPos().x,
-			enemy->GetPos().y/* + 12*/,
-			enemy->GetPos().z
-		};
-		player->SetisReverse(true);
+	stages[currentStage]->Update();
 
-		if (player->GetisHaveStar() == true)
-		{
-			enemy->Damage(5);
-		}
-		else
-		{
-			if (player->GetisHeavyAttack() == true)
-			{
-				GenerateStar(tempPos);
-			}
-			enemy->Damage(1);
-		}
+	if (input_->TriggerKey(DIK_1))
+	{
+		stages[currentStage]->Init();
+		currentStage = 0;
 	}
-
-	for (const auto& temp : stars)
+	if (input_->TriggerKey(DIK_2))
 	{
-		if (collision->SphereHitSphere(
-			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius()))
-		{
-			if (temp->GetisMove() == true)
-			{
-				player->SetisHaveStar(true);
-				stars.remove(temp);
-				break;
-			}
-		}
-	}
-
-	player->Update();
-	for (const auto& temp : stars)
-	{
-		temp->Update();
+		stages[currentStage]->Init();
+		currentStage = 1;
+		stages[currentStage]->GenerateThorn({ 20,20,0 });
+		stages[currentStage]->GenerateThorn({ -20,20,0 });
 	}
 
 	debugText_->SetPos(20, 20);
-	debugText_->Printf("EnemyHP = %d", enemy->GetHP());
+	debugText_->Printf("CurrentStage = %d", currentStage);
+
+	debugText_->SetPos(20, 40);
+	debugText_->Printf("FloorHP = %d", enemy->GetHP());
 }
 
-void GameScene::Draw() {
-
+void GameScene::Draw()
+{
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
@@ -121,15 +109,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	player->Draw(viewProjection_);
-	if (enemy->GetHP() > 0)
-	{
-		enemy->Draw(viewProjection_);
-	}
-	for (const auto& temp : stars)
-	{
-		temp->Draw(viewProjection_, starTexture);
-	}
+	stages[currentStage]->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -152,18 +132,4 @@ void GameScene::Draw() {
 #pragma endregion
 }
 
-void GameScene::GenerateStar(const Vector3 pos)
-{
-	for (int i = 0; i < 2; i++)
-	{
-		stars.emplace_back(move(make_unique<Star>()));
-		if (i == 0)
-		{
-			stars.back()->Generate({ pos.x,pos.y + 8,pos.z }, pos.y + 12, -1);
-		}
-		if (i == 1)
-		{
-			stars.back()->Generate({ pos.x,pos.y + 8,pos.z }, pos.y + 12, 1);
-		}
-	}
-}
+

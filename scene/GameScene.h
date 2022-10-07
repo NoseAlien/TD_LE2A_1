@@ -10,10 +10,9 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-#include "Player.h"
-#include "Enemy.h"
-#include "Star.h"
+#include "Stage.h"
 #include <memory>
+#include <vector>
 
 /// <summary>
 /// ゲームシーン
@@ -57,11 +56,7 @@ private: // メンバ変数
 	/// </summary>
 	ViewProjection viewProjection_{};
 
-	std::unique_ptr<Player> player;
-	std::unique_ptr<Enemy> enemy;
-	std::list<std::unique_ptr<Star>> stars;
-	uint32_t starTexture = 0;			// 星テクスチャー
+	std::vector<std::unique_ptr<Stage>> stages;
 
-	void GenerateStar(const Vector3 pos);
-public:
+	int currentStage;
 };

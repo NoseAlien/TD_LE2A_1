@@ -1,7 +1,7 @@
 #include "Star.h"
 
 Star::Star() :
-	gravity(2), collisionRadius(2)
+	gravity(2), collisionRadius(1), floorPosY(-10.5), isCanHit(false)
 {
 	trans = new WorldTransform();
 	trans->Initialize();
@@ -19,51 +19,31 @@ void Star::Init()
 
 }
 
-void Star::Generate(const Vector3 pos, const float& floorPosY, const int& dir)
+void Star::Generate(const Vector3 pos, const int& dir)
 {
+	speed = 1.3;
 	trans->translation_ = pos;
-	trans->scale_ = { 2,2,2 };
+	trans->scale_ = { 1.5,1.5,1.5 };
 	trans->UpdateMatrix();
 	gravity = 1;
+	collisionRadius = trans->scale_.x;
 	isNotGravity = false;
-	isMove = false;
-	this->floorPosY = floorPosY;
 	this->dir = dir;
 }
+
 void Star::Update()
 {
+	trans->translation_.x += dir * speed;
+	speed -= 0.1;
+	if (speed <= 0)
+	{
+		speed = 0;
+		isCanHit = true;
+	}
+
 	if (trans->translation_.y <= floorPosY)
 	{
-		if (isNotGravity == true)
-		{
-			trans->translation_.y = floorPosY;
-			gravity = 0;
-			isMove = true;
-		}
-	}
-	else
-	{
-		trans->translation_.x += dir * 0.25;
-	}
-
-	trans->translation_.y += gravity;
-	gravity -= 0.05;
-	if (gravity <= 0)
-	{
-		isNotGravity = true;
-	}
-	if (gravity <= -2)
-	{
-		gravity = -2;
-	}
-
-	if (isMove == true)
-	{
-		trans->translation_.x += 0.2;
-		if (trans->translation_.x >= 50)
-		{
-			trans->translation_.x = -50;
-		}
+		trans->translation_.y = floorPosY;
 	}
 
 	trans->UpdateMatrix();

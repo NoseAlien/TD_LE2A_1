@@ -1,54 +1,88 @@
 #include "Player.h"
 
 Player::Player() :
-	isAttack(false),
-	isWeakAttack(false), weakAttackMoveSpeed(5),
-	isHeavyAttack(false), heavyAttackMoveSpeed(5),
+	isAttack(false), speed(0.25),
+	isWeakAttack(false), isHeavyAttack(false),
 	collisionRadius(1)
 {
-	trans = new WorldTransform();
-	trans->Initialize();
 
-	playerModel = Model::Create();
-
-	playerTexture = TextureManager::Load("white1x1.png");
-	redPixel = TextureManager::Load("red1x1.png");
-
-	trans->translation_ = { 0,20,0 };
-	//trans->scale_ = { 2,2,2 };
+	//trans->scale_ = { 1.5,1.5,1.5 };
 }
 
 Player::~Player()
 {
-	delete trans;
 	delete playerModel;
+	delete trans;
+}
+
+
+
+void Player::Load()
+{
+	input_ = Input::GetInstance();
+	playerTexture = TextureManager::Load("white1x1.png");
+	redPixel = TextureManager::Load("red1x1.png");
+	playerModel = Model::Create();
+	trans = new WorldTransform();
+	trans->Initialize();
 }
 
 void Player::Init()
 {
-	input_ = Input::GetInstance();
+	trans->translation_ = { 0,20,0 };
+	trans->UpdateMatrix();
 
 	isWeakAttack = false;
-	weakAttackMoveSpeed = 5;
-
 	isHeavyAttack = false;
-	heavyAttackMoveSpeed = 5;
+	attackMoveSpeed = 3;
+	isHaveStar = false;
+
+	isDamage = false;
+	damegeTimer = 0;
 }
 
 void Player::Update()
+{
+	MoveUpdate();
+	AttackUpdate();
+	DamageUpdate();
+	trans->UpdateMatrix();
+}
+
+void Player::Draw(const ViewProjection& viewProjection_)
+{
+	if (damegeTimer % 10 < 5)
+	{
+		if (pushKeyFream >= 30)
+		{
+			playerModel->Draw(*trans, viewProjection_, redPixel);
+		}
+		else
+		{
+			playerModel->Draw(*trans, viewProjection_, playerTexture);
+		}
+	}
+}
+
+void Player::MoveUpdate()
 {
 	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
 	//if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
 	//if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
 	//if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
 
-	if (isAttack == false)
+	// ˆÚ“®ˆ—
+	trans->translation_.x += speed;
+	if (trans->translation_.x >= 43)
 	{
-		if (input_->TriggerKey(DIK_SPACE))
-		{
-			pushKeyFream = 0;
-		}
-
+		trans->translation_.x = -43;
+	}
+}
+void Player::AttackUpdate()
+{
+	// UŒ‚‚ÌŽí—Þ‚ð”»’f‚·‚éˆ—
+	if (isAttack == false && isDamage == false)
+	{
 		if (input_->PushKey(DIK_SPACE))
 		{
 			pushKeyFream++;
@@ -68,66 +102,73 @@ void Player::Update()
 		}
 	}
 
+	// UŒ‚ˆ—
 	if (isAttack == true)
 	{
-		// ŽãUŒ‚
-		if (isWeakAttack == true)
+		if (trans->translation_.y <= floorPosY)
 		{
-			if (isReverse == false)
-			{
-				trans->translation_.y -= weakAttackMoveSpeed;
-			}
-			else
-			{
-				trans->translation_.y += weakAttackMoveSpeed;
-
-				if (trans->translation_.y >= 20)
-				{
-					trans->translation_.y = 20;
-					isReverse = false;
-					isWeakAttack = false;
-					pushKeyFream = 0;
-					isAttack = false;
-					isHaveStar = false;
-				}
-			}
+			trans->translation_.y = floorPosY;
+			isReverse = true;
 		}
 
-		// ‹­UŒ‚
-		if (isHeavyAttack == true)
+		if (isReverse == false)
 		{
-			if (isReverse == false)
+			trans->translation_.y -= attackMoveSpeed;
+		}
+		else
+		{
+			stopTimer++;
+			if (stopTimer >= 5)
 			{
-				trans->translation_.y -= heavyAttackMoveSpeed;
-			}
-			else
-			{
-				trans->translation_.y += heavyAttackMoveSpeed;
-
+				trans->translation_.y += attackMoveSpeed;
 				if (trans->translation_.y >= 20)
 				{
 					trans->translation_.y = 20;
-					isReverse = false;
-					isHeavyAttack = false;
-					pushKeyFream = 0;
-					isAttack = false;
-					isHaveStar = false;
+					isReverse = false;		// ”½“]ƒtƒ‰ƒO
+					isWeakAttack = false;	// ŽãUŒ‚
+					isHeavyAttack = false;	// ‹­UŒ‚
+					isAttack = false;		// UŒ‚ƒtƒ‰ƒO
+					isHaveStar = false;		// ¯Ž‚¿‚©?
 
+					isBreak = false;		// ‚Ü‚í‚è‚Ì¯‚ð‰ó‚·ƒtƒ‰ƒO
+					stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
+					pushKeyFream = 0;		// ‰Ÿ‚µ‚½Žž‚ÌƒtƒŒ[ƒ€
 				}
 			}
 		}
 	}
-	trans->UpdateMatrix();
-}
 
-void Player::Draw(const ViewProjection& viewProjection_)
+	// ‚Ü‚í‚è‚Ì¯‚ð‰ó‚·ˆ—
+	if (trans->translation_.y <= -9)
+	{
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			isBreak = true;
+		}
+	}
+}
+void Player::DamageUpdate()
 {
-	if (pushKeyFream >= 30)
+	if (isDamage == true)
 	{
-		playerModel->Draw(*trans, viewProjection_, redPixel);
-	}
-	else
-	{
-		playerModel->Draw(*trans, viewProjection_, playerTexture);
+		pushKeyFream = 0;
+
+		damegeTimer++;
+		if (damegeTimer >= 100)
+		{
+			damegeTimer = 0;
+			isDamage = false;
+		}
 	}
 }
+
+Player* Player::GetInstance()
+{
+	static Player* player = new Player;
+	return player;
+}
+void Player::DestroyInstance()
+{
+	delete GetInstance();
+}
+Player* player = Player::GetInstance();
