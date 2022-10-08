@@ -3,7 +3,8 @@
 using namespace MathUtility;
 
 Star::Star() :
-	gravity(2), collisionRadius(1), floorPosY(-10.5), isCanHit(false)
+	gravity(2), collisionRadius(1),
+	isCanHit(false), maxCanHitTimer(10)
 {
 	trans = new WorldTransform();
 	trans->Initialize();
@@ -16,37 +17,44 @@ Star::~Star()
 	delete starModel;
 }
 
-void Star::Generate(const Vector3 pos, const int& dir)
+void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& generateType)
 {
-	speed = 1.3;
 	trans->translation_ = pos;
 	trans->scale_ = { 1.5,1.5,1.5 };
 	trans->UpdateMatrix();
 	gravity = 1;
 	collisionRadius = trans->scale_.x;
 	isNotGravity = false;
-	this->dir = dir;
 	isAngleShake = false;
+	this->dirVec = dirVec;
+	this->generateType = generateType;
 }
 
 void Star::Update()
 {
-
-	trans->translation_.x += dir * speed;
-	speed -= 0.1;
-	if (speed <= 0)
+	if (generateType == 0)
 	{
-		speed = 0;
+		trans->translation_ += speed * dirVec.Normalized();
+		speed -= 0.1;
+		if (speed <= 0)
+		{
+			speed = 0;
+		}
+	}
+	else if (generateType == 1)
+	{
+		gravity -= 0.05;
+		if (gravity <= -1) gravity = -1;
+		trans->translation_.x += speed * dirVec.Normalized().x;
+		trans->translation_.y += gravity;
+	}
+
+	// UŒ‚‰Â”\‚©‚Ç‚¤‚©
+	canHitTimer++;
+	if (canHitTimer >= maxCanHitTimer)
+	{
+		canHitTimer = maxCanHitTimer;
 		isCanHit = true;
-	}
-
-	if (trans->translation_.y <= floorPosY)
-	{
-		trans->translation_.y = floorPosY;
-	}
-	else
-	{
-		trans->translation_.y -= 0.5;
 	}
 
 	if (isAngleShake == true)

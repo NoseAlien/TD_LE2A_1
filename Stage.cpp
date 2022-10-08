@@ -1,7 +1,8 @@
 #include "Stage.h"
 #include "Collision.h"
 #include "Player.h"
-#include "Enemy.h"
+#include "DebugText.h"
+#include "Random.h"
 using namespace std;
 
 uint32_t Stage::starTexture = 0;
@@ -24,9 +25,11 @@ void Stage::Load()
 void Stage::Init()
 {
 	player->Init();
-	enemy->Init();
+	ground->Init();
 	stars.clear();
 	thorns.clear();
+	blocks.clear();
+	cannons.clear();
 	gameClear = false;
 	gameOver = false;
 	//GenerateThorn(player->GetPos());
@@ -35,12 +38,23 @@ void Stage::Update()
 {
 	if (gameClear == true || gameOver == true) return;
 
-	PlayerUpdate();
-	StarUpdate();
-	FloorUpdate();
-	ThornUpdate();
+	if (ground->GetHP() > 0)
+	{
+		StarUpdate();
+		BlockUpdate();
+		FloorUpdate();
+		ThornUpdate();
+		CannonUpdate();
+		PlayerUpdate();
+	}
 
-	if (enemy->GetScale().y >= 36.5)
+	if (ground->GetHP() <= 0)
+	{
+		gameClear = true;
+	}
+
+	if (ground->GetScale().y >= 36.5 ||
+		player->GetLife() <= 0)
 	{
 		gameOver = true;
 	}
@@ -48,9 +62,9 @@ void Stage::Update()
 void Stage::Draw(const ViewProjection& viewProjection_)
 {
 	player->Draw(viewProjection_);
-	if (enemy->GetHP() > 0)
+	if (ground->GetHP() > 0)
 	{
-		enemy->Draw(viewProjection_);
+		ground->Draw(viewProjection_);
 	}
 
 	for (const auto& temp : stars)
@@ -62,26 +76,48 @@ void Stage::Draw(const ViewProjection& viewProjection_)
 	{
 		temp->Draw(viewProjection_, thornTexture);
 	}
+
+	for (const auto& temp : blocks)
+	{
+		temp->Draw(viewProjection_, thornTexture);
+	}
+
+	for (const auto& temp : cannons)
+	{
+		temp->Draw(viewProjection_, thornTexture);
+	}
 }
 
-void Stage::GenerateThorn(const Vector3& pos)
+void Stage::GenerateThorn(const Vector3& pos, const Vector3& scale)
 {
 	thorns.emplace_back(move(make_unique<Thorn>()));
-	thorns.back()->Generate(pos);
+	thorns.back()->Generate(pos, scale);
+}
+void Stage::GenerateBlock(const Vector3& pos, const Vector3& scale)
+{
+	blocks.emplace_back(move(make_unique<Block>()));
+	blocks.back()->Generate(pos, scale);
+}
+void Stage::GenerateCannon(const Vector3& pos, const Vector3& rot)
+{
+	cannons.emplace_back(move(make_unique<Cannon>()));
+	cannons.back()->Generate(pos, rot);
 }
 
-void Stage::HitGenerateStar(const Vector3 pos)
+void Stage::PlayerGenerateStar(const Vector3 pos)
 {
 	for (int i = 0; i < 2; i++)
 	{
 		stars.emplace_back(move(make_unique<Star>()));
 		if (i == 0)
 		{
-			stars.back()->Generate(pos, -1);
+			stars.back()->Generate(pos, { -1,0,0 }, 0);
+			stars.back()->SetSpeed(1.3);
 		}
 		if (i == 1)
 		{
-			stars.back()->Generate(pos, 1);
+			stars.back()->Generate(pos, { 1,0,0 }, 0);
+			stars.back()->SetSpeed(1.3);
 		}
 	}
 }
@@ -89,27 +125,44 @@ void Stage::HitGenerateStar(const Vector3 pos)
 // 自機
 void Stage::PlayerUpdate()
 {
-	// 攻撃処理
-	if (player->GetPos().y <= player->GetFloorPosY())
+	// まわりを巻き込む処理
+	if (player->GetisEngulfAttack() == true)
 	{
-		player->SetisReverse(true);
-
-		// タイマ－にした
-		// 瞬間的なフラグが欲しかったため
-		if (player->GetStopTimer() == 1)
+		SquareCollider playerCollider =
 		{
-			if (player->GetisHaveStar() == true)
+			{ player->GetPos().x,player->GetPos().y },
+			{ 15,4 },
+		};
+
+		for (const auto& temp : stars)
+		{
+			SquareCollider starCollider
 			{
-				enemy->Damage(5);
-			}
-			else
+				{ temp->GetPos().x,temp->GetPos().y },
+				{ temp->GetScale().x,temp->GetScale().y },
+			};
+
+			if (collision->SquareHitSquare(playerCollider, starCollider))
 			{
-				if (player->GetisHeavyAttack() == true)
-				{
-					HitGenerateStar(player->GetPos());
-					enemy->Damage(1);
-				}
+				ground->Damage(player->GetStarAttackDamage());
+				stars.remove(temp);
+				break;
 			}
+		}
+		for (const auto& temp : blocks)
+		{
+			SquareCollider blockCollider =
+			{
+				{ temp->GetPos().x,temp->GetPos().y },
+				{ temp->GetScale().x,temp->GetScale().y },
+			};
+
+			if (collision->SquareHitSquare(playerCollider, blockCollider))
+			{
+				blocks.remove(temp);
+				break;
+			}
+
 		}
 	}
 
@@ -121,7 +174,7 @@ void Stage::PlayerUpdate()
 		{
 			if (temp->GetisCanHit() == true)
 			{
-				player->SetisHaveStar(true);
+				player->HaveStarNumIncriment();
 				stars.remove(temp);
 				break;
 			}
@@ -129,27 +182,92 @@ void Stage::PlayerUpdate()
 	}
 
 	// 更新処理
-	float offset = enemy->GetPos().y + enemy->GetScale().y;
-	player->SetFloorPosY(offset + player->GetScale().y);
 	player->Update();
+
+	//auto text = DebugText::GetInstance();
+
 }
 
 // 床
 void Stage::FloorUpdate()
 {
-	// 大きくなる処理
-	if (stars.size() >= 10 && enemy->GetisAddScaleCountDown() == 0)
+	// 床との当たり判定
+	SquareCollider playerCollider =
 	{
-		enemy->SetisAddScaleCountDown(1);
+		{ player->GetPos().x,player->GetPos().y },
+		{ player->GetScale().x,player->GetScale().y },
+	};
+	SquareCollider floorCollider =
+	{
+		{ ground->GetPos().x,ground->GetPos().y },
+		{ ground->GetScale().x,ground->GetScale().y },
+	};
+
+	while (player->GetPos().y - player->GetAttackMoveSpeed() <=
+		ground->GetPos().y + ground->GetScale().y + player->GetScale().y &&
+		player->GetisReverse() == false)
+	{
+		SquareCollider tempCollider =
+		{
+			{ player->GetPos().x,player->GetPos().y },
+			{ player->GetScale().x,player->GetScale().y },
+		};
+
+		float y = player->GetPos().y;
+		y -= 0.5;
+		player->SetPos({ player->GetPos().x ,y,player->GetPos().z });
+
+		if (collision->SquareHitSquare(tempCollider, floorCollider))
+		{
+			player->SetPos(
+				{
+					player->GetPos().x,
+					ground->GetPos().y + ground->GetScale().y - 1,
+					player->GetPos().z
+				});
+			player->UpdateMatrix();
+			break;
+		}
 	}
-	if (enemy->GetisAddScaleCountDown() == 1)
+	if (collision->SquareHitSquare(playerCollider, floorCollider))
+	{
+		player->SetisReverse(true);
+		// タイマ－にした、瞬間的なフラグが欲しかったため
+		if (player->GetStopTimer() == 0)
+		{
+			if (player->GetHaveStarNum() > 0)
+			{
+				ground->Damage(player->GetHaveStarNum() * player->GetStarAttackDamage());
+				player->SetHaveStarNum(0);
+			}
+			else
+			{
+				if (player->GetisHeavyAttack() == true)
+				{
+					PlayerGenerateStar(player->GetPos());
+					ground->Damage(player->GetHeavyAttackDamage());
+				}
+				else if (player->GetisWeakAttack() == true)
+				{
+					ground->Damage(player->GetWeakAttackDamage());
+				}
+			}
+		}
+	}
+
+	// 大きくなる処理
+	if (stars.size() >= 10 && ground->GetisAddScaleCountDown() == 0)
+	{
+		ground->SetisAddScaleCountDown(1);
+	}
+	if (ground->GetisAddScaleCountDown() == 1)
 	{
 		for (const auto& temp : stars)
 		{
 			temp->SetisAngleShacke(true);
 		}
 	}
-	else
+	if (stars.size() < 10)
 	{
 		for (const auto& temp : stars)
 		{
@@ -157,39 +275,90 @@ void Stage::FloorUpdate()
 		}
 	}
 
-	if (enemy->GetisSuctionStar() == true)
+	// 星を吸収する処理
+	if (ground->GetisSuctionStar() == true)
 	{
-		const int num = 5;
-		if (stars.size() < num)
-		{
-			stars.clear();
-			enemy->SetisSuctionStar(false);
-		}
-		else
-		{
-			for (int i = 0; i < num; i++)
-			{
-				stars.pop_front();
-			}
-			enemy->SetisSuctionStar(false);
-		}
+		stars.clear();
+		ground->SetisSuctionStar(false);
+
+		//const int num = 5;
+		//if (stars.size() < num)
+		//{
+		//	stars.clear();
+		//	ground->SetisSuctionStar(false);
+		//}
+		//else
+		//{
+		//	for (int i = 0; i < num; i++)
+		//	{
+		//		stars.pop_front();
+		//	}
+		//	ground->SetisSuctionStar(false);
+		//}
 	}
 
-	//else
-	//{
-	//	enemy->SetisAddScale(false);
-	//}
+	// 八個集まったか
+	if (stars.size() >= 8)
+	{
+		ground->SetisDanger(true);
+	}
+	else
+	{
+		ground->SetisDanger(false);
+	}
 
-	enemy->Update();
+	ground->Update();
 }
 
 // 星
 void Stage::StarUpdate()
 {
-	float offset = enemy->GetPos().y + enemy->GetScale().y;
+	SquareCollider floorCollider =
+	{
+		{ ground->GetPos().x,ground->GetPos().y },
+		{ ground->GetScale().x,ground->GetScale().y },
+	};
+
+	for (const auto& tempStar : stars)
+	{
+		SquareCollider starCollider =
+		{
+			{ tempStar->GetPos().x,tempStar->GetPos().y },
+			{ tempStar->GetScale().x,tempStar->GetScale().y },
+		};
+
+		if (collision->SquareHitSquare(starCollider, floorCollider))
+		{
+			tempStar->SetPos(
+				{
+					tempStar->GetPos().x,
+					ground->GetPos().y + ground->GetScale().y + tempStar->GetScale().y,
+					tempStar->GetPos().z,
+				});
+			tempStar->SetGravity(0);
+			if (tempStar->GetGenerateType() == 1)
+			{
+				tempStar->SetSpeed(0);
+			}
+		}
+
+		for (const auto& tempBlock : blocks)
+		{
+			SquareCollider blockCollider =
+			{
+				{ tempBlock->GetPos().x,tempBlock->GetPos().y },
+				{ tempBlock->GetScale().x,tempBlock->GetScale().y },
+			};
+
+			if (collision->SquareHitSquare(starCollider, blockCollider))
+			{
+				tempStar->SetSpeed(0);
+			}
+		}
+	}
+
 	for (const auto& temp : stars)
 	{
-		temp->SetFloorPosY(offset + temp->GetScale().y);
 		temp->Update();
 	}
 
@@ -206,13 +375,23 @@ void Stage::StarUpdate()
 // トゲ
 void Stage::ThornUpdate()
 {
+	SquareCollider playerCollider =
+	{
+		{ player->GetPos().x,player->GetPos().y },
+		{ player->GetScale().x,player->GetScale().y },
+	};
+
 	for (const auto& temp : thorns)
 	{
-		if (collision->SphereHitSphere(
-			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius()))
+		SquareCollider thornCollider =
+		{
+			{ temp->GetPos().x,temp->GetPos().y },
+			{ temp->GetScale().x,temp->GetScale().y },
+		};
+
+		if (collision->SquareHitSquare(playerCollider, thornCollider))
 		{
 			player->SetisDamage(true);
-			break;
 		}
 	}
 
@@ -221,3 +400,95 @@ void Stage::ThornUpdate()
 		temp->Update();
 	}
 }
+
+// ブロック
+void Stage::BlockUpdate()
+{
+	SquareCollider playerCollider =
+	{
+		{ player->GetPos().x,player->GetPos().y },
+		{ player->GetScale().x,player->GetScale().y },
+	};
+	SquareCollider floorCollider =
+	{
+		{ ground->GetPos().x,ground->GetPos().y },
+		{ ground->GetScale().x,ground->GetScale().y },
+	};
+
+	// 当たり判定
+	for (const auto& temp : blocks)
+	{
+		SquareCollider blockCollider =
+		{
+			{ temp->GetPos().x,temp->GetPos().y },
+			{ temp->GetScale().x,temp->GetScale().y },
+		};
+
+		if (collision->SquareHitSquare(playerCollider, blockCollider))
+		{
+			player->SetPos(
+				{
+					player->GetPos().x,
+					temp->GetPos().y + temp->GetScale().y + player->GetScale().y,
+					player->GetPos().z
+				});
+			player->SetisReverse(true);
+
+			if (player->GetisWeakAttack() == true)
+			{
+				temp->Damage(player->GetWeakAttackDamage());
+			}
+			if (player->GetisHeavyAttack() == true)
+			{
+				temp->Damage(player->GetHeavyAttackDamage());
+			}
+
+		}
+		else if (collision->SquareHitSquare(floorCollider, blockCollider))
+		{
+			temp->SetPos(
+				{
+					temp->GetPos().x,
+					ground->GetPos().y + ground->GetScale().y + temp->GetScale().y,
+					temp->GetPos().z,
+				});
+		}
+
+	}
+	// 更新処理
+	for (const auto& temp : blocks)
+	{
+		temp->Update();
+	}
+
+	// 削除処理
+	for (const auto& temp : blocks)
+	{
+		if (temp->GetisDestroy() == true)
+		{
+			blocks.remove(temp);
+			break;
+		}
+	}
+}
+
+// 大砲
+void Stage::CannonUpdate()
+{
+	for (const auto& temp : cannons)
+	{
+		if (temp->GetisShot() == 1)
+		{
+			stars.emplace_back(move(make_unique<Star>()));
+			stars.back()->Generate(temp->GetPos(), temp->GetDirVec(), 1);
+			stars.back()->SetSpeed(Random::RangeF(0.5, 2.2));
+			temp->SetisShot(false);
+		}
+	}
+
+	for (const auto& temp : cannons)
+	{
+		temp->Update();
+	}
+}
+

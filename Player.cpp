@@ -1,21 +1,18 @@
 #include "Player.h"
+#include "DebugText.h"
 
 Player::Player() :
-	isAttack(false), speed(0.25),
+	isAttack(false), speed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
 	isWeakAttack(false), isHeavyAttack(false),
-	collisionRadius(1)
+	collisionRadius(1), maxDamageTimer(180),
+	starAttackDamage(5), weakAttackDamage(5), heavyAttackDamage(10)
 {
-
-	//trans->scale_ = { 1.5,1.5,1.5 };
 }
-
 Player::~Player()
 {
 	delete playerModel;
 	delete trans;
 }
-
-
 
 void Player::Load()
 {
@@ -26,7 +23,6 @@ void Player::Load()
 	trans = new WorldTransform();
 	trans->Initialize();
 }
-
 void Player::Init()
 {
 	trans->translation_ = { 0,20,0 };
@@ -34,14 +30,17 @@ void Player::Init()
 
 	isWeakAttack = false;
 	isHeavyAttack = false;
+	isEngulfAttack = false;
+
 	attackMoveSpeed = 3;
-	isHaveStar = false;
+	haveStarNum = 0;
 
 	isDamage = false;
 
-	damegeTimer = 0;
-}
+	damageTimer = 0;
 
+	life = 3;
+}
 void Player::Update()
 {
 	MoveUpdate();
@@ -49,12 +48,11 @@ void Player::Update()
 	DamageUpdate();
 	trans->UpdateMatrix();
 }
-
 void Player::Draw(const ViewProjection& viewProjection_)
 {
-	if (damegeTimer % 10 < 5)
+	if (damageTimer % 10 < 5)
 	{
-		if (pushKeyFream >= 30)
+		if (pushKeyFream >= maxPushKeyFream)
 		{
 			playerModel->Draw(*trans, viewProjection_, redPixel);
 		}
@@ -82,7 +80,7 @@ void Player::MoveUpdate()
 void Player::AttackUpdate()
 {
 	// UŒ‚‚ÌŽí—Þ‚ð”»’f‚·‚éˆ—
-	if (isAttack == false && isDamage == false)
+	if (isAttack == false)
 	{
 		if (input_->PushKey(DIK_SPACE))
 		{
@@ -92,11 +90,11 @@ void Player::AttackUpdate()
 		if (input_->ReleasedKey(DIK_SPACE))
 		{
 			isAttack = true;
-			if (pushKeyFream < 30)
+			if (pushKeyFream < maxPushKeyFream)
 			{
 				isWeakAttack = true;
 			}
-			else if (pushKeyFream >= 30)
+			else if (pushKeyFream >= maxPushKeyFream)
 			{
 				isHeavyAttack = true;
 			}
@@ -106,12 +104,6 @@ void Player::AttackUpdate()
 	// UŒ‚ˆ—
 	if (isAttack == true)
 	{
-		if (trans->translation_.y <= floorPosY)
-		{
-			trans->translation_.y = floorPosY;
-			isReverse = true;
-		}
-
 		if (isReverse == false)
 		{
 			trans->translation_.y -= attackMoveSpeed;
@@ -119,7 +111,7 @@ void Player::AttackUpdate()
 		else
 		{
 			stopTimer++;
-			if (stopTimer >= 5)
+			if (stopTimer >= 1)
 			{
 				trans->translation_.y += attackMoveSpeed;
 				if (trans->translation_.y >= 20)
@@ -128,10 +120,10 @@ void Player::AttackUpdate()
 					isReverse = false;		// ”½“]ƒtƒ‰ƒO
 					isWeakAttack = false;	// ŽãUŒ‚
 					isHeavyAttack = false;	// ‹­UŒ‚
+					isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
 					isAttack = false;		// UŒ‚ƒtƒ‰ƒO
-					isHaveStar = false;		// ¯Ž‚¿‚©?
+					//haveStarNum = 0;
 
-					isBreak = false;		// ‚Ü‚í‚è‚Ì¯‚ð‰ó‚·ƒtƒ‰ƒO
 					stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
 					pushKeyFream = 0;		// ‰Ÿ‚µ‚½Žž‚ÌƒtƒŒ[ƒ€
 				}
@@ -144,20 +136,23 @@ void Player::AttackUpdate()
 	{
 		if (input_->TriggerKey(DIK_SPACE))
 		{
-			isBreak = true;
+			isEngulfAttack = true;
 		}
 	}
+
+	auto text = DebugText::GetInstance();
+	text->SetPos(20, 60);
+	text->Printf("pushKeyFream = %d", pushKeyFream);
+
 }
 void Player::DamageUpdate()
 {
 	if (isDamage == true)
 	{
-		pushKeyFream = 0;
-
-		damegeTimer++;
-		if (damegeTimer >= 100)
+		damageTimer++;
+		if (damageTimer >= maxDamageTimer)
 		{
-			damegeTimer = 0;
+			damageTimer = 0;
 			isDamage = false;
 		}
 	}

@@ -1,11 +1,11 @@
 #include "MathUtility.h"
 
-double DegreeToRad(double num)
+float DegreeToRad(float num)
 {
 	return num / 180 * MathUtility::PI;
 }
 
-double RadToDegree(double num)
+float RadToDegree(float num)
 {
 	return num / MathUtility::PI * 180;
 }

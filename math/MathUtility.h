@@ -4,8 +4,8 @@
 #include "Vector3.h"
 #include "Matrix4.h"
 
-double DegreeToRad(double num);
-double RadToDegree(double num);
+float DegreeToRad(float num);
+float RadToDegree(float num);
 
 namespace MathUtility {
 

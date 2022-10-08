@@ -1,17 +1,17 @@
-#include "Enemy.h"
+#include "Ground.h"
 
-Enemy::Enemy() :
-	collisionRadius(10), maxHp(50)
+Ground::Ground() :
+	collisionRadius(10), maxHp(100)
 {
 }
 
-Enemy::~Enemy()
+Ground::~Ground()
 {
 	delete trans;
 	delete enemyModel;
 }
 
-void Enemy::Load()
+void Ground::Load()
 {
 	enemyTexture = TextureManager::Load("red1x1.png");
 	enemyTexture2 = TextureManager::Load("blue1x1.png");
@@ -21,7 +21,7 @@ void Enemy::Load()
 
 }
 
-void Enemy::Init()
+void Ground::Init()
 {
 	trans->translation_ = { 0,-22.5,0 };
 	trans->scale_ = { 50,10,5 };
@@ -34,9 +34,10 @@ void Enemy::Init()
 	isAddScaleCountDown = false;
 	addScale = 0;
 	isSuctionStar = false;
+	isDanger = false;
 }
 
-void Enemy::Update()
+void Ground::Update()
 {
 	if (isAddScaleCountDown == 1)
 	{
@@ -75,9 +76,9 @@ void Enemy::Update()
 	trans->UpdateMatrix();
 }
 
-void Enemy::Draw(const ViewProjection& viewProjection_)
+void Ground::Draw(const ViewProjection& viewProjection_)
 {
-	if (isAddScale == true)
+	if (isDanger == true)
 	{
 		enemyModel->Draw(*trans, viewProjection_, enemyTexture);
 	}
@@ -87,15 +88,15 @@ void Enemy::Draw(const ViewProjection& viewProjection_)
 	}
 }
 
-Enemy* Enemy::GetInstance()
+Ground* Ground::GetInstance()
 {
-	static Enemy* enemy = new Enemy;
-	return enemy;
+	static Ground* floor = new Ground;
+	return floor;
 }
 
-void Enemy::DestroyInstance()
+void Ground::DestroyInstance()
 {
 	delete GetInstance();
 }
 
-Enemy* enemy = Enemy::GetInstance();
+Ground* ground = Ground::GetInstance();

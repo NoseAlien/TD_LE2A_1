@@ -3,7 +3,7 @@
 #include <cassert>
 #include <memory>
 #include "Player.h"
-#include "Enemy.h"
+#include "Ground.h"
 #include "Collision.h"
 #include "Random.h"
 
@@ -18,7 +18,7 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	player->DestroyInstance();
-	enemy->DestroyInstance();
+	ground->DestroyInstance();
 	collision->DestroyInstance();
 }
 
@@ -28,7 +28,7 @@ void GameScene::Initialize()
 
 	Stage::Load();
 	player->Load();
-	enemy->Load();
+	ground->Load();
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
@@ -41,6 +41,8 @@ void GameScene::Initialize()
 	viewProjection_.up = { 0,1,0 };
 	viewProjection_.Initialize();
 
+	stages.emplace_back(move(make_unique<Stage>()));
+	stages.emplace_back(move(make_unique<Stage>()));
 	stages.emplace_back(move(make_unique<Stage>()));
 	stages.emplace_back(move(make_unique<Stage>()));
 
@@ -68,12 +70,26 @@ void GameScene::Update()
 		stages[currentStage]->GenerateThorn({ 20,20,0 });
 		stages[currentStage]->GenerateThorn({ -20,20,0 });
 	}
+	if (input_->TriggerKey(DIK_3))
+	{
+		stages[currentStage]->Init();
+		currentStage = 2;
+		stages[currentStage]->GenerateBlock({ 20,-20,0 }, { 2,2,1});
+		stages[currentStage]->GenerateBlock({ -20,-20,0 }, { 3,2,1 });
+	}
+	if (input_->TriggerKey(DIK_4))
+	{
+		stages[currentStage]->Init();
+		currentStage = 3;
+		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
+		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+	}
 
 	debugText_->SetPos(20, 20);
 	debugText_->Printf("CurrentStage = %d", currentStage);
 
 	debugText_->SetPos(20, 40);
-	debugText_->Printf("FloorHP = %d", enemy->GetHP());
+	debugText_->Printf("FloorHP = %d", ground->GetHP());
 }
 
 void GameScene::Draw()

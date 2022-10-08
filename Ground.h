@@ -3,7 +3,7 @@
 #include "Model.h"
 #include "Vector3.h"
 
-class Enemy
+class Ground
 {
 private:
 	WorldTransform* trans = nullptr;	// トランスフォーム
@@ -20,10 +20,11 @@ private:
 	float addScale;
 	float preScaleY;
 
+
 	int maxRecoveryTimer;	// 最大値
 
-	bool isSuctionStar;
-
+	bool isDanger;	// 星が八個なったいるか
+	bool isSuctionStar;	// 星を吸収するフラグ
 
 public:
 	void Load();
@@ -42,22 +43,23 @@ public:
 	inline bool GetisAddScale() { return isAddScale; }
 	inline bool GetisSuctionStar() { return isSuctionStar; }
 
+	inline void SetisDanger(const bool& isDanger) { this->isDanger = isDanger; }
 	inline void SetisAddScale(const bool& isAddScale) { this->isAddScale = isAddScale; }
 	inline void SetisAddScaleCountDown(const int& isAddScaleCountDown) { this->isAddScaleCountDown = isAddScaleCountDown; }
 	inline void SetAddScaleCount(const int& addScaleCount) { this->addScaleCount = addScaleCount; }
 	inline void SetisSuctionStar(const bool& isSuctionStar) { this->isSuctionStar = isSuctionStar; }
 
 public:
-	static Enemy* GetInstance();
+	static Ground* GetInstance();
 	static void DestroyInstance();
 private:
-	Enemy();
-	~Enemy();
+	Ground();
+	~Ground();
 
-	Enemy(const Enemy&) = delete;
-	Enemy& operator=(const Enemy&) = delete;
-	Enemy(const Enemy&&) = delete;
-	Enemy& operator=(const Enemy&&) = delete;
+	Ground(const Ground&) = delete;
+	Ground& operator=(const Ground&) = delete;
+	Ground(const Ground&&) = delete;
+	Ground& operator=(const Ground&&) = delete;
 };
 
-extern Enemy* enemy;
+extern Ground* ground;

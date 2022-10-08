@@ -14,11 +14,12 @@ private:
 public:
 	Thorn();
 	~Thorn();
-	void Generate(const Vector3& pos);
+	void Generate(const Vector3& pos, const Vector3& scale);
 	void Update();
 	void Draw(const ViewProjection& viewProjection_, const uint32_t& thornTexture);
 
 	Vector3 GetPos() { return trans->translation_; }
+	Vector3 GetScale() { return trans->scale_; }
 	float GetRadius() { return collisionRadius; }
 };
 

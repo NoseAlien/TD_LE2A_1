@@ -11,11 +11,12 @@ Thorn::~Thorn()
 	delete thornModel;
 }
 
-void Thorn::Generate(const Vector3& pos)
+void Thorn::Generate(const Vector3& pos, const Vector3& scale)
 {
 	trans = new WorldTransform();
 	trans->Initialize();
 	trans->translation_ = pos;
+	trans->scale_ = scale;
 	trans->scale_ = { 0.5,0.5,0.5 };
 	trans->UpdateMatrix();
 	collisionRadius = trans->scale_.x;
