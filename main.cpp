@@ -5,6 +5,7 @@
 #include "WinApp.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
+#include "SceneManager.h"
 #include <string>
 
 #pragma comment(lib,"winmm.lib")
@@ -64,8 +65,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 
 	// ゲームシーンの初期化
-	gameScene = new GameScene();
-	gameScene->Initialize();
+	//gameScene = new GameScene();
+	//gameScene->Initialize();
+	sceneManager->Initialize();
 
 	//1フレームの時間
 	const float FRAME_TIME = 1.0f / 60.0f;
@@ -93,14 +95,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 入力関連の毎フレーム処理
 		input->Update();
 		// ゲームシーンの毎フレーム処理
-		gameScene->Update();
+		//gameScene->Update();
+		sceneManager->Update();
 		// 軸表示の更新
 		axisIndicator->Update();
 
 		// 描画開始
 		dxCommon->PreDraw();
 		// ゲームシーンの描画
-		gameScene->Draw();
+		//gameScene->Draw();
+		sceneManager->Draw();
 		// 軸表示の描画
 		axisIndicator->Draw();
 		// プリミティブ描画のリセット
@@ -138,7 +142,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	// 各種解放
-	SafeDelete(gameScene);
+	//SafeDelete(gameScene);
+	sceneManager->DestroyInstance();
 	audio->Finalize();
 
 	// ゲームウィンドウの破棄

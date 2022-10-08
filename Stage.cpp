@@ -24,8 +24,6 @@ void Stage::Load()
 }
 void Stage::Init()
 {
-	player->Init();
-	ground->Init();
 	stars.clear();
 	thorns.clear();
 	blocks.clear();
@@ -53,7 +51,7 @@ void Stage::Update()
 		gameClear = true;
 	}
 
-	if (ground->GetScale().y >= 36.5 ||
+	if (ground->GetPos().y + ground->GetScale().y >= 0 ||
 		player->GetLife() <= 0)
 	{
 		gameOver = true;

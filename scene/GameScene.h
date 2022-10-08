@@ -11,13 +11,15 @@
 #include "WorldTransform.h"
 
 #include "Stage.h"
+#include "IScene.h"
 #include <memory>
 #include <vector>
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene {
+class GameScene : public IScene
+{
 
 public: // メンバ関数
   /// <summary>
@@ -44,6 +46,9 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	static void Load();
+	IScene* GetNextScene();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;

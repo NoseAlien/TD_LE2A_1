@@ -12,7 +12,7 @@ private:
 	uint32_t enemyTexture2 = 0;			// テクスチャー
 
 	int hp;
-	int maxHp;
+	int maxhp;
 	bool isAddScale;		// 拡大のフラグ
 	float collisionRadius;	// 当たり判定の半径
 	int isAddScaleCountDown;
@@ -28,7 +28,7 @@ private:
 
 public:
 	void Load();
-	void Init();
+	void Init(const int& maxhp);
 	void Update();
 	void Draw(const ViewProjection& viewProjection_);
 

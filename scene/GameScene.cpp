@@ -4,7 +4,6 @@
 #include <memory>
 #include "Player.h"
 #include "Ground.h"
-#include "Collision.h"
 #include "Random.h"
 
 using namespace std;
@@ -17,19 +16,18 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
-	player->DestroyInstance();
-	ground->DestroyInstance();
-	collision->DestroyInstance();
+}
+
+void GameScene::Load()
+{
+	Random::Initialize();
+	Stage::Load();
+	player->Load();
+	ground->Load();
 }
 
 void GameScene::Initialize()
 {
-	Random::Initialize();
-
-	Stage::Load();
-	player->Load();
-	ground->Load();
-
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -60,11 +58,15 @@ void GameScene::Update()
 
 	if (input_->TriggerKey(DIK_1))
 	{
+		player->Init();
+		ground->Init(100);
 		stages[currentStage]->Init();
 		currentStage = 0;
 	}
 	if (input_->TriggerKey(DIK_2))
 	{
+		player->Init();
+		ground->Init(100);
 		stages[currentStage]->Init();
 		currentStage = 1;
 		stages[currentStage]->GenerateThorn({ 20,20,0 });
@@ -72,13 +74,17 @@ void GameScene::Update()
 	}
 	if (input_->TriggerKey(DIK_3))
 	{
+		player->Init();
+		ground->Init(100);
 		stages[currentStage]->Init();
 		currentStage = 2;
-		stages[currentStage]->GenerateBlock({ 20,-20,0 }, { 2,2,1});
+		stages[currentStage]->GenerateBlock({ 20,-20,0 }, { 2,2,1 });
 		stages[currentStage]->GenerateBlock({ -20,-20,0 }, { 3,2,1 });
 	}
 	if (input_->TriggerKey(DIK_4))
 	{
+		player->Init();
+		ground->Init(100);
 		stages[currentStage]->Init();
 		currentStage = 3;
 		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
@@ -89,7 +95,7 @@ void GameScene::Update()
 	debugText_->Printf("CurrentStage = %d", currentStage);
 
 	debugText_->SetPos(20, 40);
-	debugText_->Printf("FloorHP = %d", ground->GetHP());
+	debugText_->Printf("GroundHP = %d", ground->GetHP());
 }
 
 void GameScene::Draw()
@@ -140,6 +146,13 @@ void GameScene::Draw()
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+
+
+IScene* GameScene::GetNextScene()
+{
+	return nullptr;
 }
 
 

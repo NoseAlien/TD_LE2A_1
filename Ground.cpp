@@ -1,7 +1,7 @@
 #include "Ground.h"
 
 Ground::Ground() :
-	collisionRadius(10), maxHp(100)
+	collisionRadius(10)
 {
 }
 
@@ -21,13 +21,14 @@ void Ground::Load()
 
 }
 
-void Ground::Init()
+void Ground::Init(const int& maxhp)
 {
 	trans->translation_ = { 0,-22.5,0 };
 	trans->scale_ = { 50,10,5 };
 	trans->UpdateMatrix();
 
-	hp = maxHp;
+	hp = maxhp;
+	this->maxhp = maxhp;
 	isAddScale = false;
 	maxRecoveryTimer = 60;
 	addScaleCount = 240;
@@ -60,9 +61,9 @@ void Ground::Update()
 		if (trans->scale_.y - preScaleY >= difference)
 		{
 			hp += 10;
-			if (hp >= maxHp)
+			if (hp >= maxhp)
 			{
-				hp = maxHp;
+				hp = maxhp;
 			}
 
 			trans->scale_.y = preScaleY + difference;
