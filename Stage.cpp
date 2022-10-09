@@ -3,14 +3,15 @@
 #include "Player.h"
 #include "DebugText.h"
 #include "Random.h"
+#include "GameScene.h"
 using namespace std;
 
 uint32_t Stage::starTexture = 0;
 uint32_t Stage::thornTexture = 0;
 
-Stage::Stage()
+Stage::Stage(const int& stageType) : stageType(stageType), playerIsHitGoal(false)
 {
-
+	goal = nullptr;
 }
 Stage::~Stage()
 {
@@ -24,12 +25,17 @@ void Stage::Load()
 }
 void Stage::Init()
 {
+	viewProjection_.eye = { 0,0,-50 };
+	viewProjection_.target = { 0,0,0 };
+	viewProjection_.up = { 0,1,0 };
+	viewProjection_.UpdateMatrix();
 	stars.clear();
 	thorns.clear();
 	blocks.clear();
 	cannons.clear();
 	gameClear = false;
 	gameOver = false;
+	playerIsHitGoal = false;
 	//GenerateThorn(player->GetPos());
 }
 void Stage::Update()
@@ -42,11 +48,18 @@ void Stage::Update()
 		BlockUpdate();
 		FloorUpdate();
 		ThornUpdate();
-		CannonUpdate();
+		if (stageType == CannonStage)
+		{
+			CannonUpdate();
+		}
+		else if (stageType == RaceStage)
+		{
+			RaceUpdate();
+		}
 		PlayerUpdate();
 	}
 
-	if (ground->GetHP() <= 0)
+	if (ground->GetHP() <= 0 || playerIsHitGoal == true)
 	{
 		gameClear = true;
 	}
@@ -57,7 +70,7 @@ void Stage::Update()
 		gameOver = true;
 	}
 }
-void Stage::Draw(const ViewProjection& viewProjection_)
+void Stage::Draw()
 {
 	player->Draw(viewProjection_);
 	if (ground->GetHP() > 0)
@@ -84,6 +97,11 @@ void Stage::Draw(const ViewProjection& viewProjection_)
 	{
 		temp->Draw(viewProjection_, thornTexture);
 	}
+
+	if (goal != nullptr)
+	{
+		goal->Draw(viewProjection_, thornTexture);
+	}
 }
 
 void Stage::GenerateThorn(const Vector3& pos, const Vector3& scale)
@@ -100,6 +118,11 @@ void Stage::GenerateCannon(const Vector3& pos, const Vector3& rot)
 {
 	cannons.emplace_back(move(make_unique<Cannon>()));
 	cannons.back()->Generate(pos, rot);
+}
+void Stage::GenerateGoal(const Vector3& pos)
+{
+	goal = move(make_unique<Goal>());
+	goal->Generate(pos);
 }
 
 void Stage::PlayerGenerateStar(const Vector3 pos)
@@ -220,7 +243,7 @@ void Stage::FloorUpdate()
 			player->SetPos(
 				{
 					player->GetPos().x,
-					ground->GetPos().y + ground->GetScale().y - 1,
+					ground->GetPos().y + ground->GetScale().y /*- 0.5f*/,
 					player->GetPos().z
 				});
 			player->UpdateMatrix();
@@ -362,10 +385,13 @@ void Stage::StarUpdate()
 
 	for (const auto& temp : stars)
 	{
-		if (temp->GetPos().x >= 44 || temp->GetPos().x <= -44)
+		if (stageType != RaceStage)
 		{
-			stars.remove(temp);
-			break;
+			if (temp->GetPos().x >= 44 || temp->GetPos().x <= -44)
+			{
+				stars.remove(temp);
+				break;
+			}
 		}
 	}
 }
@@ -487,6 +513,32 @@ void Stage::CannonUpdate()
 	for (const auto& temp : cannons)
 	{
 		temp->Update();
+	}
+}
+
+// ƒŒ[ƒX
+void Stage::RaceUpdate()
+{
+	Vector3 tempGroundPos = ground->GetPos();
+	ground->SetPos(
+		{
+			tempGroundPos.x + player->GetSpeed(),
+			tempGroundPos.y,
+			tempGroundPos.z,
+		});
+
+	viewProjection_.eye.x += player->GetSpeed();
+	viewProjection_.target.x += player->GetSpeed();
+	viewProjection_.UpdateMatrix();
+
+	if (player->GetPos().x >= goal->GetPos().x - goal->GetScale().x)
+	{
+		playerIsHitGoal = true;
+	}
+
+	if (goal != nullptr)
+	{
+		goal->Update();
 	}
 }
 

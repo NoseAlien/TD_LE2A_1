@@ -35,6 +35,7 @@ private:
 	int haveStarNum;	// スターを巻き込めたか?
 
 	int stopTimer = 0;	// 床で少し止まるタイマー
+	int stageType;
 
 	bool isDamage;
 	int damageTimer;
@@ -53,13 +54,14 @@ private:
 public:
 	void Load();
 
-	void Init();
+	void Init(const int& stageType);
 	void Update();
 	inline void UpdateMatrix() { trans->UpdateMatrix(); }
 	void Draw(const ViewProjection& viewProjection_);
 
 	inline Vector3 GetPos() { return trans->translation_; }
-	inline Vector3 GetScale() { return trans->scale_; }
+	inline Vector3 GetScale() { return { 1,1,1 };/*return trans->scale_;*/ }
+	inline float GetSpeed() { return speed; }
 	inline float GetRadius() { return collisionRadius; }
 	inline bool GetisWeakAttack() { return isWeakAttack; }
 	inline bool GetisHeavyAttack() { return isHeavyAttack; }

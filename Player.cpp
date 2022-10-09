@@ -1,11 +1,14 @@
 #include "Player.h"
 #include "DebugText.h"
+#include "Stage.h"
+using namespace std;
 
 Player::Player() :
 	isAttack(false), speed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
 	isWeakAttack(false), isHeavyAttack(false),
 	collisionRadius(1), maxDamageTimer(180),
-	starAttackDamage(5), weakAttackDamage(5), heavyAttackDamage(10)
+	starAttackDamage(5), weakAttackDamage(5), heavyAttackDamage(10),
+	stageType(BaseStage)
 {
 }
 Player::~Player()
@@ -23,8 +26,14 @@ void Player::Load()
 	trans = new WorldTransform();
 	trans->Initialize();
 }
-void Player::Init()
+
+static int tempTimer = 0; // ƒQ[ƒ€ŠJŽn‚Æ“¯Žž‚ÉUŒ‚‚µ‚È‚¢‚½‚ß
+void Player::Init(const int& stageType)
 {
+	tempTimer = 0;
+
+	this->stageType = stageType;
+
 	trans->translation_ = { 0,20,0 };
 	trans->UpdateMatrix();
 
@@ -40,14 +49,26 @@ void Player::Init()
 	damageTimer = 0;
 
 	life = 3;
+
 }
+
 void Player::Update()
 {
+	if (!input_->ReleasedKey(DIK_SPACE))
+	{
+		tempTimer++;
+	}
+
 	MoveUpdate();
-	AttackUpdate();
-	DamageUpdate();
+	if (tempTimer >= 10)
+	{
+		tempTimer = 10;
+		AttackUpdate();
+		DamageUpdate();
+	}
 	trans->UpdateMatrix();
 }
+
 void Player::Draw(const ViewProjection& viewProjection_)
 {
 	if (damageTimer % 10 < 5)
@@ -72,11 +93,20 @@ void Player::MoveUpdate()
 
 	// ˆÚ“®ˆ—
 	trans->translation_.x += speed;
-	if (trans->translation_.x >= 43)
+
+	if (stageType != RaceStage)
 	{
-		trans->translation_.x = -43;
+		if (trans->translation_.x >= 43)
+		{
+			trans->translation_.x = -43;
+		}
 	}
 }
+
+static float addScaleValue = 0.5;
+static int addScaleStep = 0;
+static float maxSize = 2.5;
+
 void Player::AttackUpdate()
 {
 	// UŒ‚‚ÌŽí—Þ‚ð”»’f‚·‚éˆ—
@@ -90,13 +120,16 @@ void Player::AttackUpdate()
 		if (input_->ReleasedKey(DIK_SPACE))
 		{
 			isAttack = true;
+			addScaleStep = 1;
 			if (pushKeyFream < maxPushKeyFream)
 			{
 				isWeakAttack = true;
+				maxSize = 2.5;
 			}
 			else if (pushKeyFream >= maxPushKeyFream)
 			{
 				isHeavyAttack = true;
+				maxSize = 4;
 			}
 		}
 	}
@@ -111,7 +144,8 @@ void Player::AttackUpdate()
 		else
 		{
 			stopTimer++;
-			if (stopTimer >= 1)
+
+			if (addScaleStep == 3 && stopTimer >= 1)
 			{
 				trans->translation_.y += attackMoveSpeed;
 				if (trans->translation_.y >= 20)
@@ -126,6 +160,8 @@ void Player::AttackUpdate()
 
 					stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
 					pushKeyFream = 0;		// ‰Ÿ‚µ‚½Žž‚ÌƒtƒŒ[ƒ€
+					trans->scale_ = { 1,1,1 };
+
 				}
 			}
 		}
@@ -140,9 +176,38 @@ void Player::AttackUpdate()
 		}
 	}
 
-	auto text = DebugText::GetInstance();
-	text->SetPos(20, 60);
-	text->Printf("pushKeyFream = %d", pushKeyFream);
+
+	if (addScaleStep == 1 && isReverse == true)
+	{
+		trans->scale_.x += addScaleValue;
+		trans->scale_.y -= addScaleValue / maxSize;
+		trans->scale_.z += addScaleValue;
+		if (trans->scale_.x >= maxSize)
+		{
+			trans->scale_.x = maxSize;
+			trans->scale_.y = 0.5;
+			trans->scale_.z = maxSize;
+			addScaleStep = 2;
+		}
+	}
+	if (addScaleStep == 2)
+	{
+		trans->scale_.x -= addScaleValue;
+		trans->scale_.y += addScaleValue / maxSize;
+		trans->scale_.z -= addScaleValue;
+		if (trans->scale_.x <= 1)
+		{
+			trans->scale_ = { 1,1,1 };
+			addScaleStep = 3;
+		}
+	}
+
+	//trans->scale_ = { 0.5,0.5,0.5 };
+	//trans->UpdateMatrix();
+
+	//auto text = DebugText::GetInstance();
+	//text->SetPos(20, 60);
+	//text->Printf("pushKeyFream = %d", pushKeyFream);
 
 }
 void Player::DamageUpdate()

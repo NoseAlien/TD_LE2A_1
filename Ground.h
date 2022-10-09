@@ -43,6 +43,7 @@ public:
 	inline bool GetisAddScale() { return isAddScale; }
 	inline bool GetisSuctionStar() { return isSuctionStar; }
 
+	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
 	inline void SetisDanger(const bool& isDanger) { this->isDanger = isDanger; }
 	inline void SetisAddScale(const bool& isAddScale) { this->isAddScale = isAddScale; }
 	inline void SetisAddScaleCountDown(const int& isAddScaleCountDown) { this->isAddScaleCountDown = isAddScaleCountDown; }

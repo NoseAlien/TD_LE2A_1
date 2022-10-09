@@ -1,10 +1,11 @@
 #include "Star.h"
 #include "Random.h"
+#include "Stage.h"
 using namespace MathUtility;
 
 Star::Star() :
 	gravity(2), collisionRadius(1),
-	isCanHit(false), maxCanHitTimer(10)
+	isCanHit(false), maxCanHitTimer(10), stageType(BaseStage)
 {
 	trans = new WorldTransform();
 	trans->Initialize();

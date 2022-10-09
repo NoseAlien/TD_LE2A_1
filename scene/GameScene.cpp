@@ -8,10 +8,10 @@
 
 using namespace std;
 using namespace MathUtility;
+ViewProjection viewProjection_{};
 
 GameScene::GameScene()
 {
-
 }
 
 GameScene::~GameScene()
@@ -39,56 +39,48 @@ void GameScene::Initialize()
 	viewProjection_.up = { 0,1,0 };
 	viewProjection_.Initialize();
 
-	stages.emplace_back(move(make_unique<Stage>()));
-	stages.emplace_back(move(make_unique<Stage>()));
-	stages.emplace_back(move(make_unique<Stage>()));
-	stages.emplace_back(move(make_unique<Stage>()));
+	//player->Init();
+	//ground->Init(100);
+
+	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
+	stages.emplace_back(move(make_unique<Stage>(RaceStage)));
 
 	for (int i = 0; i < stages.size(); i++)
 	{
 		stages[i]->Init();
 	}
 
+	stageSelect = move(make_unique<StageSelect>());
+	stageSelect->Initialize(stages.size());
+
 	currentStage = 0;
+	gameState = isSelect;
 }
 
 void GameScene::Update()
 {
-	stages[currentStage]->Update();
+	if (gameState == isGame)
+	{
+		stages[currentStage]->Update();
+		if (input_->TriggerKey(DIK_ESCAPE))
+		{
+			gameState = isSelect;
+			//currentStage = stageSelect->GetCurrentStage();
+			stageSelect->ResetViewPos();
+		}
+	}
+	else if (gameState == isSelect)
+	{
+		currentStage = stageSelect->GetCurrentStage();
+		stageSelect->Update();
 
-	if (input_->TriggerKey(DIK_1))
-	{
-		player->Init();
-		ground->Init(100);
-		stages[currentStage]->Init();
-		currentStage = 0;
-	}
-	if (input_->TriggerKey(DIK_2))
-	{
-		player->Init();
-		ground->Init(100);
-		stages[currentStage]->Init();
-		currentStage = 1;
-		stages[currentStage]->GenerateThorn({ 20,20,0 });
-		stages[currentStage]->GenerateThorn({ -20,20,0 });
-	}
-	if (input_->TriggerKey(DIK_3))
-	{
-		player->Init();
-		ground->Init(100);
-		stages[currentStage]->Init();
-		currentStage = 2;
-		stages[currentStage]->GenerateBlock({ 20,-20,0 }, { 2,2,1 });
-		stages[currentStage]->GenerateBlock({ -20,-20,0 }, { 3,2,1 });
-	}
-	if (input_->TriggerKey(DIK_4))
-	{
-		player->Init();
-		ground->Init(100);
-		stages[currentStage]->Init();
-		currentStage = 3;
-		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
-		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			CurrentStageInit();
+		}
 	}
 
 	debugText_->SetPos(20, 20);
@@ -125,7 +117,14 @@ void GameScene::Draw()
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	stages[currentStage]->Draw(viewProjection_);
+	if (gameState == isGame)
+	{
+		stages[currentStage]->Draw();
+	}
+	else if (gameState == isSelect)
+	{
+		stageSelect->Draw();
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -148,11 +147,53 @@ void GameScene::Draw()
 #pragma endregion
 }
 
-
-
 IScene* GameScene::GetNextScene()
 {
 	return nullptr;
+}
+
+void GameScene::CurrentStageInit()
+{
+	if (currentStage == 0)
+	{
+		player->Init(stages[currentStage]->GetStageType());
+		ground->Init(100);
+		stages[currentStage]->Init();
+	}
+	if (currentStage == 1)
+	{
+		player->Init(stages[currentStage]->GetStageType());
+		ground->Init(100);
+		stages[currentStage]->Init();
+		stages[currentStage]->GenerateThorn({ 20,20,0 });
+		stages[currentStage]->GenerateThorn({ -20,20,0 });
+	}
+	if (currentStage == 2)
+	{
+		player->Init(stages[currentStage]->GetStageType());
+		ground->Init(100);
+		stages[currentStage]->Init();
+		stages[currentStage]->GenerateBlock({ 20,-20,0 }, { 2,2,1 });
+		stages[currentStage]->GenerateBlock({ -20,-20,0 }, { 3,2,1 });
+	}
+	if (currentStage == 3)
+	{
+		player->Init(stages[currentStage]->GetStageType());
+		ground->Init(100);
+		stages[currentStage]->Init();
+		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
+		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+	}
+	if (currentStage == 4)
+	{
+		player->Init(stages[currentStage]->GetStageType());
+		ground->Init(100);
+		stages[currentStage]->Init();
+		stages[currentStage]->GenerateGoal({ 100,20,0 });
+		//stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
+		//stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+	}
+	gameState = isGame;
 }
 
 

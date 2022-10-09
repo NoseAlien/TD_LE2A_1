@@ -16,6 +16,7 @@ private:
 	bool isCanHit;
 	int canHitTimer;
 	int maxCanHitTimer;
+	int stageType;
 
 	float gravity;
 	bool isNotGravity;

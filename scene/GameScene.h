@@ -10,10 +10,17 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-#include "Stage.h"
 #include "IScene.h"
+#include "Stage.h"
+#include "StageSelect.h"
 #include <memory>
 #include <vector>
+
+enum GameState
+{
+	isGame,
+	isSelect,
+};
 
 /// <summary>
 /// ゲームシーン
@@ -59,9 +66,15 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
-	ViewProjection viewProjection_{};
 
 	std::vector<std::unique_ptr<Stage>> stages;
+	std::unique_ptr<StageSelect> stageSelect;
 
+	int gameState;
 	int currentStage;
+
+private:
+	void CurrentStageInit();
 };
+
+extern ViewProjection viewProjection_;
