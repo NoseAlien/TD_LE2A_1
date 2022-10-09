@@ -67,9 +67,9 @@ void Star::Update()
 			Random::RangeF(-10, 10),
 		};
 
-		trans->rotation_.x = DegreeToRad(angleShakeValue.x);
-		trans->rotation_.y = DegreeToRad(angleShakeValue.y);
-		trans->rotation_.z = DegreeToRad(angleShakeValue.z);
+		trans->rotation_ = { DegreeToRad(angleShakeValue.x),
+		DegreeToRad(angleShakeValue.y),
+		DegreeToRad(angleShakeValue.z) };
 	}
 	else
 	{
