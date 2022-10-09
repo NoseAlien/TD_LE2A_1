@@ -154,44 +154,29 @@ IScene* GameScene::GetNextScene()
 
 void GameScene::CurrentStageInit()
 {
-	if (currentStage == 0)
+	player->Init(stages[currentStage]->GetStageType());
+	ground->Init(100);
+	stages[currentStage]->Init();
+
+	switch (currentStage)
 	{
-		player->Init(stages[currentStage]->GetStageType());
-		ground->Init(100);
-		stages[currentStage]->Init();
-	}
-	if (currentStage == 1)
-	{
-		player->Init(stages[currentStage]->GetStageType());
-		ground->Init(100);
-		stages[currentStage]->Init();
+	case 1:
 		stages[currentStage]->GenerateThorn({ 20,20,0 });
 		stages[currentStage]->GenerateThorn({ -20,20,0 });
-	}
-	if (currentStage == 2)
-	{
-		player->Init(stages[currentStage]->GetStageType());
-		ground->Init(100);
-		stages[currentStage]->Init();
+		break;
+	case 2:
 		stages[currentStage]->GenerateBlock({ 20,-20,0 }, { 2,2,1 });
 		stages[currentStage]->GenerateBlock({ -20,-20,0 }, { 3,2,1 });
-	}
-	if (currentStage == 3)
-	{
-		player->Init(stages[currentStage]->GetStageType());
-		ground->Init(100);
-		stages[currentStage]->Init();
+		break;
+	case 3:
 		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
 		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
-	}
-	if (currentStage == 4)
-	{
-		player->Init(stages[currentStage]->GetStageType());
-		ground->Init(100);
-		stages[currentStage]->Init();
+		break;
+	case 4:
 		stages[currentStage]->GenerateGoal({ 100,20,0 });
 		//stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
 		//stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+		break;
 	}
 	gameState = isGame;
 }
