@@ -58,9 +58,11 @@ void Star::Update()
 		isCanHit = true;
 	}
 
+	trans->rotation_ = { 0,0,trans->rotation_.z };
+
 	if (isAngleShake == true)
 	{
-		angleShakeValue =
+		/*angleShakeValue =
 		{
 			Random::RangeF(-10, 10),
 			Random::RangeF(-10, 10),
@@ -69,13 +71,15 @@ void Star::Update()
 
 		trans->rotation_ = { DegreeToRad(angleShakeValue.x),
 		DegreeToRad(angleShakeValue.y),
-		DegreeToRad(angleShakeValue.z) };
+		DegreeToRad(angleShakeValue.z) };*/
+
+		trans->rotation_.z = DegreeToRad(Random::RangeF(-20, 20));
+
 	}
 	else
 	{
 		trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),0.0001};
 
-		trans->rotation_ = { 0,0,trans->rotation_.z };
 		trans->rotation_.z += dirVec.Normalized().x * 0.05;
 	}
 
