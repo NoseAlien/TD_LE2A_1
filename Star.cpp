@@ -21,7 +21,7 @@ Star::~Star()
 void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& generateType)
 {
 	trans->translation_ = pos;
-	trans->scale_ = { 1.5,1.5,1.5 };
+	trans->scale_ = { 1.5,1.5,0.0001 };
 	trans->UpdateMatrix();
 	gravity = 1;
 	collisionRadius = trans->scale_.x;
@@ -73,7 +73,10 @@ void Star::Update()
 	}
 	else
 	{
-		trans->rotation_ = { 0,0,0 };
+		trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),0.0001};
+
+		trans->rotation_ = { 0,0,trans->rotation_.z };
+		trans->rotation_.z += dirVec.Normalized().x * 0.05;
 	}
 
 	trans->UpdateMatrix();
