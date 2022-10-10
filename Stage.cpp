@@ -69,6 +69,10 @@ void Stage::Update()
 	{
 		gameOver = true;
 	}
+
+	viewProjection_.ShackUpdate();
+	viewProjection_.UpdateMatrix();
+	player->EffectUpdate();
 }
 void Stage::Draw()
 {
@@ -102,6 +106,8 @@ void Stage::Draw()
 	{
 		goal->Draw(viewProjection_, thornTexture);
 	}
+
+	player->EffectDraw();
 }
 
 void Stage::GenerateThorn(const Vector3& pos, const Vector3& scale)
@@ -256,6 +262,13 @@ void Stage::FloorUpdate()
 		// タイマ－にした、瞬間的なフラグが欲しかったため
 		if (player->GetStopTimer() == 0)
 		{
+			player->EffectGenerate(
+				{
+					player->GetPos().x ,
+					ground->GetPos().y + ground->GetScale().y,
+					player->GetPos().z
+				});
+
 			if (player->GetHaveStarNum() > 0)
 			{
 				ground->Damage(player->GetHaveStarNum() * player->GetStarAttackDamage());
@@ -529,7 +542,6 @@ void Stage::RaceUpdate()
 
 	viewProjection_.eye.x += player->GetSpeed();
 	viewProjection_.target.x += player->GetSpeed();
-	viewProjection_.UpdateMatrix();
 
 	if (player->GetPos().x >= goal->GetPos().x - goal->GetScale().x)
 	{

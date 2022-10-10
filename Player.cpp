@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "DebugText.h"
 #include "Stage.h"
+#include "GameScene.h"
 using namespace std;
 
 Player::Player() :
@@ -10,6 +11,8 @@ Player::Player() :
 	starAttackDamage(5), weakAttackDamage(5), heavyAttackDamage(10),
 	stageType(BaseStage)
 {
+	weakAttackEffect = move(make_unique<WeakAttackEffect>());
+	heavyAttackEffect = move(make_unique<HeavyAttackEffect>());
 }
 Player::~Player()
 {
@@ -84,6 +87,33 @@ void Player::Draw(const ViewProjection& viewProjection_)
 	}
 }
 
+void Player::EffectGenerate(const Vector3& pos)
+{
+	if (isWeakAttack == true)
+	{
+		viewProjection_.SetShakeValue(-1, 1, 5);
+		weakAttackEffect->Generate({ pos.x,pos.y - 2,pos.z });
+	}
+	if (isHeavyAttack == true)
+	{
+		viewProjection_.SetShakeValue(-2, 2, 5);
+		//weakAttackEffect->Generate({ pos.x,pos.y - 2,pos.z });
+		heavyAttackEffect->Generate({ pos.x,pos.y - 5,pos.z });
+	}
+}
+
+void Player::EffectUpdate()
+{
+	weakAttackEffect->Update();
+	heavyAttackEffect->Update();
+}
+
+void Player::EffectDraw()
+{
+	weakAttackEffect->Draw();
+	heavyAttackEffect->Draw();
+}
+
 void Player::MoveUpdate()
 {
 	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
@@ -144,7 +174,6 @@ void Player::AttackUpdate()
 		else
 		{
 			stopTimer++;
-
 			if (addScaleStep == 3 && stopTimer >= 1)
 			{
 				trans->translation_.y += attackMoveSpeed;

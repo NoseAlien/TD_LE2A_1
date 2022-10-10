@@ -25,6 +25,12 @@ public:
 	Vector3& operator-=(const Vector3& v);
 	Vector3& operator*=(float s);
 	Vector3& operator/=(float s);
+	Vector3& operator-=(float s) {
+		x -= s;
+		y -= s;
+		z -= s;
+		return *this;
+	}
 
 	Vector3 operator*(float num) const { return { x * num, y * num, z * num }; }
 	Vector3 operator+(const Vector3& other) const { return { x + other.x, y + other.y, z + other.z }; }

@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Ground.h"
 #include "Random.h"
+#include "SceneChange.h"
 
 using namespace std;
 using namespace MathUtility;
@@ -80,8 +81,17 @@ void GameScene::Update()
 		if (input_->TriggerKey(DIK_SPACE))
 		{
 			CurrentStageInit();
+
+			sceneChange->StartSceneChange();
 		}
 	}
+
+	if (sceneChange->GetisChange() == true)
+	{
+		gameState = isGame;
+	}
+
+	sceneChange->Update();
 
 	debugText_->SetPos(20, 20);
 	debugText_->Printf("CurrentStage = %d", currentStage);
@@ -138,6 +148,8 @@ void GameScene::Draw()
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
+	sceneChange->Draw();
+
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
 	//
@@ -178,7 +190,6 @@ void GameScene::CurrentStageInit()
 		//stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
 		break;
 	}
-	gameState = isGame;
 }
 
 

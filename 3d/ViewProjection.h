@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "MathUtility.h"
+#include "Random.h"
 #include <d3d12.h>
 #include <wrl.h>
 
@@ -22,11 +23,11 @@ struct ViewProjection {
 
 #pragma region ビュー行列の設定
 	// 視点座標
-	Vector3 eye = {0, 0, -50.0f};
+	Vector3 eye = { 0, 0, -50.0f };
 	// 注視点座標
-	Vector3 target = {0, 0, 0};
+	Vector3 target = { 0, 0, 0 };
 	// 上方向ベクトル
-	Vector3 up = {0, 1, 0};
+	Vector3 up = { 0, 1, 0 };
 #pragma endregion
 
 #pragma region 射影行列の設定
@@ -65,4 +66,52 @@ struct ViewProjection {
 	/// 行列を転送する
 	/// </summary>
 	void TransferMatrix();
+
+
+private:
+	Vector3 prevPos = eye;
+	bool isShack = false;
+	Vector3 shakeValue = { 0,0,0 };
+	float shackValueMin = 0;
+	float shackValueMax = 0;
+	int shakeTimer = 0;
+	int shakeMaxTimer = 0;
+
+public:
+
+	inline void SetShakeValue(const float& shackValueMin, const float& shackValueMax, const int& shakeMaxTimer)
+	{
+		isShack = true;
+		prevPos = eye;
+		shakeTimer = 0;
+		this->shackValueMin = shackValueMin;
+		this->shackValueMax = shackValueMax;
+		this->shakeMaxTimer = shakeMaxTimer;
+	}
+
+	void ShackUpdate()
+	{
+		if (isShack == true)
+		{
+			shakeTimer++;
+			if (shakeTimer >= shakeMaxTimer)
+			{
+				isShack = false;
+			}
+
+			shakeValue =
+			{
+				Random::RangeF(shackValueMin,shackValueMax),
+				Random::RangeF(shackValueMin,shackValueMax),
+				Random::RangeF(shackValueMin,shackValueMax),
+			};
+
+			eye += shakeValue;
+		}
+		if (isShack == false)
+		{
+			shakeValue = { 0,0,0 };
+			eye = prevPos;
+		}
+	}
 };

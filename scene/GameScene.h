@@ -73,6 +73,7 @@ private: // メンバ変数
 	int gameState;
 	int currentStage;
 
+
 private:
 	void CurrentStageInit();
 };

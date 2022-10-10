@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Ground.h"
 #include "Collision.h"
+#include "SceneChange.h"
 
 SceneManager::SceneManager()
 {
@@ -15,11 +16,13 @@ SceneManager::~SceneManager()
 	player->DestroyInstance();
 	ground->DestroyInstance();
 	collision->DestroyInstance();
+	sceneChange->DestroyInstance();
 }
 
 void SceneManager::Initialize()
 {
 	GameScene::Load();
+	sceneChange->Load();
 	scene->Initialize();
 }
 

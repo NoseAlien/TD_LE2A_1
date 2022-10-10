@@ -4,8 +4,15 @@
 #include "Input.h"
 #include "Vector3.h"
 
+#include "WeakAttackEffect.h"
+#include "HeavyAttackEffect.h"
+
 class Player
 {
+private:
+	std::unique_ptr<WeakAttackEffect> weakAttackEffect;
+	std::unique_ptr<HeavyAttackEffect> heavyAttackEffect;
+
 private:
 	Input* input_ = nullptr;
 
@@ -14,6 +21,7 @@ private:
 
 	uint32_t playerTexture = 0;		// テクスチャー
 	uint32_t redPixel = 0;			// テクスチャー
+
 
 	int life;
 
@@ -56,8 +64,12 @@ public:
 
 	void Init(const int& stageType);
 	void Update();
-	inline void UpdateMatrix() { trans->UpdateMatrix(); }
 	void Draw(const ViewProjection& viewProjection_);
+	void EffectGenerate(const Vector3& pos);
+	void EffectUpdate();
+	void EffectDraw();
+
+	inline void UpdateMatrix() { trans->UpdateMatrix(); }
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return { 1,1,1 };/*return trans->scale_;*/ }
