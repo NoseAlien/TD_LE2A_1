@@ -55,6 +55,7 @@ void Stage::Update()
 		else if (stageType == RaceStage)
 		{
 			RaceUpdate();
+
 		}
 		PlayerUpdate();
 	}
@@ -68,6 +69,17 @@ void Stage::Update()
 		player->GetLife() <= 0)
 	{
 		gameOver = true;
+	}
+
+	if (stageType == RaceStage)
+	{
+		viewProjection_.eye = { player->GetPos().x,0,-50 };
+		viewProjection_.target = { player->GetPos().x ,0,0 };
+	}
+	else
+	{
+		viewProjection_.eye = { 0,0,-50 };
+		viewProjection_.target = { 0 ,0,0 };
 	}
 
 	viewProjection_.ShackUpdate();
@@ -230,34 +242,39 @@ void Stage::FloorUpdate()
 		{ ground->GetScale().x,ground->GetScale().y },
 	};
 
-	while (player->GetPos().y - player->GetAttackMoveSpeed() <=
-		ground->GetPos().y + ground->GetScale().y + player->GetScale().y &&
-		player->GetisReverse() == false)
-	{
-		SquareCollider tempCollider =
-		{
-			{ player->GetPos().x,player->GetPos().y },
-			{ player->GetScale().x,player->GetScale().y },
-		};
+	//while (player->GetPos().y - player->GetAttackMoveSpeed() <=
+	//	ground->GetPos().y + ground->GetScale().y + player->GetScale().y &&
+	//	player->GetisReverse() == false)
+	//{
+	//	SquareCollider tempCollider =
+	//	{
+	//		{ player->GetPos().x,player->GetPos().y },
+	//		{ player->GetScale().x,player->GetScale().y },
+	//	};
 
-		float y = player->GetPos().y;
-		y -= 0.5;
-		player->SetPos({ player->GetPos().x ,y,player->GetPos().z });
+	//	float y = player->GetPos().y;
+	//	y -= 0.5;
+	//	player->SetPos({ player->GetPos().x ,y,player->GetPos().z });
 
-		if (collision->SquareHitSquare(tempCollider, floorCollider))
-		{
-			player->SetPos(
-				{
-					player->GetPos().x,
-					ground->GetPos().y + ground->GetScale().y /*- 0.5f*/,
-					player->GetPos().z
-				});
-			player->UpdateMatrix();
-			break;
-		}
-	}
-	if (collision->SquareHitSquare(playerCollider, floorCollider))
+	//	if (collision->SquareHitSquare(tempCollider, floorCollider))
+	//	{
+	//		player->SetPos(
+	//			{
+	//				player->GetPos().x,
+	//				ground->GetPos().y + ground->GetScale().y,
+	//				player->GetPos().z
+	//			});
+	//		player->UpdateMatrix();
+	//		break;
+	//	}
+	//}
+	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetScale().y)
 	{
+
+	//}
+
+	//if (collision->SquareHitSquare(playerCollider, floorCollider))
+	//{
 		player->SetisReverse(true);
 		// タイマ－にした、瞬間的なフラグが欲しかったため
 		if (player->GetStopTimer() == 0)
@@ -539,9 +556,6 @@ void Stage::RaceUpdate()
 			tempGroundPos.y,
 			tempGroundPos.z,
 		});
-
-	viewProjection_.eye.x += player->GetSpeed();
-	viewProjection_.target.x += player->GetSpeed();
 
 	if (player->GetPos().x >= goal->GetPos().x - goal->GetScale().x)
 	{

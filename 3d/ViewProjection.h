@@ -82,8 +82,8 @@ public:
 	inline void SetShakeValue(const float& shackValueMin, const float& shackValueMax, const int& shakeMaxTimer)
 	{
 		isShack = true;
-		prevPos = eye;
 		shakeTimer = 0;
+		prevPos = eye;
 		this->shackValueMin = shackValueMin;
 		this->shackValueMax = shackValueMax;
 		this->shakeMaxTimer = shakeMaxTimer;
@@ -93,12 +93,6 @@ public:
 	{
 		if (isShack == true)
 		{
-			shakeTimer++;
-			if (shakeTimer >= shakeMaxTimer)
-			{
-				isShack = false;
-			}
-
 			shakeValue =
 			{
 				Random::RangeF(shackValueMin,shackValueMax),
@@ -107,11 +101,17 @@ public:
 			};
 
 			eye += shakeValue;
+
+			shakeTimer++;
+			if (shakeTimer >= shakeMaxTimer)
+			{
+				eye = prevPos;
+				isShack = false;
+			}
 		}
 		if (isShack == false)
 		{
 			shakeValue = { 0,0,0 };
-			eye = prevPos;
 		}
 	}
 };

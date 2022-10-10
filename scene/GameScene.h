@@ -72,10 +72,12 @@ private: // メンバ変数
 
 	int gameState;
 	int currentStage;
+	bool isSelectEnd = false;
 
 
 private:
 	void CurrentStageInit();
+	void SelectUpdate();
 };
 
 extern ViewProjection viewProjection_;

@@ -54,6 +54,10 @@ private:
 	const int weakAttackDamage;
 	const int heavyAttackDamage;
 
+	float addScaleValue = 0.5;
+	int addScaleStep = 0;
+	float maxSize = 2.5;
+
 private:
 	void MoveUpdate();
 	void AttackUpdate();
@@ -62,8 +66,9 @@ private:
 public:
 	void Load();
 
-	void Init(const int& stageType);
+	void Init();
 	void Update();
+	void SelectSceneUpdate();
 	void Draw(const ViewProjection& viewProjection_);
 	void EffectGenerate(const Vector3& pos);
 	void EffectUpdate();
@@ -84,7 +89,7 @@ public:
 	inline int GetWeakAttackDamage() { return weakAttackDamage; }
 	inline int GetHeavyAttackDamage() { return heavyAttackDamage; }
 	inline float GetAttackMoveSpeed() { return attackMoveSpeed; }
-	inline bool GetisReverse() { return isReverse; }
+	inline bool GetisReverse() { return isReverse && addScaleStep == 3; }
 
 	inline int GetStopTimer() { return stopTimer; }
 	inline int GetLife() { return life; }
@@ -95,6 +100,7 @@ public:
 	inline void SetisReverse(bool isReverse) { this->isReverse = isReverse; }
 	inline void SetisEngulfAttack(const bool& isEngulfAttack) { this->isEngulfAttack = isEngulfAttack; }
 	inline void SetHaveStarNum(const int& haveStarNum) { this->haveStarNum = haveStarNum; }
+	inline void SetStageType(const int& stageType) { this->stageType = stageType; }
 
 	inline void SetisDamage(const bool& isDamage)
 	{

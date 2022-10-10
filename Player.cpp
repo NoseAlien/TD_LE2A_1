@@ -31,12 +31,9 @@ void Player::Load()
 }
 
 static int tempTimer = 0; // ƒQ[ƒ€ŠJŽn‚Æ“¯Žž‚ÉUŒ‚‚µ‚È‚¢‚½‚ß
-void Player::Init(const int& stageType)
+void Player::Init()
 {
 	tempTimer = 0;
-
-	this->stageType = stageType;
-
 	trans->translation_ = { 0,20,0 };
 	trans->UpdateMatrix();
 
@@ -69,6 +66,12 @@ void Player::Update()
 		AttackUpdate();
 		DamageUpdate();
 	}
+	trans->UpdateMatrix();
+}
+
+void Player::SelectSceneUpdate()
+{
+	AttackUpdate();
 	trans->UpdateMatrix();
 }
 
@@ -133,9 +136,7 @@ void Player::MoveUpdate()
 	}
 }
 
-static float addScaleValue = 0.5;
-static int addScaleStep = 0;
-static float maxSize = 2.5;
+
 
 void Player::AttackUpdate()
 {
