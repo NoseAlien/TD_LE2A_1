@@ -10,8 +10,6 @@ private:
 	std::vector<std::unique_ptr<WorldTransform>> stageSelectTrans;
 	std::vector<Model*> stageTextModel;
 	std::vector<std::unique_ptr<WorldTransform>> stageTextTrans;
-
-	std::unique_ptr<WorldTransform> parentTrans;
 	int stagesSize;
 	int currentStage;
 	bool isFront;
@@ -24,7 +22,7 @@ public:
 	void Initialize(int stagesSize);
 	void Update();
 	void Draw();
-	void ResetViewPos();
+	void ResetObjPos();
 
 	inline int GetCurrentStage() { return currentStage; }
 	inline Vector3 GetSelectPos(const int& number) { return stageSelectTrans[number]->translation_; }

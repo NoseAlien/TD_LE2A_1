@@ -73,7 +73,7 @@ void GameScene::Update()
 			gameState = isSelect;
 			player->Init();
 			//currentStage = stageSelect->GetCurrentStage();
-			stageSelect->ResetViewPos();
+			stageSelect->ResetObjPos();
 		}
 	}
 	else if (gameState == isSelect)
