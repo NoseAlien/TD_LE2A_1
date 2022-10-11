@@ -195,14 +195,24 @@ void Player::AttackUpdate()
 				}
 			}
 		}
-	}
 
-	// ‚Ü‚í‚è‚Ì¯‚ð‰ó‚·ˆ—
-	if (trans->translation_.y <= -9)
-	{
+		// ‚Ü‚í‚è‚Ì¯‚ð‰ó‚·ˆ—
 		if (input_->TriggerKey(DIK_SPACE))
 		{
-			isEngulfAttack = true;
+			if (isWeakAttack == true)
+			{
+				if (stopTimer <= 8)
+				{
+					isEngulfAttack = true;
+				}
+			}
+			else if (isHeavyAttack == true)
+			{
+				if (stopTimer <= 4)
+				{
+					isEngulfAttack = true;
+				}
+			}
 		}
 	}
 

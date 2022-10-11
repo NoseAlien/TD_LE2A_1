@@ -58,7 +58,6 @@ void Stage::Init()
 	gameClear = false;
 	gameOver = false;
 	playerIsHitGoal = false;
-	//GenerateThorn(player->GetPos());
 
 	startTextIndex = 0;
 	startTextTimer = 0;
@@ -70,8 +69,6 @@ void Stage::Init()
 
 	isStartGame = false;
 }
-
-
 void Stage::Update()
 {
 	if (gameClear == true || gameOver == true) return;
@@ -163,7 +160,6 @@ void Stage::Draw()
 	player->EffectDraw();
 }
 
-
 void Stage::CountDownUpdate()
 {
 	if (isStartTextEnd == true) return;
@@ -238,8 +234,6 @@ void Stage::CountDownUpdate()
 		}
 	}
 }
-
-
 void Stage::DrawCountDown()
 {
 	if (startTextIndex < 4)

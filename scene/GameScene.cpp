@@ -189,25 +189,27 @@ void GameScene::CurrentStageInit()
 	stages[currentStage]->Init();
 	player->Init();
 	player->SetStageType(stages[currentStage]->GetStageType());
-	ground->Init(100);
 
 	switch (currentStage)
 	{
 	case 0:
+		ground->Init(10000);
 		break;
 	case 1:
+		ground->Init(25);
+		break;
+	case 2:
+		ground->Init(35);
 		stages[currentStage]->GenerateThorn({ 20,20,0 });
 		stages[currentStage]->GenerateThorn({ -20,20,0 });
 		break;
-	case 2:
-		stages[currentStage]->GenerateBlock({ 20,-20,0 }, { 2,2,1 });
-		stages[currentStage]->GenerateBlock({ -20,-20,0 }, { 3,2,1 });
-		break;
 	case 3:
+		ground->Init(100);
 		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
 		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
 		break;
 	case 4:
+		ground->Init(100);
 		stages[currentStage]->GenerateGoal({ 100,20,0 });
 		//stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
 		//stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
