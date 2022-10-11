@@ -1,6 +1,9 @@
 #include "Particle.h"
 #include "GameScene.h"
+#include "SlowMotion.h"
 using namespace std;
+
+// Model* Particle::breakGroundModel = {};
 
 Particle::Particle() :
 	activeTimer(0), maxActiveTimer(120),
@@ -18,11 +21,28 @@ Particle::~Particle()
 
 void Particle::Update()
 {
-	trans->translation_ += vec * speed;
+	SlowMotion* slowMotion = SlowMotion::GetInstance();
+	trans->translation_ += vec * (speed * slowMotion->GetSlowExrate());
 	trans->UpdateMatrix();
 }
 
-void Particle::Draw()
+void Particle::Draw(const int& type)
 {
 	model->Draw(*trans, viewProjection_);
+	//if (type == 0)
+	//{
+	//}
+	//else
+	//{
+	//	//breakGroundModel->Draw(*trans, viewProjection_);
+	//}
 }
+
+//void Particle::Load()
+//{
+//	//breakGroundModel = Model::CreateFromOBJ("remnants", true);
+//}
+//void Particle::UnLoad()
+//{
+//	//delete breakGroundModel;
+//}

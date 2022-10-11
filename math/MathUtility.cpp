@@ -9,3 +9,8 @@ float RadToDegree(float num)
 {
 	return num / MathUtility::PI * 180;
 }
+
+DWORD GetNowTime()
+{
+	return GetTickCount64() / 1000;
+}

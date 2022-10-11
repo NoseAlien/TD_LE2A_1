@@ -7,6 +7,7 @@
 #include "Random.h"
 #include "SceneChange.h"
 #include "Collision.h"
+#include "Particle.h"
 
 using namespace std;
 using namespace MathUtility;
@@ -34,6 +35,8 @@ void GameScene::Initialize()
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
+	slowMotion = SlowMotion::GetInstance();
+	slowMotion->Init();
 
 	viewProjection_.fovAngleY = DegreeToRad(50);
 	viewProjection_.eye = { 0,0,-50 };
@@ -105,7 +108,9 @@ void GameScene::Update()
 		gameState = isGame;
 	}
 
+	slowMotion->Update();
 	sceneChange->Update();
+
 
 	debugText_->SetPos(20, 20);
 	debugText_->Printf("CurrentStage = %d", currentStage);

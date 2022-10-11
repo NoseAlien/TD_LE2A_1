@@ -10,7 +10,7 @@ private:
 public:
 	WeakAttackEffect();
 	~WeakAttackEffect();
-	void Generate(const Vector3 pos);
+	void Generate(const Vector3& pos);
 	void Update();
 	void Draw();
 };

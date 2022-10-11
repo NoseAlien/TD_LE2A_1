@@ -1,6 +1,7 @@
 #include "WeakAttackEffect.h"
 #include "MathUtility.h"
 #include "Random.h"
+#include "SlowMotion.h"
 using namespace std;
 
 WeakAttackEffect::WeakAttackEffect() :
@@ -10,9 +11,10 @@ WeakAttackEffect::WeakAttackEffect() :
 
 WeakAttackEffect::~WeakAttackEffect()
 {
+	particles.clear();
 }
 
-void WeakAttackEffect::Generate(const Vector3 pos)
+void WeakAttackEffect::Generate(const Vector3& pos)
 {
 	for (int i = 0; i < maxParticle; i++)
 	{
@@ -28,10 +30,12 @@ void WeakAttackEffect::Generate(const Vector3 pos)
 
 void WeakAttackEffect::Update()
 {
+	SlowMotion* slowMotion = SlowMotion::GetInstance();
+
 	for (int i = 0; i < particles.size(); i++)
 	{
 		auto tempScale = particles[i]->GetScale();
-		tempScale -= 0.01;
+		tempScale -= 0.01 * slowMotion->GetSlowExrate();
 		if (tempScale.x <= 0) tempScale = { 0,0,0 };
 		particles[i]->SetScale(tempScale);
 	}

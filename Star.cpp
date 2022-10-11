@@ -1,6 +1,7 @@
 #include "Star.h"
 #include "Random.h"
 #include "Stage.h"
+#include "SlowMotion.h"
 using namespace MathUtility;
 
 Star::Star() :
@@ -33,10 +34,12 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 
 void Star::Update()
 {
+	SlowMotion* slowMotion = SlowMotion::GetInstance();
+
 	if (generateType == 0)
 	{
-		trans->translation_ += speed * dirVec.Normalized();
-		speed -= 0.1;
+		trans->translation_ += slowMotion->GetSlowExrate() * speed * dirVec.Normalized();
+		speed -= 0.1 * slowMotion->GetSlowExrate();
 		if (speed <= 0)
 		{
 			speed = 0;
@@ -44,14 +47,14 @@ void Star::Update()
 	}
 	else if (generateType == 1)
 	{
-		gravity -= 0.05;
+		gravity -= 0.05 * slowMotion->GetSlowExrate();
 		if (gravity <= -1) gravity = -1;
-		trans->translation_.x += speed * dirVec.Normalized().x;
-		trans->translation_.y += gravity;
+		trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
+		trans->translation_.y += gravity * slowMotion->GetSlowExrate();
 	}
 
 	// UŒ‚‰Â”\‚©‚Ç‚¤‚©
-	canHitTimer++;
+	canHitTimer += 1 * slowMotion->GetSlowExrate();
 	if (canHitTimer >= maxCanHitTimer)
 	{
 		canHitTimer = maxCanHitTimer;
@@ -78,9 +81,16 @@ void Star::Update()
 	}
 	else
 	{
-		trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),0.0001};
-
-		trans->rotation_.z += dirVec.Normalized().x * 0.05;
+		if (generateType == 0)
+		{
+			trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),0.0001 };
+			trans->rotation_.z += dirVec.Normalized().x * 0.05 * slowMotion->GetSlowExrate();
+		}
+		else if (generateType == 1)
+		{
+			trans->scale_ = trans->scale_ = { 1.5,1.5,0.0001 };
+			trans->rotation_.z += dirVec.Normalized().x * 0.05 * slowMotion->GetSlowExrate();
+		}
 	}
 
 	trans->UpdateMatrix();

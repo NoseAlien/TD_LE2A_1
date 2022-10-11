@@ -6,6 +6,7 @@
 
 #include "WeakAttackEffect.h"
 #include "HeavyAttackEffect.h"
+#include "SlowMotion.h"
 
 class Player
 {
@@ -21,6 +22,8 @@ private:
 
 	uint32_t playerTexture = 0;		// テクスチャー
 	uint32_t redPixel = 0;			// テクスチャー
+
+	SlowMotion* slowMotion;
 
 
 	int life;

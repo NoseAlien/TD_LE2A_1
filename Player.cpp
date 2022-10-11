@@ -36,7 +36,9 @@ void Player::Init()
 	tempTimer = 0;
 	trans->translation_ = { 0,20,0 };
 	trans->UpdateMatrix();
+	slowMotion = SlowMotion::GetInstance();
 
+	isAttack = false;
 	isWeakAttack = false;
 	isHeavyAttack = false;
 	isEngulfAttack = false;
@@ -49,7 +51,6 @@ void Player::Init()
 	damageTimer = 0;
 
 	life = 3;
-
 }
 
 void Player::Update()
@@ -125,7 +126,7 @@ void Player::MoveUpdate()
 	//if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
 
 	// ˆÚ“®ˆ—
-	trans->translation_.x += speed;
+	trans->translation_.x += speed * slowMotion->GetSlowExrate();
 
 	if (stageType != RaceStage)
 	{
@@ -135,8 +136,6 @@ void Player::MoveUpdate()
 		}
 	}
 }
-
-
 
 void Player::AttackUpdate()
 {
@@ -170,14 +169,14 @@ void Player::AttackUpdate()
 	{
 		if (isReverse == false)
 		{
-			trans->translation_.y -= attackMoveSpeed;
+			trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
 		}
 		else
 		{
 			stopTimer++;
 			if (addScaleStep == 3 && stopTimer >= 1)
 			{
-				trans->translation_.y += attackMoveSpeed;
+				trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
 				if (trans->translation_.y >= 20)
 				{
 					trans->translation_.y = 20;
@@ -219,9 +218,9 @@ void Player::AttackUpdate()
 
 	if (addScaleStep == 1 && isReverse == true)
 	{
-		trans->scale_.x += addScaleValue;
-		trans->scale_.y -= addScaleValue / maxSize;
-		trans->scale_.z += addScaleValue;
+		trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+		trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+		trans->scale_.z += addScaleValue * slowMotion->GetSlowExrate();
 		if (trans->scale_.x >= maxSize)
 		{
 			trans->scale_.x = maxSize;
@@ -232,9 +231,9 @@ void Player::AttackUpdate()
 	}
 	if (addScaleStep == 2)
 	{
-		trans->scale_.x -= addScaleValue;
-		trans->scale_.y += addScaleValue / maxSize;
-		trans->scale_.z -= addScaleValue;
+		trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
+		trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
+		trans->scale_.z -= addScaleValue * slowMotion->GetSlowExrate();
 		if (trans->scale_.x <= 1)
 		{
 			trans->scale_ = { 1,1,1 };

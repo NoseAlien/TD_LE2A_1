@@ -11,7 +11,7 @@ HeavyAttackEffect::~HeavyAttackEffect()
 {
 }
 
-void HeavyAttackEffect::Generate(const Vector3 pos)
+void HeavyAttackEffect::Generate(const Vector3& pos)
 {
 	for (int i = 0; i < maxParticle; i++)
 	{
@@ -38,25 +38,19 @@ void HeavyAttackEffect::Generate(const Vector3 pos)
 
 void HeavyAttackEffect::Update()
 {
+	SlowMotion* slowMotion = SlowMotion::GetInstance();
+
 	for (int i = 0; i < particles.size(); i++)
 	{
 		auto tempScale = particles[i]->GetScale();
-		tempScale -= 0.01;
+		tempScale -= 0.01 * slowMotion->GetSlowExrate();
 		if (tempScale.x <= 0) tempScale = { 0,0,0 };
 		particles[i]->SetScale(tempScale);
 
 		auto tempVec = particles[i]->GetVec();
 		Vector3 offset = { 0,-0.05,0 };
-		particles[i]->SetVec(tempVec + offset);
+		particles[i]->SetVec(tempVec + offset * slowMotion->GetSlowExrate());
 	}
-
-	//for (int i = 0; i < particles.size(); i++)
-	//{
-	//	auto tempScale = particles[i]->GetScale();
-	//	tempScale -= 0.04;
-	//	if (tempScale.x <= 0) tempScale = { 0,0,0 };
-	//	particles[i]->SetScale(tempScale);
-	//}
 
 	for (int i = 0; i < particles.size(); i++)
 	{

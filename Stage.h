@@ -19,16 +19,22 @@ enum StageType
 class Stage
 {
 private:
-	// カウント関連
-	static std::vector<uint32_t> startTextTextures;
-	std::vector<Sprite*> startTextSprites;
-	int startTextIndex;
-	int startTextTimer;
-	int startTextMaxTimer;
-	float startTextExrate;
-	float startTextAngle;
-	float startTextAlpha;
-	bool isStartTextEnd;
+	// 開始カウント関連
+	//static std::vector<uint32_t> startTextTextures;
+	//std::vector<Sprite*> startTextSprites;
+	//int startTextIndex;
+	//int startTextTimer;
+	//int startTextMaxTimer;
+	//float startTextExrate;
+	//float startTextAngle;
+	//float startTextAlpha;
+	//bool isStartTextEnd;
+
+private:
+	// クリア時間関連
+	DWORD startTime;
+	DWORD endTime;
+	DWORD clearTime;
 
 private:
 	std::list<std::unique_ptr<Star>> stars;

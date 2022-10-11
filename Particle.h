@@ -11,12 +11,16 @@ private:
 	int activeTimer;
 	int maxActiveTimer;
 	float speed;
+private:
+	//static Model* breakGroundModel;
 
 public:
 	Particle();
 	~Particle();
+	static void Load();
+	static void UnLoad();
 	void Update();
-	void Draw();
+	void Draw(const int& type = 0);
 
 public:	// セッター
 	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }

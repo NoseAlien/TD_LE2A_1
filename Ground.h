@@ -2,6 +2,8 @@
 #include "WorldTransform.h"
 #include "Model.h"
 #include "Vector3.h"
+//#include "BreakGroundEffect.h"
+#include <memory>
 
 class Ground
 {
@@ -11,6 +13,7 @@ private:
 	uint32_t enemyTexture = 0;			// テクスチャー
 	uint32_t enemyTexture2 = 0;			// テクスチャー
 
+	bool isAlive;
 	int hp;
 	int maxhp;
 	bool isAddScale;		// 拡大のフラグ
@@ -20,17 +23,24 @@ private:
 	float addScale;
 	float preScaleY;
 
-
 	int maxRecoveryTimer;	// 最大値
 
 	bool isDanger;	// 星が八個なったいるか
 	bool isSuctionStar;	// 星を吸収するフラグ
+
+private:
+	// エフェクト関連
+	//std::unique_ptr<BreakGroundEffect> breakGroundEffect;
+	bool isGeneEffect;
+
 
 public:
 	void Load();
 	void Init(const int& maxhp);
 	void Update();
 	void Draw(const ViewProjection& viewProjection_);
+	void EffectUpdate();
+	void EffectDraw();
 
 	inline void Damage(const int subhp) { hp -= subhp; }
 

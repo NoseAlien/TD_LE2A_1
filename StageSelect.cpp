@@ -24,32 +24,21 @@ void StageSelect::Initialize(int stagesSize)
 {
 	this->stagesSize = stagesSize;
 	angle = 360 / this->stagesSize;
+
 	for (int i = 0; i < this->stagesSize; i++)
 	{
-		//float radian = DegreeToRad(i * (360 / this->stagesSize));
-		//int lenght = 20;
-
 		stageSelectModel.emplace_back(Model::Create());
 		stageSelectTrans.emplace_back(move(make_unique<WorldTransform>()));
 		stageSelectTrans.back()->Initialize();
-		//stageSelectTrans.back()->translation_ = { sinf(radian) * lenght,0,-cosf(radian) * lenght };
 		stageSelectTrans.back()->translation_ = { (float)i * 25,0,0 };
 		stageSelectTrans.back()->scale_ = { 5,5,1 };
-		//stageSelectTrans.back()->rotation_ = { 0,-radian,0 };
 		stageSelectTrans.back()->UpdateMatrix();
 
 		stageTextModel.emplace_back(Model::Create());
 		stageTextTrans.emplace_back(move(make_unique<WorldTransform>()));
 		stageTextTrans.back()->Initialize();
-		//stageTextTrans.back()->translation_ =
-		//{
-		//	sinf(radian) * lenght,
-		//	stageSelectTrans.back()->scale_.y,
-		//	-cosf(radian) * lenght
-		//};
 		stageTextTrans.back()->translation_ = { (float)i * 25,stageSelectTrans.back()->scale_.y,0 };
 		stageTextTrans.back()->scale_ = { 5.5,1.5,1.5 };
-		//stageTextTrans.back()->rotation_ = { 0,-radian,0 };
 		stageTextTrans.back()->UpdateMatrix();
 	}
 }
@@ -132,6 +121,17 @@ void StageSelect::Draw()
 
 void StageSelect::ResetObjPos()
 {
+	//for (int i = 0; i < this->stagesSize; i++)
+	//{
+	//	stageSelectTrans[i]->Initialize();
+	//	stageSelectTrans[i]->translation_ = { (float)i * 25,0,0 };
+	//	stageSelectTrans[i]->scale_ = { 5,5,1 };
+
+	//	stageTextTrans[i]->Initialize();
+	//	stageTextTrans[i]->translation_ = { (float)i * 25,stageSelectTrans.back()->scale_.y,0 };
+	//	stageTextTrans[i]->scale_ = { 5.5,1.5,1.5 };
+	//}
+
 	for (int i = 0; i < stagesSize; i++)
 	{
 		stageSelectTrans[i]->translation_.x =
@@ -140,10 +140,9 @@ void StageSelect::ResetObjPos()
 		stageTextTrans[i]->translation_.x =
 			stageTextTrans[currentStage]->translation_.x -
 			(currentStage - i) * 25;
+
+		stageSelectTrans[i]->UpdateMatrix();
+		stageTextTrans[i]->UpdateMatrix();
+
 	}
-
-	//current * 25;
-
-	//viewProjection_.eye.x = currentStage * 25;
-	//viewProjection_.target.x = currentStage * 25;
 }

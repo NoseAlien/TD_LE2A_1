@@ -1,5 +1,6 @@
 #pragma once
 #include "Particle.h"
+#include "SlowMotion.h"
 #include <vector>
 class HeavyAttackEffect
 {
@@ -10,7 +11,7 @@ private:
 public:
 	HeavyAttackEffect();
 	~HeavyAttackEffect();
-	void Generate(const Vector3 pos);
+	void Generate(const Vector3& pos);
 	void Update();
 	void Draw();
 };

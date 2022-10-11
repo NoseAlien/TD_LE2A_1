@@ -1,4 +1,5 @@
 #include "Ground.h"
+using namespace std;
 
 Ground::Ground() :
 	collisionRadius(10)
@@ -18,7 +19,6 @@ void Ground::Load()
 	enemyModel = Model::Create();
 	trans = new WorldTransform();
 	trans->Initialize();
-
 }
 
 void Ground::Init(const int& maxhp)
@@ -27,6 +27,7 @@ void Ground::Init(const int& maxhp)
 	trans->scale_ = { 50,10,5 };
 	trans->UpdateMatrix();
 
+	isAlive = true;
 	hp = maxhp;
 	this->maxhp = maxhp;
 	isAddScale = false;
@@ -36,10 +37,15 @@ void Ground::Init(const int& maxhp)
 	addScale = 0;
 	isSuctionStar = false;
 	isDanger = false;
+
+	//breakGroundEffect = move(make_unique<BreakGroundEffect>());
+	isGeneEffect = false;
 }
 
 void Ground::Update()
 {
+	if (isAlive == false) return;
+
 	if (isAddScaleCountDown == 1)
 	{
 		addScaleCount--;
@@ -74,11 +80,20 @@ void Ground::Update()
 		}
 	}
 
+	if (hp <= 0)
+	{
+		hp = 0;
+		//breakGroundEffect->Generate(trans->translation_, trans->scale_);
+		isAlive = false;
+	}
+
 	trans->UpdateMatrix();
 }
 
 void Ground::Draw(const ViewProjection& viewProjection_)
 {
+	if (isAlive == false) return;
+
 	if (isDanger == true)
 	{
 		enemyModel->Draw(*trans, viewProjection_, enemyTexture);
@@ -87,6 +102,16 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 	{
 		enemyModel->Draw(*trans, viewProjection_, enemyTexture2);
 	}
+}
+
+void Ground::EffectUpdate()
+{
+	//breakGroundEffect->Update();
+}
+
+void Ground::EffectDraw()
+{
+	//breakGroundEffect->Draw();
 }
 
 Ground* Ground::GetInstance()

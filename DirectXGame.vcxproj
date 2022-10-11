@@ -113,6 +113,7 @@
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="SlowMotion.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="StageSelect.cpp" />
     <ClCompile Include="Star.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="SlowMotion.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageSelect.h" />
     <ClInclude Include="Star.h" />
