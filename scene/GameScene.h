@@ -74,7 +74,6 @@ private: // メンバ変数
 	int currentStage;
 	bool isSelectEnd = false;
 
-
 private:
 	void CurrentStageInit();
 	void SelectUpdate();

@@ -163,6 +163,11 @@ void GameScene::Draw()
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
+	if (gameState == isGame)
+	{
+		stages[currentStage]->DrawCountDown();
+	}
+
 	sceneChange->Draw();
 
 	// デバッグテキストの描画

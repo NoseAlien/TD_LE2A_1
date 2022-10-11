@@ -8,6 +8,7 @@ using namespace std;
 
 uint32_t Stage::starTexture = 0;
 uint32_t Stage::thornTexture = 0;
+vector<uint32_t> Stage::startTextTextures = {};
 
 Stage::Stage(const int& stageType) : stageType(stageType), playerIsHitGoal(false)
 {
@@ -15,16 +16,37 @@ Stage::Stage(const int& stageType) : stageType(stageType), playerIsHitGoal(false
 }
 Stage::~Stage()
 {
-
+	for (int i = 0; i < startTextSprites.size(); i++)
+	{
+		delete startTextSprites[i];
+	}
 }
 
 void Stage::Load()
 {
+	startTextTextures.emplace_back(TextureManager::Load("Text/StartText1.png"));
+	startTextTextures.emplace_back(TextureManager::Load("Text/StartText2.png"));
+	startTextTextures.emplace_back(TextureManager::Load("Text/StartText3.png"));
+	startTextTextures.emplace_back(TextureManager::Load("Text/StartText4.png"));
 	starTexture = TextureManager::Load("star.png");
 	thornTexture = TextureManager::Load("thorn.png");
+
+
 }
 void Stage::Init()
 {
+	startTextSprites.clear();
+
+	startTextSprites.emplace_back(Sprite::Create(startTextTextures[0], { 960,540 }));
+	startTextSprites.emplace_back(Sprite::Create(startTextTextures[1], { 960,540 }));
+	startTextSprites.emplace_back(Sprite::Create(startTextTextures[2], { 960,540 }));
+	startTextSprites.emplace_back(Sprite::Create(startTextTextures[3], { 960,540 }));
+
+	for (int i = 0; i < startTextSprites.size(); i++)
+	{
+		startTextSprites[i]->SetAnchorPoint({ 0.5, 0.5 });
+	}
+
 	viewProjection_.eye = { 0,0,-50 };
 	viewProjection_.target = { 0,0,0 };
 	viewProjection_.up = { 0,1,0 };
@@ -37,49 +59,68 @@ void Stage::Init()
 	gameOver = false;
 	playerIsHitGoal = false;
 	//GenerateThorn(player->GetPos());
+
+	startTextIndex = 0;
+	startTextTimer = 0;
+	startTextMaxTimer = 80;
+	startTextExrate = 0;
+	startTextAngle = -180;
+	startTextAlpha = 1;
+	isStartTextEnd = false;
+
+	isStartGame = false;
 }
+
+
 void Stage::Update()
 {
 	if (gameClear == true || gameOver == true) return;
 
-	if (ground->GetHP() > 0)
+	CountDownUpdate();
+
+	if (isStartGame == true)
 	{
-		StarUpdate();
-		BlockUpdate();
-		FloorUpdate();
-		ThornUpdate();
-		if (stageType == CannonStage)
+		if (ground->GetHP() > 0)
 		{
-			CannonUpdate();
+			StarUpdate();
+			BlockUpdate();
+			FloorUpdate();
+			ThornUpdate();
+			if (stageType == CannonStage)
+			{
+				CannonUpdate();
+			}
+			else if (stageType == RaceStage)
+			{
+				RaceUpdate();
+
+			}
+			PlayerUpdate();
 		}
-		else if (stageType == RaceStage)
+
+		if (ground->GetHP() <= 0 || playerIsHitGoal == true)
 		{
-			RaceUpdate();
-
+			gameClear = true;
+			isStartGame = false;
 		}
-		PlayerUpdate();
-	}
 
-	if (ground->GetHP() <= 0 || playerIsHitGoal == true)
-	{
-		gameClear = true;
-	}
+		if (ground->GetPos().y + ground->GetScale().y >= 0 ||
+			player->GetLife() <= 0)
+		{
+			gameOver = true;
+			isStartGame = false;
+		}
 
-	if (ground->GetPos().y + ground->GetScale().y >= 0 ||
-		player->GetLife() <= 0)
-	{
-		gameOver = true;
-	}
-
-	if (stageType == RaceStage)
-	{
-		viewProjection_.eye = { player->GetPos().x,0,-50 };
-		viewProjection_.target = { player->GetPos().x ,0,0 };
-	}
-	else
-	{
-		viewProjection_.eye = { 0,0,-50 };
-		viewProjection_.target = { 0 ,0,0 };
+		if (stageType == RaceStage)
+		{
+			viewProjection_.eye = { player->GetPos().x,0,-50 };
+			viewProjection_.target = { player->GetPos().x ,0,0 };
+		}
+		else
+		{
+			viewProjection_.eye = { 0,0,-50 };
+			viewProjection_.target = { 0 ,0,0 };
+		}
 	}
 
 	viewProjection_.ShackUpdate();
@@ -120,6 +161,91 @@ void Stage::Draw()
 	}
 
 	player->EffectDraw();
+}
+
+
+void Stage::CountDownUpdate()
+{
+	if (isStartTextEnd == true) return;
+
+	// カウント
+	const float fream = 30;
+	if (startTextIndex < 3)
+	{
+		startTextTimer++;
+		if (startTextTimer >= startTextMaxTimer)
+		{
+			startTextExrate = 0;
+			startTextAlpha = 1;
+			startTextAngle = -180;
+			startTextTimer = 0;
+			startTextIndex++;
+		}
+
+		// 拡大率
+		if (startTextExrate >= 1)
+		{
+			startTextExrate += 0.005;
+		}
+		else if (startTextExrate >= 0)
+		{
+			startTextExrate += 1 / fream;
+		}
+		startTextSprites[startTextIndex]->SetSize({ 448 * startTextExrate,448 * startTextExrate });
+
+		// 角度
+		if (startTextAngle >= 0)
+		{
+			startTextAngle += 0.25;
+		}
+		else if (startTextAngle >= -180)
+		{
+			startTextAngle += 180 / fream;
+		}
+		startTextSprites[startTextIndex]->SetRotation(DegreeToRad(startTextAngle));
+
+		// アルファ
+		startTextAlpha -= 1 / (float)startTextMaxTimer;
+		startTextSprites[startTextIndex]->SetColor({ 1,1,1,startTextAlpha });
+	}
+	else if (startTextIndex == 3)
+	{
+		//isStartTextEnd = true;
+		isStartGame = true;
+		// 拡大率
+		if (startTextExrate >= 1.5)
+		{
+			startTextExrate += 0.005;
+		}
+		else if (startTextExrate >= 0)
+		{
+			startTextExrate += 1.5 / fream;
+		}
+		startTextSprites[startTextIndex]->SetSize({ 726 * startTextExrate,448 * startTextExrate });
+
+
+		startTextSprites[startTextIndex]->SetRotation(DegreeToRad(0));
+
+		// アルファ
+		startTextAlpha -= 1 / (float)startTextMaxTimer;
+		startTextSprites[startTextIndex]->SetColor({ 1,1,1,startTextAlpha });
+
+		startTextTimer++;
+		if (startTextTimer >= startTextMaxTimer)
+		{
+			startTextIndex = 4;
+			isStartTextEnd = true;
+		}
+	}
+}
+
+
+void Stage::DrawCountDown()
+{
+	if (startTextIndex < 4)
+	{
+		startTextSprites[startTextIndex]->Draw();
+	}
 }
 
 void Stage::GenerateThorn(const Vector3& pos, const Vector3& scale)
@@ -271,10 +397,10 @@ void Stage::FloorUpdate()
 	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetScale().y)
 	{
 
-	//}
+		//}
 
-	//if (collision->SquareHitSquare(playerCollider, floorCollider))
-	//{
+		//if (collision->SquareHitSquare(playerCollider, floorCollider))
+		//{
 		player->SetisReverse(true);
 		// タイマ－にした、瞬間的なフラグが欲しかったため
 		if (player->GetStopTimer() == 0)

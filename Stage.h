@@ -5,6 +5,8 @@
 #include "Block.h"
 #include "Cannon.h"
 #include "Goal.h"
+#include "Sprite.h"
+#include <vector>
 #include <memory>
 
 enum StageType
@@ -17,6 +19,18 @@ enum StageType
 class Stage
 {
 private:
+	// カウント関連
+	static std::vector<uint32_t> startTextTextures;
+	std::vector<Sprite*> startTextSprites;
+	int startTextIndex;
+	int startTextTimer;
+	int startTextMaxTimer;
+	float startTextExrate;
+	float startTextAngle;
+	float startTextAlpha;
+	bool isStartTextEnd;
+
+private:
 	std::list<std::unique_ptr<Star>> stars;
 	std::list<std::unique_ptr<Thorn>> thorns;
 	std::list<std::unique_ptr<Block>> blocks;
@@ -25,6 +39,7 @@ private:
 	static uint32_t starTexture;			// 星テクスチャー
 	static uint32_t thornTexture;		// トゲテクスチャー
 
+	bool isStartGame;
 	bool gameClear;
 	bool gameOver;
 	bool playerIsHitGoal;
@@ -34,6 +49,7 @@ private:
 private:
 	void PlayerGenerateStar(const Vector3 pos);
 
+	void CountDownUpdate();
 	void PlayerUpdate();
 	void FloorUpdate();
 	void StarUpdate();
@@ -49,6 +65,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	void DrawCountDown();
 
 	void GenerateThorn(const Vector3& pos, const Vector3& scale = { 1,1,1 });
 	void GenerateBlock(const Vector3& pos, const Vector3& scale = { 1,1,1 });
