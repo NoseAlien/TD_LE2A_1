@@ -4,6 +4,8 @@
 #include "GameScene.h"
 using namespace std;
 
+Audio* Player::audio = nullptr;
+
 Player::Player() :
 	isAttack(false), speed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
 	isWeakAttack(false), isHeavyAttack(false),
@@ -23,6 +25,10 @@ Player::~Player()
 void Player::Load()
 {
 	input_ = Input::GetInstance();
+
+	jumpSE = audio->LoadWave("se/jump.wav");
+	damageSE = audio->LoadWave("se/damage.wav");
+
 	playerTexture = TextureManager::Load("white1x1.png");
 	redPixel = TextureManager::Load("red1x1.png");
 	playerModel = Model::Create();
@@ -161,6 +167,8 @@ void Player::AttackUpdate()
 				isHeavyAttack = true;
 				maxSize = 4;
 			}
+
+			audio->PlayWave(jumpSE);
 		}
 	}
 

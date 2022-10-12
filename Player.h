@@ -1,6 +1,7 @@
 #pragma once
 #include "WorldTransform.h"
 #include "Model.h"
+#include "Audio.h"
 #include "Input.h"
 #include "Vector3.h"
 
@@ -10,6 +11,9 @@
 
 class Player
 {
+public:
+	static Audio* audio;
+
 private:
 	std::unique_ptr<WeakAttackEffect> weakAttackEffect;
 	std::unique_ptr<HeavyAttackEffect> heavyAttackEffect;
@@ -19,6 +23,9 @@ private:
 
 	WorldTransform* trans = nullptr;	// トランスフォーム
 	Model* playerModel = nullptr;		// モデル
+
+	uint32_t jumpSE = 0;
+	uint32_t damageSE = 0;
 
 	uint32_t playerTexture = 0;		// テクスチャー
 	uint32_t redPixel = 0;			// テクスチャー
@@ -112,6 +119,8 @@ public:
 			this->isDamage = isDamage;
 			pushKeyFream = 0;
 			life--;
+
+			audio->PlayWave(damageSE);
 		}
 	}
 

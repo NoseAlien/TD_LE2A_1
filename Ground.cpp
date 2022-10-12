@@ -1,5 +1,8 @@
 #include "Ground.h"
+
 using namespace std;
+
+Audio* Ground::audio = nullptr;
 
 Ground::Ground() :
 	collisionRadius(10)
@@ -14,6 +17,8 @@ Ground::~Ground()
 
 void Ground::Load()
 {
+	damageSE = audio->LoadWave("se/floor_damage.wav");
+	defeatSE = audio->LoadWave("se/floor_break.wav");
 	enemyTexture = TextureManager::Load("red1x1.png");
 	enemyTexture2 = TextureManager::Load("blue1x1.png");
 	enemyModel = Model::Create();
@@ -84,6 +89,7 @@ void Ground::Update()
 	{
 		hp = 0;
 		breakGroundEffect->Generate(trans->translation_, trans->scale_);
+		audio->PlayWave(defeatSE);
 		isAlive = false;
 	}
 

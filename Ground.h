@@ -3,11 +3,18 @@
 #include "Model.h"
 #include "Vector3.h"
 #include "BreakGroundEffect.h"
+#include "Audio.h"
 #include <memory>
 
 class Ground
 {
+public:
+	static Audio* audio;
+
 private:
+	uint32_t damageSE;
+	uint32_t defeatSE;
+
 	WorldTransform* trans = nullptr;	// トランスフォーム
 	Model* enemyModel = nullptr;		// モデル
 	uint32_t enemyTexture = 0;			// テクスチャー
@@ -25,7 +32,7 @@ private:
 
 	int maxRecoveryTimer;	// 最大値
 
-	bool isDanger;	// 星が八個なったいるか
+	bool isDanger;	// 星が八個になっているか
 	bool isSuctionStar;	// 星を吸収するフラグ
 
 private:
@@ -42,7 +49,11 @@ public:
 	void EffectUpdate();
 	void EffectDraw();
 
-	inline void Damage(const int subhp) { hp -= subhp; }
+	inline void Damage(const int subhp)
+	{
+		hp -= subhp;
+		audio->PlayWave(damageSE);
+	}
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
