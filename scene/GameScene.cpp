@@ -46,30 +46,27 @@ void GameScene::Initialize()
 	hitstop->Init();
 	slowMotion = SlowMotion::GetInstance();
 	slowMotion->Init();
-
-	viewProjection_.fovAngleY = DegreeToRad(50);
-	viewProjection_.eye = { 0,0,-50 };
-	viewProjection_.target = { 0,0,0 };
-	viewProjection_.up = { 0,1,0 };
-	viewProjection_.Initialize();
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 
-	isSelectEnd = false;
-
-	player->Init();
-
+	stages.clear();
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
 	stages.emplace_back(move(make_unique<Stage>(RaceStage)));
 
-	for (int i = 0; i < stages.size(); i++)
-	{
-		stages[i]->Init();
-	}
-
 	stageSelect = move(make_unique<StageSelect>());
+
+	viewProjection_.fovAngleY = DegreeToRad(50);
+	viewProjection_.eye = { 0,0,-50 };
+	viewProjection_.target = { 0,0,0 };
+	viewProjection_.up = { 0,1,0 };
+	viewProjection_.Initialize();
+
+	isSelectEnd = false;
+
+	player->Init();
+
 	stageSelect->Initialize(stages.size());
 
 	currentStage = 0;
@@ -78,19 +75,43 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
+
+
 	if (gameState == isGame)
 	{
-		stages[currentStage]->Update();
 		if (input_->TriggerKey(DIK_ESCAPE))
 		{
 			gameState = isSelect;
 			player->Init();
-			//currentStage = stageSelect->GetCurrentStage();
+
 			stageSelect->ResetObjPos();
 			viewProjection_.eye = { 0,0,-50 };
 			viewProjection_.target = { 0,0,0 };
 			viewProjection_.Initialize();
 			isSelectEnd = false;
+		}
+
+		if (sceneChange->GetisChange() == true)
+		{
+			gameState = isSelect;
+
+			player->Init();
+			stageSelect->ResetObjPos();
+			viewProjection_.eye = { 0,0,-50 };
+			viewProjection_.target = { 0,0,0 };
+			viewProjection_.Initialize();
+			isSelectEnd = false;
+			sceneChange->SetisChange(false);
+		}
+
+		if (input_->TriggerKey(DIK_RETURN))
+		{
+			pause = !pause;
+		}
+
+		if (!pause)
+		{
+			stages[currentStage]->Update();
 		}
 	}
 	else if (gameState == isSelect)
@@ -109,17 +130,15 @@ void GameScene::Update()
 		stageSelect->Update();
 		SelectUpdate();
 
-		//if (input_->TriggerKey(DIK_SPACE))
-		//{
-		//	CurrentStageInit();
-		//	sceneChange->StartSceneChange();
-		//}
+		if (sceneChange->GetisChange() == true)
+		{
+			gameState = isGame;
+			sceneChange->SetisChange(false);
+
+		}
 	}
 
-	if (sceneChange->GetisChange() == true)
-	{
-		gameState = isGame;
-	}
+
 
 	hitstop->Update();
 	slowMotion->Update();
@@ -209,8 +228,11 @@ IScene* GameScene::GetNextScene()
 	return nullptr;
 }
 
+
 void GameScene::CurrentStageInit()
 {
+	pause = false;
+
 	stages[currentStage]->Init();
 	player->Init();
 	player->SetStageType(stages[currentStage]->GetStageType());
@@ -234,7 +256,7 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
 		break;
 	case 4:
-		ground->Init(100);
+		ground->Init(25);
 		stages[currentStage]->GenerateGoal({ 100,20,0 });
 		//stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
 		//stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });

@@ -72,6 +72,7 @@ struct ViewProjection {
 
 private:
 	Vector3 prevPos = eye;
+	Vector3 prevTarget = target;
 	bool isShack = false;
 	Vector3 shakeValue = { 0,0,0 };
 	float shackValueMin = 0;
@@ -86,6 +87,7 @@ public:
 		isShack = true;
 		shakeTimer = 0;
 		prevPos = eye;
+		prevTarget = target;
 		this->shackValueMin = shackValueMin;
 		this->shackValueMax = shackValueMax;
 		this->shakeMaxTimer = shakeMaxTimer;
@@ -99,15 +101,18 @@ public:
 			{
 				Random::RangeF(shackValueMin,shackValueMax),
 				Random::RangeF(shackValueMin,shackValueMax),
-				Random::RangeF(shackValueMin,shackValueMax),
+				//Random::RangeF(shackValueMin,shackValueMax),
+				0
 			};
 
 			eye += shakeValue;
+			target += shakeValue;
 
 			shakeTimer++;
 			if (shakeTimer >= shakeMaxTimer)
 			{
 				eye = prevPos;
+				target = prevTarget;
 				isShack = false;
 			}
 		}

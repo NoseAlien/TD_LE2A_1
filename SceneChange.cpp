@@ -135,7 +135,6 @@ void SceneChange::Draw()
 	for (int i = 0; i < blocks.size(); i++)
 	{
 		blocks[i]->Draw();
-		//DrawRotaGraph(blocks[i]->pos.x, blocks[i]->pos.y, blocks[i]->exrate, Radian(blocks[i]->angle), image, true);
 	}
 }
 

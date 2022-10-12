@@ -106,18 +106,16 @@ void Player::EffectGenerate(const Vector3& pos)
 	}
 	if (isHeavyAttack == true)
 	{
-		viewProjection_.SetShakeValue(-2, 2, 5);
+		viewProjection_.SetShakeValue(-2, 2, 10);
 		//weakAttackEffect->Generate({ pos.x,pos.y - 2,pos.z });
 		heavyAttackEffect->Generate({ pos.x,pos.y - 5,pos.z });
 	}
 }
-
 void Player::EffectUpdate()
 {
 	weakAttackEffect->Update();
 	heavyAttackEffect->Update();
 }
-
 void Player::EffectDraw()
 {
 	weakAttackEffect->Draw();
@@ -142,7 +140,6 @@ void Player::MoveUpdate()
 		}
 	}
 }
-
 void Player::AttackUpdate()
 {
 	// UŒ‚‚ÌŽí—Þ‚ð”»’f‚·‚éˆ—
@@ -166,6 +163,7 @@ void Player::AttackUpdate()
 			{
 				isHeavyAttack = true;
 				maxSize = 4;
+				viewProjection_.SetShakeValue(-0.5, 0.5, 5);
 			}
 
 			audio->PlayWave(jumpSE);

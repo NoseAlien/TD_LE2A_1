@@ -60,6 +60,8 @@ public: // メンバ関数
 	static void Load();
 	IScene* GetNextScene();
 
+	void InitOnce();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -76,6 +78,8 @@ private: // メンバ変数
 	int gameState;
 	int currentStage;
 	bool isSelectEnd = false;
+
+	bool pause = false;
 
 	HitStop* hitstop;
 	SlowMotion* slowMotion;
