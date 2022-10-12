@@ -116,9 +116,11 @@ void GameScene::Update()
 	}
 	else if (gameState == isSelect)
 	{
-		if (player->GetPos().y >= 20 && isSelectEnd == true)
+		//if (player->GetPos().y >= 20 && isSelectEnd == true)
+
+		if (stageSelect->GetTextPos(currentStage).y >= 5 && isSelectEnd == true)
 		{
-			player->SetPos({ 0,20,0 });
+			//player->SetPos({ 0,20,0 });
 
 			CurrentStageInit();
 			sceneChange->StartSceneChange();
@@ -137,8 +139,6 @@ void GameScene::Update()
 
 		}
 	}
-
-
 
 	hitstop->Update();
 	slowMotion->Update();
@@ -268,12 +268,13 @@ void GameScene::SelectUpdate()
 {
 	float speed = player->GetAttackMoveSpeed() / 2;
 	if (player->GetisReverse() == false && player->GetPos().y <=
-		stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y - 2)
+		stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + 3)
 	{
+		//player->SetScale({ 0,0,0 });
 		player->SetPos(
 			{
 				0,
-				stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y
+				stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + 3
 				,0
 			});
 
@@ -303,7 +304,7 @@ void GameScene::SelectUpdate()
 		}
 		stageSelect->SetSelectScale(tempScale2, currentStage);
 
-		if (player->GetPos().y <= -1.5)
+		if (player->GetPos().y <= 2)
 		{
 			player->SetisReverse(true);
 		}

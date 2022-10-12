@@ -41,9 +41,11 @@ void Player::Init()
 {
 	tempTimer = 0;
 	trans->translation_ = { 0,20,0 };
+	trans->scale_ = { 1,1,1 };
 	trans->UpdateMatrix();
 	slowMotion = SlowMotion::GetInstance();
 
+	isReverse = false;
 	isAttack = false;
 	isWeakAttack = false;
 	isHeavyAttack = false;
@@ -58,7 +60,6 @@ void Player::Init()
 
 	life = 3;
 }
-
 void Player::Update()
 {
 	if (!input_->ReleasedKey(DIK_SPACE))
@@ -75,13 +76,11 @@ void Player::Update()
 	}
 	trans->UpdateMatrix();
 }
-
 void Player::SelectSceneUpdate()
 {
 	AttackUpdate();
 	trans->UpdateMatrix();
 }
-
 void Player::Draw(const ViewProjection& viewProjection_)
 {
 	if (damageTimer % 10 < 5)
@@ -173,30 +172,49 @@ void Player::AttackUpdate()
 	// UŒ‚ˆ—
 	if (isAttack == true)
 	{
+		trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
+
 		if (isReverse == false)
 		{
 			trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
 		}
 		else
 		{
-			stopTimer++;
-			if (addScaleStep == 3 && stopTimer >= 1)
+			if (addScaleStep == 1)
 			{
-				trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
-				if (trans->translation_.y >= 20)
+				trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+				trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+				trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
+				if (trans->scale_.y <= 0)
 				{
 					trans->translation_.y = 20;
-					isReverse = false;		// ”½“]ƒtƒ‰ƒO
-					isWeakAttack = false;	// ŽãUŒ‚
-					isHeavyAttack = false;	// ‹­UŒ‚
-					isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
-					isAttack = false;		// UŒ‚ƒtƒ‰ƒO
-					//haveStarNum = 0;
+					trans->scale_ = { 0,0,0 };
+					addScaleStep = 2;
+				}
+			}
+			else if (addScaleStep == 2)
+			{
+				stopTimer++;
 
-					stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
-					pushKeyFream = 0;		// ‰Ÿ‚µ‚½Žž‚ÌƒtƒŒ[ƒ€
-					trans->scale_ = { 1,1,1 };
+				if (stopTimer >= 1)
+				{
+					trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
+					trans->scale_.x += 0.1 * slowMotion->GetSlowExrate();
+					trans->scale_.y += 0.1 * slowMotion->GetSlowExrate();
+					trans->scale_.z += 0.1 * slowMotion->GetSlowExrate();
 
+					if (trans->scale_.x >= 1)
+					{
+						isReverse = false;		// ”½“]ƒtƒ‰ƒO
+						isWeakAttack = false;	// ŽãUŒ‚
+						isHeavyAttack = false;	// ‹­UŒ‚
+						isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
+						isAttack = false;		// UŒ‚ƒtƒ‰ƒO
+
+						stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
+						pushKeyFream = 0;		// ‰Ÿ‚µ‚½Žž‚ÌƒtƒŒ[ƒ€
+						trans->scale_ = { 1,1,1 };
+					}
 				}
 			}
 		}
@@ -221,38 +239,6 @@ void Player::AttackUpdate()
 		}
 	}
 
-
-	if (addScaleStep == 1 && isReverse == true)
-	{
-		trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
-		trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
-		trans->scale_.z += addScaleValue * slowMotion->GetSlowExrate();
-		if (trans->scale_.x >= maxSize)
-		{
-			trans->scale_.x = maxSize;
-			trans->scale_.y = 0.5;
-			trans->scale_.z = maxSize;
-			addScaleStep = 2;
-		}
-	}
-	if (addScaleStep == 2)
-	{
-		trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
-		trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
-		trans->scale_.z -= addScaleValue * slowMotion->GetSlowExrate();
-		if (trans->scale_.x <= 1)
-		{
-			trans->scale_ = { 1,1,1 };
-			addScaleStep = 3;
-		}
-	}
-
-	//trans->scale_ = { 0.5,0.5,0.5 };
-	//trans->UpdateMatrix();
-
-	//auto text = DebugText::GetInstance();
-	//text->SetPos(20, 60);
-	//text->Printf("pushKeyFream = %d", pushKeyFream);
 
 }
 void Player::DamageUpdate()

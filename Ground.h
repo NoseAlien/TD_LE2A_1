@@ -34,6 +34,7 @@ private:
 
 	bool isDanger;	// 星が八個になっているか
 	bool isSuctionStar;	// 星を吸収するフラグ
+	int isHit;
 
 private:
 	// エフェクト関連
@@ -63,6 +64,7 @@ public:
 	inline int GetisAddScaleCountDown() { return isAddScaleCountDown; }
 	inline bool GetisAddScale() { return isAddScale; }
 	inline bool GetisSuctionStar() { return isSuctionStar; }
+	inline int GetisHit() { return isHit; }
 
 	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
 	inline void SetisDanger(const bool& isDanger) { this->isDanger = isDanger; }
@@ -70,6 +72,7 @@ public:
 	inline void SetisAddScaleCountDown(const int& isAddScaleCountDown) { this->isAddScaleCountDown = isAddScaleCountDown; }
 	inline void SetAddScaleCount(const int& addScaleCount) { this->addScaleCount = addScaleCount; }
 	inline void SetisSuctionStar(const bool& isSuctionStar) { this->isSuctionStar = isSuctionStar; }
+	inline void SetisHit(const int& isHit) { this->isHit = isHit; }
 
 public:
 	static Ground* GetInstance();
