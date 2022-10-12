@@ -28,9 +28,9 @@ void Particle::Update()
 
 void Particle::Draw(const int& type)
 {
-	model->Draw(*trans, viewProjection_);
 	if (type == 0)
 	{
+		model->Draw(*trans, viewProjection_);
 	}
 	else
 	{

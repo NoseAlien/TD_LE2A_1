@@ -23,9 +23,21 @@ void BreakGroundEffect::Generate(const Vector3& pos, const Vector3& scale)
 				Random::RangeF(pos.y,pos.y + scale.y),
 				pos.z
 			});
-		particles.back()->SetScale({ 3,3,3 });
-		particles.back()->SetSpeed(1.5);
-		particles.back()->SetVec({ cosf(radian) / 5,Random::RangeF(1,1.1),sinf(radian) / 5 });
+		particles.back()->SetScale(
+			{
+				Random::RangeF(1,3),
+				Random::RangeF(1,3),
+				Random::RangeF(1,3),
+			});
+		particles.back()->SetRot(
+			{
+				DegreeToRad(Random::RangeF(0,360)),
+				DegreeToRad(Random::RangeF(0,360)),
+				DegreeToRad(Random::RangeF(0,360)),
+			});
+
+		particles.back()->SetSpeed(1);
+		particles.back()->SetVec({ cosf(radian) / 5,Random::RangeF(2,4),sinf(radian) / 5 });
 	}
 }
 
@@ -43,6 +55,10 @@ void BreakGroundEffect::Update()
 		auto tempVec = particles[i]->GetVec();
 		Vector3 offset = { 0,-0.5,0 };
 		particles[i]->SetVec(tempVec + offset * slowMotion->GetSlowExrate());
+
+		auto tempRot = particles[i]->GetRot();
+		tempRot -= 0.01;
+		particles[i]->SetRot(tempRot);
 	}
 
 	for (int i = 0; i < particles.size(); i++)
