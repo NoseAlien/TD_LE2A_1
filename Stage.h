@@ -20,7 +20,9 @@ enum StageProgress
 {
 	Start,
 	Play,
+	Staging,
 	End,
+
 };
 
 class Stage
