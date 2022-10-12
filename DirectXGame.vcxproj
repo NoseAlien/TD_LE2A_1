@@ -106,6 +106,7 @@
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="HeavyAttackEffect.cpp" />
+    <ClCompile Include="HitStop.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\MathUtility.cpp" />
     <ClCompile Include="Particle.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="Goal.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="HeavyAttackEffect.h" />
+    <ClInclude Include="HitStop.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="IScene.h" />
     <ClInclude Include="math\MathUtility.h" />

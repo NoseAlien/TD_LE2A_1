@@ -8,17 +8,20 @@ private:
 	int slowTimer;
 	int slowMaxTimer;
 	bool isAddSlowExrate;
+	bool isSlowMotion;
 
 public:
 	void Init();
 	void Update();
 	void StartSlowMotion(const float& slowExrate, const int& slowMaxTimer)
 	{
+		isSlowMotion = true;
 		this->slowExrate = slowExrate;
 		this->slowMaxTimer = slowMaxTimer;
 	}
 
 	inline float GetSlowExrate() { return slowExrate; }
+	inline bool GetisSlowMotion() { return isSlowMotion; }
 
 public:
 	static SlowMotion* GetInstance();

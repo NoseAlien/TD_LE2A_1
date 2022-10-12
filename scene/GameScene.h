@@ -12,6 +12,7 @@
 #include "IScene.h"
 #include "Stage.h"
 #include "StageSelect.h"
+#include "HitStop.h"
 #include "SlowMotion.h"
 #include <memory>
 #include <vector>
@@ -76,8 +77,8 @@ private: // メンバ変数
 	int currentStage;
 	bool isSelectEnd = false;
 
+	HitStop* hitstop;
 	SlowMotion* slowMotion;
-
 
 private:
 	void CurrentStageInit();

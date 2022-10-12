@@ -14,8 +14,6 @@ SquareCollider::SquareCollider(const Vector2& pos, const Vector2& scale) :
 {
 }
 
-
-
 bool Collision::SphereHitSphere(const Vector3& pos1, float radius1, const Vector3& pos2, float radius2)
 {
 	return

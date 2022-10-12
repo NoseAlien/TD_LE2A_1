@@ -2,6 +2,8 @@
 
 #include "MathUtility.h"
 #include "Random.h"
+#include "SlowMotion.h"
+#include "Collision.h"
 #include <d3d12.h>
 #include <wrl.h>
 

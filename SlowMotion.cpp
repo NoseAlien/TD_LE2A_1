@@ -11,6 +11,8 @@ void SlowMotion::Init()
 
 void SlowMotion::Update()
 {
+	if (isSlowMotion == false) return;
+
 	if (slowExrate < 1)
 	{
 		slowTimer++;
@@ -28,6 +30,7 @@ void SlowMotion::Update()
 		{
 			slowExrate = 1;
 			isAddSlowExrate = false;
+			isSlowMotion = false;
 		}
 	}
 }

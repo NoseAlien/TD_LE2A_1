@@ -41,6 +41,8 @@ void GameScene::Initialize()
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
+	hitstop = HitStop::GetInstance();
+	hitstop->Init();
 	slowMotion = SlowMotion::GetInstance();
 	slowMotion->Init();
 
@@ -83,6 +85,9 @@ void GameScene::Update()
 			player->Init();
 			//currentStage = stageSelect->GetCurrentStage();
 			stageSelect->ResetObjPos();
+			viewProjection_.eye = { 0,0,-50 };
+			viewProjection_.target = { 0,0,0 };
+			viewProjection_.Initialize();
 		}
 	}
 	else if (gameState == isSelect)
@@ -114,6 +119,7 @@ void GameScene::Update()
 		gameState = isGame;
 	}
 
+	hitstop->Update();
 	slowMotion->Update();
 	sceneChange->Update();
 
