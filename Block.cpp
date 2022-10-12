@@ -21,6 +21,7 @@ void Block::Generate(const Vector3& pos, const Vector3& scale)
 	trans->scale_ = scale;
 	trans->UpdateMatrix();
 	isDestroy = false;
+	isHit = 0;
 }
 
 void Block::Update()

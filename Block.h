@@ -12,6 +12,7 @@ private:
 	int hp;
 	int maxhp;
 	bool isDestroy;
+	int isHit;
 
 public:
 	Block();
@@ -25,7 +26,9 @@ public:
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
 	inline bool GetisDestroy() { return isDestroy; }
+	inline int GetisHit() { return isHit; }
 
 	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
+	inline void SetisHit(const int& isHit) { this->isHit = isHit; }
 };
 

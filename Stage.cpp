@@ -155,9 +155,9 @@ void Stage::Update()
 
 	GameOverCameraUpdate();
 
-	auto text = DebugText::GetInstance();
-	text->SetPos(20, 60);
-	text->Printf("isCameraMoveStep = %d", isCameraMoveStep);
+	//auto text = DebugText::GetInstance();
+	//text->SetPos(20, 60);
+	//text->Printf("isCameraMoveStep = %d", isCameraMoveStep);
 
 	viewProjection_.ShakeUpdate();
 	viewProjection_.UpdateMatrix();
@@ -450,12 +450,12 @@ void Stage::FloorUpdate()
 	//	{ ground->GetScale().x,ground->GetScale().y },
 	//};
 
-	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + 3.1f)
+	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + 1)
 	{
 		player->SetPos(
 			{
 				player->GetPos().x,
-				ground->GetPos().y + ground->GetScale().y + 3.1f,
+				ground->GetPos().y + ground->GetScale().y + 1,
 				player->GetPos().z
 			});
 		//player->SetScale({ 0,0,0 });
@@ -466,8 +466,7 @@ void Stage::FloorUpdate()
 		{
 			ground->SetisHit(1);
 		}
-		// タイマ－にした、瞬間的なフラグが欲しかったため
-		else if (ground->GetisHit() == 1)
+		if (ground->GetisHit() == 1)
 		{
 			player->EffectGenerate(
 				{
@@ -686,20 +685,28 @@ void Stage::BlockUpdate()
 			player->SetPos(
 				{
 					player->GetPos().x,
-					temp->GetPos().y + temp->GetScale().y + player->GetScale().y,
+					temp->GetPos().y + temp->GetScale().y + 1,
 					player->GetPos().z
 				});
 			player->SetisReverse(true);
 
-			if (player->GetisWeakAttack() == true)
+			if (temp->GetisHit() == 0)
 			{
-				temp->Damage(player->GetWeakAttackDamage());
+				temp->SetisHit(1);
 			}
-			if (player->GetisHeavyAttack() == true)
+			if (temp->GetisHit() == 1)
 			{
-				temp->Damage(player->GetHeavyAttackDamage());
+				if (player->GetisWeakAttack() == true)
+				{
+					temp->Damage(player->GetWeakAttackDamage());
+					temp->SetisHit(2);
+				}
+				if (player->GetisHeavyAttack() == true)
+				{
+					temp->Damage(player->GetHeavyAttackDamage());
+					temp->SetisHit(2);
+				}
 			}
-
 		}
 		else if (collision->SquareHitSquare(floorCollider, blockCollider))
 		{
@@ -711,7 +718,17 @@ void Stage::BlockUpdate()
 				});
 		}
 
+		if (player->GetPos().y >= 20 && temp->GetisHit() == 2)
+		{
+			temp->SetisHit(0);
+		}
+
 	}
+	//if (player->GetPos().y <= 4)
+	//{
+	//	int a = 10;
+	//}
+
 	// 更新処理
 	for (const auto& temp : blocks)
 	{

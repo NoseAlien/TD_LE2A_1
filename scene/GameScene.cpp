@@ -150,6 +150,9 @@ void GameScene::Update()
 
 	debugText_->SetPos(20, 40);
 	debugText_->Printf("GroundHP = %d", ground->GetHP());
+
+	debugText_->SetPos(20, 60);
+	debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
 }
 
 void GameScene::Draw()
@@ -241,6 +244,11 @@ void GameScene::CurrentStageInit()
 	{
 	case 0:
 		ground->Init(10000);
+		stages[currentStage]->GenerateBlock({ 20,0,0 }, { 20,2,2 });
+		//stages[currentStage]->GenerateBlock({ 1,0,0 }, { 1,1,1 });
+		//stages[currentStage]->GenerateBlock({ 2,0,0 }, { 1,1,1 });
+		//stages[currentStage]->GenerateBlock({ 3,0,0 }, { 1,1,1 });
+
 		break;
 	case 1:
 		ground->Init(25);
@@ -268,13 +276,13 @@ void GameScene::SelectUpdate()
 {
 	float speed = player->GetAttackMoveSpeed() / 2;
 	if (player->GetisReverse() == false && player->GetPos().y <=
-		stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + 3)
+		stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + 1)
 	{
 		//player->SetScale({ 0,0,0 });
 		player->SetPos(
 			{
 				0,
-				stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + 3
+				stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + 1
 				,0
 			});
 

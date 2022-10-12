@@ -105,7 +105,8 @@ void Player::EffectGenerate(const Vector3& pos)
 	}
 	if (isHeavyAttack == true)
 	{
-		viewProjection_.SetShakeValue(1.5, 80, 3);
+		//viewProjection_.SetShakeValue(1.5, 80, 3);
+		viewProjection_.SetShakeValue(1.5, 40);
 		//weakAttackEffect->Generate({ pos.x,pos.y - 2,pos.z });
 		heavyAttackEffect->Generate({ pos.x,pos.y - 5,pos.z });
 	}
@@ -137,6 +138,10 @@ void Player::MoveUpdate()
 		{
 			trans->translation_.x = -43;
 		}
+	}
+	if (trans->translation_.y >= 20)
+	{
+		trans->translation_.y = 20;
 	}
 }
 void Player::AttackUpdate()
@@ -172,7 +177,8 @@ void Player::AttackUpdate()
 	// 攻撃処理
 	if (isAttack == true)
 	{
-		trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
+		pushKeyFream = 0;
+		//trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
 
 		if (isReverse == false)
 		{
@@ -198,10 +204,10 @@ void Player::AttackUpdate()
 
 				if (stopTimer >= 1)
 				{
-					trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
-					trans->scale_.x += 0.1 * slowMotion->GetSlowExrate();
-					trans->scale_.y += 0.1 * slowMotion->GetSlowExrate();
-					trans->scale_.z += 0.1 * slowMotion->GetSlowExrate();
+					//trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
+					trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
+					trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
+					trans->scale_.z += 0.05 * slowMotion->GetSlowExrate();
 
 					if (trans->scale_.x >= 1)
 					{
@@ -212,7 +218,7 @@ void Player::AttackUpdate()
 						isAttack = false;		// 攻撃フラグ
 
 						stopTimer = 0;			// 止まるタイマー
-						pushKeyFream = 0;		// 押した時のフレーム
+						//pushKeyFream = 0;		// 押した時のフレーム
 						trans->scale_ = { 1,1,1 };
 					}
 				}
