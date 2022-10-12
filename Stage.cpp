@@ -159,7 +159,7 @@ void Stage::Update()
 	text->SetPos(20, 60);
 	text->Printf("isCameraMoveStep = %d", isCameraMoveStep);
 
-	viewProjection_.ShackUpdate();
+	viewProjection_.ShakeUpdate();
 	viewProjection_.UpdateMatrix();
 	player->EffectUpdate();
 	ground->EffectUpdate();

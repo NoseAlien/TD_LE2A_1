@@ -72,52 +72,61 @@ struct ViewProjection {
 
 private:
 	Vector3 prevPos = eye;
-	bool isShack = false;
-	Vector3 shakeValue = { 0,0,0 };
-	float shackValueMin = 0;
-	float shackValueMax = 0;
+	Vector3 prevTarget = target;
+	Vector3 shakeVector = { 0,0,0 };
+	float shakeValue = 0;
 	int shakeTimer = 0;
 	int shakeMaxTimer = 0;
+	int shakePerFrame = 0;
 
 public:
 
-	inline void SetShakeValue(const float& shackValueMin, const float& shackValueMax, const int& shakeMaxTimer)
+	inline void SetShakeValue(const float& shakeValue, const int& shakeTimer, const int& shakePerFrame = 1)
 	{
-		isShack = true;
-		shakeTimer = 0;
 		prevPos = eye;
-		//prevTarget = target;
-		this->shackValueMin = shackValueMin;
-		this->shackValueMax = shackValueMax;
-		this->shakeMaxTimer = shakeMaxTimer;
+		prevTarget = target;
+		this->shakeValue = shakeValue;
+		this->shakeTimer = max(shakeTimer, 1);
+		this->shakeMaxTimer = max(shakeTimer,1);
+		this->shakePerFrame = max(shakePerFrame, 1);
 	}
 
-	void ShackUpdate()
+	void ShakeUpdate()
 	{
-		if (isShack == true)
+		if (shakeTimer > 0)
 		{
-			shakeValue =
-			{
-				Random::RangeF(shackValueMin,shackValueMax),
-				Random::RangeF(shackValueMin,shackValueMax),
-				//Random::RangeF(shackValueMin,shackValueMax),
-				0
-			};
-
-			eye += shakeValue;
-			//target += shakeValue;
-
-			shakeTimer++;
-			if (shakeTimer >= shakeMaxTimer)
+			if(shakeTimer % shakePerFrame == 0)
 			{
 				eye = prevPos;
+				target = prevTarget;
+
+				float shakeVecRad = Random::RangeF(0, 2 * 3.1415926);
+
+				shakeVector =
+				{
+					sin(shakeVecRad),
+					cos(shakeVecRad),
+					0
+				};
+				shakeVector *= shakeValue * (shakeTimer / (float)shakeMaxTimer);
+
+				eye += shakeVector;
+				target += shakeVector;
+			}
+			//target += shakeValue;
+
+			shakeTimer--;
+			if (shakeTimer <= 0)
+			{
+				eye = prevPos;
+				target = prevTarget;
 				//target = prevTarget;
-				isShack = false;
+				//isShack = false;
 			}
 		}
-		if (isShack == false)
+		else
 		{
-			shakeValue = { 0,0,0 };
+			shakeVector = { 0,0,0 };
 		}
 	}
 };
