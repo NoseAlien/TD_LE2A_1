@@ -49,7 +49,11 @@ public:
 	void EffectUpdate();
 	void EffectDraw();
 
-	inline void Damage(const int subhp) { hp -= subhp; }
+	inline void Damage(const int subhp)
+	{
+		hp -= subhp;
+		audio->PlayWave(damageSE);
+	}
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
