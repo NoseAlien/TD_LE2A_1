@@ -2,7 +2,7 @@
 using namespace std;
 
 BreakGroundEffect::BreakGroundEffect() :
-	maxParticle(64)
+	maxParticle(128)
 {
 }
 

@@ -12,8 +12,6 @@ private:
 	std::vector<std::unique_ptr<WorldTransform>> stageTextTrans;
 	int stagesSize;
 	int currentStage;
-	bool isFront;
-	bool isBack;
 	float moveSpeed;
 
 public:

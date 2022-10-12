@@ -5,8 +5,7 @@
 using namespace std;
 
 StageSelect::StageSelect() :
-	stagesSize(0), currentStage(0), moveSpeed(2),
-	isFront(false), isBack(false)
+	stagesSize(0), currentStage(0), moveSpeed(0.13)
 {
 }
 
@@ -49,56 +48,22 @@ void StageSelect::Update()
 {
 	auto input = Input::GetInstance();
 
-	if (input->TriggerKey(DIK_RIGHT) && currentStage < stagesSize - 1)
+	if (input->TriggerKey(DIK_RIGHT))
 	{
-		if (isFront == false)
-		{
-			isFront = true;
-			isBack = false;
-			currentStage++;
-		}
+		currentStage++;
 	}
-	if (input->TriggerKey(DIK_LEFT) && currentStage > 0)
+	if (input->TriggerKey(DIK_LEFT))
 	{
-		if (isBack == false)
-		{
-			isFront = false;
-			isBack = true;
-			currentStage--;
-		}
+		currentStage--;
 	}
 
-	if (isFront == true)
-	{
-		for (int i = 0; i < stagesSize; i++)
-		{
-			stageSelectTrans[i]->translation_.x -= moveSpeed;
-			stageTextTrans[i]->translation_.x -= moveSpeed;
-		}
+	currentStage = min(max(currentStage,0), stagesSize - 1);
 
-		if (stageSelectTrans[currentStage]->translation_.x <= 0)
-		{
-			stageSelectTrans[currentStage]->translation_.x = 0;
-			stageTextTrans[currentStage]->translation_.x = 0;
-			ResetObjPos();
-			isFront = false;
-		}
-	}
-	if (isBack == true)
+	for (int i = 0; i < stagesSize; i++)
 	{
-		for (int i = 0; i < stagesSize; i++)
-		{
-			stageSelectTrans[i]->translation_.x += moveSpeed;
-			stageTextTrans[i]->translation_.x += moveSpeed;
-		}
-
-		if (stageSelectTrans[currentStage]->translation_.x >= 0)
-		{
-			stageSelectTrans[currentStage]->translation_.x = 0;
-			stageTextTrans[currentStage]->translation_.x = 0;
-			ResetObjPos();
-			isBack = false;
-		}
+		float moveX = (((i - currentStage) * 25) - stageSelectTrans[i]->translation_.x) * moveSpeed;
+		stageSelectTrans[i]->translation_.x += moveX;
+		stageTextTrans[i]->translation_.x += moveX;
 	}
 
 	for (int i = 0; i < stagesSize; i++)
