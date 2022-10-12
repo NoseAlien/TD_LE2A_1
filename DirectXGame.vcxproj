@@ -100,6 +100,7 @@
     <ClCompile Include="base\TextureManager.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BreakGroundEffect.cpp" />
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Goal.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="BreakGroundEffect.h" />
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Goal.h" />

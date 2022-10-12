@@ -19,6 +19,7 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+	Particle::UnLoad();
 }
 
 void GameScene::Load()
@@ -27,6 +28,7 @@ void GameScene::Load()
 	Stage::Load();
 	player->Load();
 	ground->Load();
+	Particle::Load();
 }
 
 void GameScene::Initialize()

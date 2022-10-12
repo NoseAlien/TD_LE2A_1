@@ -16,19 +16,26 @@ enum StageType
 	CannonStage,
 };
 
+enum StageProgress
+{
+	Start,
+	Play,
+	End,
+};
+
 class Stage
 {
 private:
 	// 開始カウント関連
-	//static std::vector<uint32_t> startTextTextures;
-	//std::vector<Sprite*> startTextSprites;
-	//int startTextIndex;
-	//int startTextTimer;
-	//int startTextMaxTimer;
-	//float startTextExrate;
-	//float startTextAngle;
-	//float startTextAlpha;
-	//bool isStartTextEnd;
+	static std::vector<uint32_t> startTextTextures;
+	Sprite* startTextSprites[4];
+	int startTextIndex;
+	int startTextTimer;
+	int startTextMaxTimer;
+	float startTextExrate;
+	float startTextAngle;
+	float startTextAlpha;
+	bool isStartTextEnd;
 
 private:
 	// クリア時間関連
@@ -45,11 +52,11 @@ private:
 	static uint32_t starTexture;			// 星テクスチャー
 	static uint32_t thornTexture;		// トゲテクスチャー
 
-	bool isStartGame;
 	bool gameClear;
 	bool gameOver;
 	bool playerIsHitGoal;
 
+	int stagePcrogress;
 	int stageType;
 
 private:

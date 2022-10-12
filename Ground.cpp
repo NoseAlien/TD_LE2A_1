@@ -38,7 +38,7 @@ void Ground::Init(const int& maxhp)
 	isSuctionStar = false;
 	isDanger = false;
 
-	//breakGroundEffect = move(make_unique<BreakGroundEffect>());
+	breakGroundEffect = move(make_unique<BreakGroundEffect>());
 	isGeneEffect = false;
 }
 
@@ -83,7 +83,7 @@ void Ground::Update()
 	if (hp <= 0)
 	{
 		hp = 0;
-		//breakGroundEffect->Generate(trans->translation_, trans->scale_);
+		breakGroundEffect->Generate(trans->translation_, trans->scale_);
 		isAlive = false;
 	}
 
@@ -106,12 +106,12 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 
 void Ground::EffectUpdate()
 {
-	//breakGroundEffect->Update();
+	breakGroundEffect->Update();
 }
 
 void Ground::EffectDraw()
 {
-	//breakGroundEffect->Draw();
+	breakGroundEffect->Draw();
 }
 
 Ground* Ground::GetInstance()

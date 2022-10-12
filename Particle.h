@@ -12,7 +12,7 @@ private:
 	int maxActiveTimer;
 	float speed;
 private:
-	//static Model* breakGroundModel;
+	static Model* breakGroundModel;
 
 public:
 	Particle();

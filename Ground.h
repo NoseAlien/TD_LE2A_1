@@ -2,7 +2,7 @@
 #include "WorldTransform.h"
 #include "Model.h"
 #include "Vector3.h"
-//#include "BreakGroundEffect.h"
+#include "BreakGroundEffect.h"
 #include <memory>
 
 class Ground
@@ -30,7 +30,7 @@ private:
 
 private:
 	// エフェクト関連
-	//std::unique_ptr<BreakGroundEffect> breakGroundEffect;
+	std::unique_ptr<BreakGroundEffect> breakGroundEffect;
 	bool isGeneEffect;
 
 

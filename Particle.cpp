@@ -3,7 +3,7 @@
 #include "SlowMotion.h"
 using namespace std;
 
-// Model* Particle::breakGroundModel = {};
+Model* Particle::breakGroundModel = {};
 
 Particle::Particle() :
 	activeTimer(0), maxActiveTimer(120),
@@ -29,20 +29,20 @@ void Particle::Update()
 void Particle::Draw(const int& type)
 {
 	model->Draw(*trans, viewProjection_);
-	//if (type == 0)
-	//{
-	//}
-	//else
-	//{
-	//	//breakGroundModel->Draw(*trans, viewProjection_);
-	//}
+	if (type == 0)
+	{
+	}
+	else
+	{
+		breakGroundModel->Draw(*trans, viewProjection_);
+	}
 }
 
-//void Particle::Load()
-//{
-//	//breakGroundModel = Model::CreateFromOBJ("remnants", true);
-//}
-//void Particle::UnLoad()
-//{
-//	//delete breakGroundModel;
-//}
+void Particle::Load()
+{
+	breakGroundModel = Model::CreateFromOBJ("remnants", true);
+}
+void Particle::UnLoad()
+{
+	delete breakGroundModel;
+}
