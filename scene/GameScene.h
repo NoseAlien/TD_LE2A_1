@@ -77,6 +77,8 @@ private: // メンバ変数
 	int currentStage;
 	bool isSelectEnd = false;
 
+	bool pause = false;
+
 	HitStop* hitstop;
 	SlowMotion* slowMotion;
 
