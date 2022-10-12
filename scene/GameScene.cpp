@@ -75,9 +75,10 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
+
+
 	if (gameState == isGame)
 	{
-		stages[currentStage]->Update();
 		if (input_->TriggerKey(DIK_ESCAPE))
 		{
 			gameState = isSelect;
@@ -101,6 +102,16 @@ void GameScene::Update()
 			viewProjection_.Initialize();
 			isSelectEnd = false;
 			sceneChange->SetisChange(false);
+		}
+
+		if (input_->TriggerKey(DIK_RETURN))
+		{
+			pause = !pause;
+		}
+
+		if (!pause)
+		{
+			stages[currentStage]->Update();
 		}
 	}
 	else if (gameState == isSelect)
@@ -220,6 +231,8 @@ IScene* GameScene::GetNextScene()
 
 void GameScene::CurrentStageInit()
 {
+	pause = false;
+
 	stages[currentStage]->Init();
 	player->Init();
 	player->SetStageType(stages[currentStage]->GetStageType());
