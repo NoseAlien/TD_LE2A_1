@@ -31,7 +31,7 @@ void Particle::Draw(const int& type)
 	if (type == 0)
 	{
 		model->Draw(*trans, viewProjection_);
-	}
+ 	}
 	else
 	{
 		breakGroundModel->Draw(*trans, viewProjection_);

@@ -54,6 +54,9 @@ private:
 	static uint32_t starTexture;			// 星テクスチャー
 	static uint32_t thornTexture;		// トゲテクスチャー
 
+	Vector3 linePos1;
+	Vector3 linePos2;
+
 	bool gameClear;
 	bool gameOver;
 	bool playerIsHitGoal;
@@ -80,6 +83,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	void DrawLine();
 	void DrawCountDown();
 
 	void GenerateThorn(const Vector3& pos, const Vector3& scale = { 1,1,1 });

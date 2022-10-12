@@ -5,6 +5,7 @@
 #include "Random.h"
 #include "GameScene.h"
 #include "HitStop.h"
+#include "PrimitiveDrawer.h"
 
 using namespace std;
 
@@ -71,6 +72,8 @@ void Stage::Init()
 	endTime = 0;
 	clearTime = 0;
 
+	linePos1 = { -50,0,0 };
+	linePos2 = { +50,0,0 };
 }
 
 static int isCameraMoveStep = 0;
@@ -234,8 +237,16 @@ void Stage::Draw()
 		goal->Draw(viewProjection_, thornTexture);
 	}
 
+	//PrimitiveDrawer::GetInstance()->DrawLine3d(linePos1, linePos2, { 255,0,0,255 });
+
 	player->EffectDraw();
 	ground->EffectDraw();
+}
+
+void Stage::DrawLine()
+{
+	PrimitiveDrawer::GetInstance()->DrawLine3d(linePos1, linePos2, { 255,0,0,255 });
+	//PrimitiveDrawer::GetInstance()->DrawLine3d({ -50,0,0 }, { 50,0,0 }, { 255,0,0,255 });
 }
 
 void Stage::CountDownUpdate()
@@ -440,39 +451,8 @@ void Stage::FloorUpdate()
 		{ ground->GetScale().x,ground->GetScale().y },
 	};
 
-	//while (player->GetPos().y - player->GetAttackMoveSpeed() <=
-	//	ground->GetPos().y + ground->GetScale().y + player->GetScale().y &&
-	//	player->GetisReverse() == false)
-	//{
-	//	SquareCollider tempCollider =
-	//	{
-	//		{ player->GetPos().x,player->GetPos().y },
-	//		{ player->GetScale().x,player->GetScale().y },
-	//	};
-
-	//	float y = player->GetPos().y;
-	//	y -= 0.5;
-	//	player->SetPos({ player->GetPos().x ,y,player->GetPos().z });
-
-	//	if (collision->SquareHitSquare(tempCollider, floorCollider))
-	//	{
-	//		player->SetPos(
-	//			{
-	//				player->GetPos().x,
-	//				ground->GetPos().y + ground->GetScale().y,
-	//				player->GetPos().z
-	//			});
-	//		player->UpdateMatrix();
-	//		break;
-	//	}
-	//}
 	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetScale().y)
 	{
-
-		//}
-
-		//if (collision->SquareHitSquare(playerCollider, floorCollider))
-		//{
 		player->SetisReverse(true);
 		// タイマ－にした、瞬間的なフラグが欲しかったため
 		if (player->GetStopTimer() == 0)
@@ -754,6 +734,9 @@ void Stage::RaceUpdate()
 			tempGroundPos.y,
 			tempGroundPos.z,
 		});
+
+	linePos1.x += player->GetSpeed();
+	linePos2.x += player->GetSpeed();
 
 	if (player->GetPos().x >= goal->GetPos().x - goal->GetScale().x)
 	{

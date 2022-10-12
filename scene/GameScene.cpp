@@ -8,6 +8,7 @@
 #include "SceneChange.h"
 #include "Collision.h"
 #include "Particle.h"
+#include "PrimitiveDrawer.h"
 
 using namespace std;
 using namespace MathUtility;
@@ -47,10 +48,11 @@ void GameScene::Initialize()
 	viewProjection_.target = { 0,0,0 };
 	viewProjection_.up = { 0,1,0 };
 	viewProjection_.Initialize();
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
+
 	isSelectEnd = false;
 
 	player->Init();
-	//ground->Init(100);
 
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
@@ -84,6 +86,7 @@ void GameScene::Update()
 			viewProjection_.eye = { 0,0,-50 };
 			viewProjection_.target = { 0,0,0 };
 			viewProjection_.Initialize();
+			isSelectEnd = false;
 		}
 	}
 	else if (gameState == isSelect)
@@ -107,7 +110,6 @@ void GameScene::Update()
 		//	CurrentStageInit();
 		//	sceneChange->StartSceneChange();
 		//}
-
 	}
 
 	if (sceneChange->GetisChange() == true)
@@ -166,6 +168,12 @@ void GameScene::Draw()
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
+
+	if (gameState == isGame)
+	{
+		stages[currentStage]->DrawLine();
+	}
+
 #pragma endregion
 
 #pragma region 前景スプライト描画
