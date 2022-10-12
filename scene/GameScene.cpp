@@ -13,6 +13,8 @@ using namespace std;
 using namespace MathUtility;
 ViewProjection viewProjection_{};
 
+Audio* GameScene::audio = nullptr;
+
 GameScene::GameScene()
 {
 }
@@ -26,6 +28,8 @@ void GameScene::Load()
 {
 	Random::Initialize();
 	Stage::Load();
+	Player::audio = audio;
+	Ground::audio = audio;
 	player->Load();
 	ground->Load();
 	Particle::Load();

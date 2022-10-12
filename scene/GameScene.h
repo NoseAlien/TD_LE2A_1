@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "Audio.h"
 #include "DirectXCommon.h"
 #include "DebugText.h"
 #include "Input.h"
@@ -28,6 +27,8 @@ enum GameState
 /// </summary>
 class GameScene : public IScene
 {
+public:
+	static Audio* audio;
 
 public: // メンバ関数
   /// <summary>

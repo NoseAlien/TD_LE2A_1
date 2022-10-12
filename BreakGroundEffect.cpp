@@ -25,9 +25,9 @@ void BreakGroundEffect::Generate(const Vector3& pos, const Vector3& scale)
 			});
 		particles.back()->SetScale(
 			{
-				Random::RangeF(1,3),
-				Random::RangeF(1,3),
-				Random::RangeF(1,3),
+				Random::RangeF(0.3,3),
+				Random::RangeF(0.3,3),
+				Random::RangeF(0.3,3),
 			});
 		particles.back()->SetRot(
 			{
