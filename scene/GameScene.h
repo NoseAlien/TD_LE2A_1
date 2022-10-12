@@ -60,6 +60,8 @@ public: // メンバ関数
 	static void Load();
 	IScene* GetNextScene();
 
+	void InitOnce();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;

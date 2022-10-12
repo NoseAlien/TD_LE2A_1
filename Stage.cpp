@@ -6,6 +6,7 @@
 #include "GameScene.h"
 #include "HitStop.h"
 #include "PrimitiveDrawer.h"
+#include "SceneChange.h"
 
 using namespace std;
 
@@ -76,7 +77,9 @@ void Stage::Init()
 	linePos2 = { +50,0,0 };
 
 	isCameraMoveStep = 0;
+	stagePcrogress = Start;
 	cameraMoveVec = { 0,0,0 };
+
 }
 
 void Stage::Update()
@@ -115,7 +118,6 @@ void Stage::Update()
 				stagePcrogress = Staging;
 				SlowMotion::GetInstance()->StartSlowMotion(0.05, 180);
 			}
-			gameClear = true;
 			endTime = GetNowTime();
 			clearTime = endTime - startTime;
 
@@ -123,6 +125,10 @@ void Stage::Update()
 				SlowMotion::GetInstance()->GetisSlowMotion() == false)
 			{
 				stagePcrogress = End;
+				sceneChange->StartSceneChange();
+
+				gameClear = true;
+
 			}
 		}
 
@@ -145,7 +151,6 @@ void Stage::Update()
 			viewProjection_.eye = { player->GetPos().x,0,-50 };
 			viewProjection_.target = { player->GetPos().x ,0,0 };
 		}
-
 	}
 
 	GameOverCameraUpdate();
@@ -313,6 +318,8 @@ void Stage::GameOverCameraUpdate()
 		{
 			isCameraMoveStep = 4;
 			stagePcrogress = End;
+			sceneChange->StartSceneChange();
+
 		}
 	}
 	if (isCameraMoveStep == 2 || isCameraMoveStep == 3)
@@ -548,20 +555,26 @@ void Stage::StarUpdate()
 			{ tempStar->GetPos().x,tempStar->GetPos().y },
 			{ tempStar->GetScale().x,tempStar->GetScale().y },
 		};
-
-		if (collision->SquareHitSquare(starCollider, floorCollider))
+		if (ground->GetHP() > 0)
 		{
-			tempStar->SetPos(
-				{
-					tempStar->GetPos().x,
-					ground->GetPos().y + ground->GetScale().y + tempStar->GetScale().y,
-					tempStar->GetPos().z,
-				});
-			tempStar->SetGravity(0);
-			if (tempStar->GetGenerateType() == 1)
+			if (collision->SquareHitSquare(starCollider, floorCollider))
 			{
-				tempStar->SetSpeed(0);
+				tempStar->SetPos(
+					{
+						tempStar->GetPos().x,
+						ground->GetPos().y + ground->GetScale().y + tempStar->GetScale().y,
+						tempStar->GetPos().z,
+					});
+				tempStar->SetGravity(0);
+				if (tempStar->GetGenerateType() == 1)
+				{
+					tempStar->SetSpeed(0);
+				}
 			}
+		}
+		else
+		{
+
 		}
 
 		for (const auto& tempBlock : blocks)

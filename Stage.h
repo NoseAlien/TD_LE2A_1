@@ -83,6 +83,7 @@ private:
 
 	void GameOverCameraUpdate();
 
+
 public:
 	Stage(const int& stageType);
 	~Stage();
@@ -99,5 +100,6 @@ public:
 	void GenerateGoal(const Vector3& pos);
 
 	inline int GetStageType() { return stageType; }
+	inline int GetStageProgress() { return stagePcrogress; }
 };
 
