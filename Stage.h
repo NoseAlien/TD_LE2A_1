@@ -46,6 +46,11 @@ private:
 	DWORD clearTime;
 
 private:
+	// ââèoä÷òA
+	int isCameraMoveStep;
+	Vector3 cameraMoveVec;
+
+private:
 	std::list<std::unique_ptr<Star>> stars;
 	std::list<std::unique_ptr<Thorn>> thorns;
 	std::list<std::unique_ptr<Block>> blocks;
@@ -75,6 +80,8 @@ private:
 	void BlockUpdate();
 	void CannonUpdate();
 	void RaceUpdate();
+
+	void GameOverCameraUpdate();
 
 public:
 	Stage(const int& stageType);

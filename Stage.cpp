@@ -74,10 +74,10 @@ void Stage::Init()
 
 	linePos1 = { -50,0,0 };
 	linePos2 = { +50,0,0 };
-}
 
-static int isCameraMoveStep = 0;
-Vector3 cameraMoveVec = {};
+	isCameraMoveStep = 0;
+	cameraMoveVec = { 0,0,0 };
+}
 
 void Stage::Update()
 {
@@ -88,28 +88,27 @@ void Stage::Update()
 
 	if (stagePcrogress == Play || stagePcrogress == Staging)
 	{
-		if (HitStop::GetInstance()->GetisHitStop() == false)
-		{
-			StarUpdate();
-			BlockUpdate();
-			FloorUpdate();
-			ThornUpdate();
-			if (stageType == CannonStage)
-			{
-				CannonUpdate();
-			}
-			else if (stageType == RaceStage)
-			{
-				RaceUpdate();
 
-			}
-			if (player->GetLife() > 0)
-			{
-				PlayerUpdate();
-			}
+		StarUpdate();
+		BlockUpdate();
+		FloorUpdate();
+		ThornUpdate();
+		if (stageType == CannonStage)
+		{
+			CannonUpdate();
+		}
+		else if (stageType == RaceStage)
+		{
+			RaceUpdate();
+
+		}
+		if (player->GetLife() > 0)
+		{
+			PlayerUpdate();
 		}
 
-		if (ground->GetHP() <= 0 || playerIsHitGoal == true)
+		// ゲームクリアの時
+		if (ground->GetHP() <= 0)
 		{
 			if (stagePcrogress == Play)
 			{
@@ -120,83 +119,36 @@ void Stage::Update()
 			endTime = GetNowTime();
 			clearTime = endTime - startTime;
 
-			if (stagePcrogress == Staging && SlowMotion::GetInstance()->GetisSlowMotion() == false &&
-				player->GetPos().y >= 20)
+			if (stagePcrogress == Staging && player->GetPos().y >= 20 &&
+				SlowMotion::GetInstance()->GetisSlowMotion() == false)
 			{
-				//stagePcrogress = End;
+				stagePcrogress = End;
 			}
 		}
 
+		// ゲームオーバーの時
 		if (ground->GetPos().y + ground->GetScale().y >= 0 ||
-			player->GetLife() <= 0)
+			player->GetLife() <= 0 || playerIsHitGoal == true)
 		{
 			if (stagePcrogress == Play)
 			{
 				stagePcrogress = Staging;
-				//HitStop::GetInstance()->StartHitStop(120);
-				//SlowMotion::GetInstance()->StartSlowMotion(0.05, 120);
-				//viewProjection_.SetShakeValue(-5, 5, 120);
-				//viewProjection_.MoveToTargetPos(player->GetPos());
-				//isCameraMoveTarget = true;
 				isCameraMoveStep = 1;
 
 			}
 			gameOver = true;
 			endTime = GetNowTime();
 			clearTime = endTime - startTime;
-
-
 		}
-
-		if (stageType == RaceStage)
+		if (stageType == RaceStage && isCameraMoveStep == 0)
 		{
 			viewProjection_.eye = { player->GetPos().x,0,-50 };
 			viewProjection_.target = { player->GetPos().x ,0,0 };
 		}
-		else
-		{
-			//viewProjection_.eye = { 0,0,-50 };
-			//viewProjection_.target = { 0 ,0,0 };
-		}
+
 	}
 
-	if (isCameraMoveStep == 1)
-	{
-		Vector3 vec = player->GetPos() - viewProjection_.target;
-		viewProjection_.target += vec.Normalized() * 2;
-		if (vec.Magnitude() <= 2)
-		{
-			viewProjection_.target = player->GetPos();
-			//isCameraMoveTarget = false;
-			isCameraMoveStep = 2;
-			//isCameraMovePos = true;
-		}
-	}
-
-	if (isCameraMoveStep == 2)
-	{
-		cameraMoveVec = viewProjection_.target - viewProjection_.eye;
-
-		if (cameraMoveVec.Magnitude() <= 15)
-		{
-			SlowMotion::GetInstance()->StartSlowMotion(0.01, 60);
-
-			isCameraMoveStep = 3;
-		}
-	}
-	if (isCameraMoveStep == 3)
-	{
-		if (stagePcrogress == Staging && SlowMotion::GetInstance()->GetisSlowMotion() == false)
-		{
-			isCameraMoveStep = 4;
-			stagePcrogress = End;
-		}
-	}
-	if (isCameraMoveStep == 2 || isCameraMoveStep == 3)
-	{
-		viewProjection_.eye += cameraMoveVec.Normalized() * 2 *
-			SlowMotion::GetInstance()->GetSlowExrate();
-	}
+	GameOverCameraUpdate();
 
 	auto text = DebugText::GetInstance();
 	text->SetPos(20, 60);
@@ -330,6 +282,46 @@ void Stage::DrawCountDown()
 		startTextSprites[startTextIndex]->Draw();
 	}
 }
+void Stage::GameOverCameraUpdate()
+{
+	if (isCameraMoveStep == 1)
+	{
+		Vector3 vec = player->GetPos() - viewProjection_.target;
+		viewProjection_.target += vec.Normalized() * 2;
+		if (vec.Magnitude() <= 2)
+		{
+			viewProjection_.target = player->GetPos();
+			//isCameraMoveTarget = false;
+			isCameraMoveStep = 2;
+			//isCameraMovePos = true;
+		}
+	}
+	if (isCameraMoveStep == 2)
+	{
+		cameraMoveVec = viewProjection_.target - viewProjection_.eye;
+
+		if (cameraMoveVec.Magnitude() <= 15)
+		{
+			SlowMotion::GetInstance()->StartSlowMotion(0.01, 60);
+
+			isCameraMoveStep = 3;
+		}
+	}
+	if (isCameraMoveStep == 3)
+	{
+		if (stagePcrogress == Staging && SlowMotion::GetInstance()->GetisSlowMotion() == false)
+		{
+			isCameraMoveStep = 4;
+			stagePcrogress = End;
+		}
+	}
+	if (isCameraMoveStep == 2 || isCameraMoveStep == 3)
+	{
+		viewProjection_.eye += cameraMoveVec.Normalized() * 2 *
+			SlowMotion::GetInstance()->GetSlowExrate();
+	}
+}
+
 
 void Stage::GenerateThorn(const Vector3& pos, const Vector3& scale)
 {
@@ -730,13 +722,13 @@ void Stage::RaceUpdate()
 	Vector3 tempGroundPos = ground->GetPos();
 	ground->SetPos(
 		{
-			tempGroundPos.x + player->GetSpeed(),
+			tempGroundPos.x + player->GetSpeed() * SlowMotion::GetInstance()->GetSlowExrate(),
 			tempGroundPos.y,
 			tempGroundPos.z,
 		});
 
-	linePos1.x += player->GetSpeed();
-	linePos2.x += player->GetSpeed();
+	linePos1.x += player->GetSpeed() * SlowMotion::GetInstance()->GetSlowExrate();
+	linePos2.x += player->GetSpeed() * SlowMotion::GetInstance()->GetSlowExrate();
 
 	if (player->GetPos().x >= goal->GetPos().x - goal->GetScale().x)
 	{
