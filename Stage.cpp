@@ -317,6 +317,7 @@ void Stage::GameOverCameraUpdate()
 	}
 	if (isCameraMoveStep == 2 || isCameraMoveStep == 3)
 	{
+		viewProjection_.target = player->GetPos();
 		viewProjection_.eye += cameraMoveVec.Normalized() * 2 *
 			SlowMotion::GetInstance()->GetSlowExrate();
 	}
