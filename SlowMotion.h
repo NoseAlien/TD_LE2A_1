@@ -22,6 +22,7 @@ public:
 
 	inline float GetSlowExrate() { return slowExrate; }
 	inline bool GetisSlowMotion() { return isSlowMotion; }
+	inline int GetSlowTimer() { return slowTimer; }
 
 public:
 	static SlowMotion* GetInstance();

@@ -18,6 +18,7 @@ Ground::~Ground()
 void Ground::Load()
 {
 	damageSE = audio->LoadWave("se/floor_damage.wav");
+	largeDamageSE = audio->LoadWave("se/floor_damage_L.wav");
 	defeatSE = audio->LoadWave("se/floor_break.wav");
 	enemyTexture = TextureManager::Load("red1x1.png");
 	enemyTexture2 = TextureManager::Load("blue1x1.png");

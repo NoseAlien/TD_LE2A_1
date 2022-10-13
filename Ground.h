@@ -13,6 +13,7 @@ public:
 
 private:
 	uint32_t damageSE;
+	uint32_t largeDamageSE;
 	uint32_t defeatSE;
 
 	WorldTransform* trans = nullptr;	// トランスフォーム
@@ -54,6 +55,12 @@ public:
 	{
 		hp -= subhp;
 		audio->PlayWave(damageSE);
+	}
+
+	inline void LargeDamage(const int subhp)
+	{
+		hp -= subhp;
+		audio->PlayWave(largeDamageSE);
 	}
 
 	inline Vector3 GetPos() { return trans->translation_; }

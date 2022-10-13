@@ -6,6 +6,7 @@
 #include "Cannon.h"
 #include "Goal.h"
 #include "Sprite.h"
+#include "Vector2.h"
 #include <vector>
 #include <memory>
 
@@ -38,12 +39,21 @@ private:
 	float startTextAngle;
 	float startTextAlpha;
 	bool isStartTextEnd;
+	Vector2 clearTimeLastDightPos;
+	bool isMoveClearTime;
 
 private:
 	// クリア時間関連
 	DWORD startTime;
 	DWORD endTime;
 	DWORD clearTime;
+	static std::vector<uint32_t> numberSheet;
+	Sprite* clearTimeSprites[6];
+	static uint32_t timeStrTexture;
+	Sprite* timeStrSprite;
+	int clearTimeDights;
+	std::vector<int> dightsNumber;
+	bool isShowClearTime;
 
 private:
 	// 演出関連
@@ -73,6 +83,7 @@ private:
 	void PlayerGenerateStar(const Vector3 pos);
 
 	void CountDownUpdate();
+	void ClearTimeUpdate();
 	void PlayerUpdate();
 	void FloorUpdate();
 	void StarUpdate();
@@ -92,6 +103,7 @@ public:
 	void Update();
 	void Draw();
 	void DrawLine();
+	void DrawClearTime();
 	void DrawCountDown();
 
 	void GenerateThorn(const Vector3& pos, const Vector3& scale = { 1,1,1 });
