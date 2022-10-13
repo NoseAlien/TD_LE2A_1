@@ -477,19 +477,19 @@ void Stage::FloorUpdate()
 
 			if (player->GetHaveStarNum() > 0)
 			{
-				ground->Damage(player->GetHaveStarNum() * player->GetStarAttackDamage());
+				ground->LargeDamage(player->GetHaveStarNum() * player->GetStarAttackDamage());
 				player->SetHaveStarNum(0);
 				ground->SetisHit(2);
 			}
 			else
 			{
-				if (player->GetisHeavyAttack() == true)
+				if (player->GetisHeavyAttack())
 				{
 					PlayerGenerateStar(player->GetPos());
-					ground->Damage(player->GetHeavyAttackDamage());
+					ground->LargeDamage(player->GetHeavyAttackDamage());
 					ground->SetisHit(2);
 				}
-				else if (player->GetisWeakAttack() == true)
+				else if (player->GetisWeakAttack())
 				{
 					ground->Damage(player->GetWeakAttackDamage());
 					ground->SetisHit(2);
