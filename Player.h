@@ -7,6 +7,7 @@
 
 #include "WeakAttackEffect.h"
 #include "HeavyAttackEffect.h"
+#include "PlayerDieEffect.h"
 #include "SlowMotion.h"
 
 class Player
@@ -17,6 +18,7 @@ public:
 private:
 	std::unique_ptr<WeakAttackEffect> weakAttackEffect;
 	std::unique_ptr<HeavyAttackEffect> heavyAttackEffect;
+	std::unique_ptr<PlayerDieEffect> playerDieEffect;
 
 private:
 	Input* input_ = nullptr;
@@ -83,6 +85,7 @@ public:
 	void EffectGenerate(const Vector3& pos);
 	void EffectUpdate();
 	void EffectDraw();
+	void DieEffectGenerate();
 
 	inline void UpdateMatrix() { trans->UpdateMatrix(); }
 

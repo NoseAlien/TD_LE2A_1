@@ -67,6 +67,8 @@ void Stage::Load()
 	}
 	timeStrTexture = TextureManager::Load("TimeStr.png");
 }
+bool isPlayerDieEffectGenerate = false;
+
 void Stage::Init()
 {
 	viewProjection_.eyePos = { 0,0,-50 };
@@ -103,6 +105,8 @@ void Stage::Init()
 	isCameraMoveStep = false;
 	stagePcrogress = Start;
 	cameraMoveVec = { 0,0,0 };
+
+	isPlayerDieEffectGenerate = false;
 
 }
 
@@ -225,7 +229,6 @@ void Stage::Draw()
 		goal->Draw(viewProjection_, thornTexture);
 	}
 
-	//PrimitiveDrawer::GetInstance()->DrawLine3d(linePos1, linePos2, { 255,0,0,255 });
 
 	player->EffectDraw();
 	ground->EffectDraw();
@@ -233,7 +236,6 @@ void Stage::Draw()
 void Stage::DrawLine()
 {
 	PrimitiveDrawer::GetInstance()->DrawLine3d(linePos1, linePos2, { 255,0,0,255 });
-	//PrimitiveDrawer::GetInstance()->DrawLine3d({ -50,0,0 }, { 50,0,0 }, { 255,0,0,255 });
 }
 
 void Stage::CountDownUpdate()
@@ -322,8 +324,16 @@ void Stage::GameOverCameraUpdate()
 {
 	if (isCameraMoveStep)
 	{
-		viewProjection_.eyePos += (player->GetPos() + Vector3{ 0, 0, -8 } - viewProjection_.eyePos) * 0.4;
-		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{0, 0, 1};
+		Vector3 vec = (player->GetPos() + Vector3{ 0, 0, -8 } - viewProjection_.eyePos);
+		viewProjection_.eyePos += vec * 0.4;
+		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{ 0, 0, 1 };
+
+		if (vec.Magnitude() <= 0.001 && isPlayerDieEffectGenerate == false)
+		{
+			//sceneChange->StartSceneChange();
+			player->DieEffectGenerate();
+			isPlayerDieEffectGenerate = true;
+		}
 	}
 }
 

@@ -55,7 +55,7 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
 	stages.emplace_back(move(make_unique<Stage>(RaceStage)));
 
-	stageSelect = move(make_unique<StageSelect>());
+	stageSelect = move(make_unique<StageSelect>(stages.size()));
 
 	viewProjection_.fovAngleY = DegreeToRad(50);
 	viewProjection_.eyePos = { 0,0,-50 };
@@ -67,7 +67,7 @@ void GameScene::Initialize()
 
 	player->Init();
 
-	stageSelect->Initialize(stages.size());
+	stageSelect->Initialize();
 
 	currentStage = 0;
 	gameState = isSelect;
@@ -77,14 +77,24 @@ void GameScene::Update()
 {
 	if (gameState == isGame)
 	{
+		if (input_->TriggerKey(DIK_RETURN))
+		{
+			pause = !pause;
+		}
+
+		if (!pause)
+		{
+			stages[currentStage]->Update();
+		}
+
 		if (input_->TriggerKey(DIK_ESCAPE))
 		{
 			gameState = isSelect;
 			player->Init();
 
 			stageSelect->ResetObjPos();
-			viewProjection_.eyePos = { 0,0,-50 };
-			viewProjection_.targetPos = { 0,0,0 };
+			viewProjection_.eye = { 0,0,-50 };
+			viewProjection_.target = { 0,0,0 };
 			viewProjection_.Initialize();
 			isSelectEnd = false;
 			SlowMotion::GetInstance()->Init();
@@ -96,21 +106,11 @@ void GameScene::Update()
 
 			player->Init();
 			stageSelect->ResetObjPos();
-			viewProjection_.eyePos = { 0,0,-50 };
-			viewProjection_.targetPos = { 0,0,0 };
-			viewProjection_.Initialize();
+			viewProjection_.eye = { 0,0,-50 };
+			viewProjection_.target = { 0,0,0 };
+			viewProjection_.UpdateMatrix();
 			isSelectEnd = false;
 			sceneChange->SetisChange(false);
-		}
-
-		if (input_->TriggerKey(DIK_RETURN))
-		{
-			pause = !pause;
-		}
-
-		if (!pause)
-		{
-			stages[currentStage]->Update();
 		}
 	}
 	else if (gameState == isSelect)
@@ -121,7 +121,6 @@ void GameScene::Update()
 		{
 			//player->SetPos({ 0,20,0 });
 
-			CurrentStageInit();
 			sceneChange->StartSceneChange();
 			isSelectEnd = false;
 		}
@@ -134,6 +133,7 @@ void GameScene::Update()
 		if (sceneChange->GetisChange() == true)
 		{
 			gameState = isGame;
+			CurrentStageInit();
 			sceneChange->SetisChange(false);
 
 		}

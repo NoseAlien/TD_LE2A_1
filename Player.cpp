@@ -15,6 +15,7 @@ Player::Player() :
 {
 	weakAttackEffect = move(make_unique<WeakAttackEffect>());
 	heavyAttackEffect = move(make_unique<HeavyAttackEffect>());
+	playerDieEffect = move(make_unique<PlayerDieEffect>());
 }
 Player::~Player()
 {
@@ -31,9 +32,10 @@ void Player::Load()
 
 	playerTexture = TextureManager::Load("white1x1.png");
 	redPixel = TextureManager::Load("red1x1.png");
-	playerModel = Model::Create();
+	playerModel = Model::CreateFromOBJ("player", true);
 	trans = new WorldTransform();
 	trans->Initialize();
+	trans->rotation_ = { DegreeToRad(210),DegreeToRad(-7),DegreeToRad(4) };
 }
 
 static int tempTimer = 0; // ƒQ[ƒ€ŠJŽn‚Æ“¯Žž‚ÉUŒ‚‚µ‚È‚¢‚½‚ß
@@ -91,7 +93,7 @@ void Player::Draw(const ViewProjection& viewProjection_)
 		}
 		else
 		{
-			playerModel->Draw(*trans, viewProjection_, playerTexture);
+			playerModel->Draw(*trans, viewProjection_);
 		}
 	}
 }
@@ -105,9 +107,7 @@ void Player::EffectGenerate(const Vector3& pos)
 	}
 	if (isHeavyAttack == true)
 	{
-		//viewProjection_.SetShakeValue(1.5, 80, 3);
 		viewProjection_.SetShakeValue(1.5, 40, 2);
-		//weakAttackEffect->Generate({ pos.x,pos.y - 2,pos.z });
 		heavyAttackEffect->Generate({ pos.x,pos.y - 5,pos.z });
 	}
 }
@@ -115,19 +115,40 @@ void Player::EffectUpdate()
 {
 	weakAttackEffect->Update();
 	heavyAttackEffect->Update();
+	playerDieEffect->Update();
 }
 void Player::EffectDraw()
 {
 	weakAttackEffect->Draw();
 	heavyAttackEffect->Draw();
+	playerDieEffect->Draw();
 }
 
+void Player::DieEffectGenerate()
+{
+	playerDieEffect->Generate(trans->translation_);
+}
+
+//int tempAngle1 = 0;
+//int tempAngle2 = 255;
+//int tempAngle3 = 0;
 void Player::MoveUpdate()
 {
 	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
 	//if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
 	//if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
 	//if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
+
+	//if (input_->PushKey(DIK_D))	tempAngle1++;
+	//if (input_->PushKey(DIK_A)) tempAngle1--;
+	//if (input_->PushKey(DIK_W)) tempAngle2++;
+	//if (input_->PushKey(DIK_S)) tempAngle2--;
+	//if (input_->PushKey(DIK_Q)) tempAngle3++;
+	//if (input_->PushKey(DIK_E)) tempAngle3--;
+
+	//trans->rotation_.x = DegreeToRad(tempAngle2);
+	//trans->rotation_.y = DegreeToRad(tempAngle1);
+	//trans->rotation_.z = DegreeToRad(tempAngle3);
 
 	// ˆÚ“®ˆ—
 	trans->translation_.x += speed * slowMotion->GetSlowExrate();
