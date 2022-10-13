@@ -14,7 +14,7 @@ Block::~Block()
 	delete blockModel;
 }
 
-void Block::Generate(const Vector3& pos, const Vector3& scale)
+void Block::Generate(const Vector3& pos, const Vector3& scale, const bool& haveStar)
 {
 	hp = maxhp;
 	trans->translation_ = pos;
@@ -22,6 +22,7 @@ void Block::Generate(const Vector3& pos, const Vector3& scale)
 	trans->UpdateMatrix();
 	isDestroy = false;
 	isHit = 0;
+	this->haveStar = haveStar;
 }
 
 void Block::Update()

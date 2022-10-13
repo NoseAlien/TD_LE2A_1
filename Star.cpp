@@ -45,7 +45,7 @@ void Star::Update()
 			speed = 0;
 		}
 	}
-	else if (generateType == 1)
+	else if (generateType == 1 || generateType == 2)
 	{
 		gravity -= 0.05 * slowMotion->GetSlowExrate();
 		if (gravity <= -1) gravity = -1;
@@ -77,7 +77,6 @@ void Star::Update()
 		DegreeToRad(angleShakeValue.z) };*/
 
 		trans->rotation_.z = DegreeToRad(Random::RangeF(-20, 20));
-
 	}
 	else
 	{
@@ -86,7 +85,7 @@ void Star::Update()
 			trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),0.0001 };
 			trans->rotation_.z += dirVec.Normalized().x * 0.05 * slowMotion->GetSlowExrate();
 		}
-		else if (generateType == 1)
+		else if (generateType == 1 || generateType == 2)
 		{
 			trans->scale_ = trans->scale_ = { 1.5,1.5,0.0001 };
 			trans->rotation_.z += dirVec.Normalized().x * 0.05 * slowMotion->GetSlowExrate();

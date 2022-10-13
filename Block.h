@@ -13,11 +13,12 @@ private:
 	int maxhp;
 	bool isDestroy;
 	int isHit;
+	bool haveStar;
 
 public:
 	Block();
 	~Block();
-	void Generate(const Vector3& pos, const Vector3& scale);
+	void Generate(const Vector3& pos, const Vector3& scale, const bool& haveStar);
 	void Update();
 	void Draw(const ViewProjection& viewProjection_, const uint32_t& starTexture);
 
@@ -27,6 +28,7 @@ public:
 	inline Vector3 GetScale() { return trans->scale_; }
 	inline bool GetisDestroy() { return isDestroy; }
 	inline int GetisHit() { return isHit; }
+	inline bool GetHaveStar() { return haveStar; }
 
 	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
 	inline void SetisHit(const int& isHit) { this->isHit = isHit; }
