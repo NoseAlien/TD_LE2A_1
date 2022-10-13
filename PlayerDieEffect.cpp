@@ -36,7 +36,7 @@ void PlayerDieEffect::Update()
 	for (int i = 0; i < particles.size(); i++)
 	{
 		auto tempScale = particles[i]->GetScale();
-		tempScale -= 0.01;
+		tempScale -= 0.02;
 		if (tempScale.x <= 0) tempScale = { 0,0,0 };
 		particles[i]->SetScale(tempScale);
 
