@@ -18,5 +18,10 @@ public:
 	void Draw();
 
 	inline bool GetisEnd() { return	isEnd; }
+	inline void SetisEnd(const bool& isEnd)
+	{
+		this->isEnd = isEnd;
+		count = 0;
+	}
 };
 

@@ -88,6 +88,7 @@ public:
 	void EffectDraw();
 	void DieEffectGenerate();
 	inline bool GetDieEffectisEnd() { return playerDieEffect->GetisEnd(); }
+	inline void SetDieEffectisEnd(const bool& isEnd) { playerDieEffect->SetisEnd(isEnd); }
 
 	void SetisDamage(const bool& isDamage);
 

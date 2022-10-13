@@ -119,7 +119,6 @@ void Stage::Update()
 
 	if (stagePcrogress == Play || stagePcrogress == Staging)
 	{
-
 		StarUpdate();
 		BlockUpdate();
 		FloorUpdate();
@@ -184,15 +183,12 @@ void Stage::Update()
 		{
 			stagePcrogress = End;
 			sceneChange->StartSceneChange();
+			player->SetDieEffectisEnd(false);
 		}
 	}
 
 	GameOverCameraUpdate();
 	ClearTimeUpdate();
-	//if (isShowClearTime == true)
-	//{
-
-	//}
 
 	//auto text = DebugText::GetInstance();
 	//text->SetPos(20, 60);
