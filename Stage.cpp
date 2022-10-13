@@ -322,42 +322,8 @@ void Stage::GameOverCameraUpdate()
 {
 	if (isCameraMoveStep == 1)
 	{
-		Vector3 vec = player->GetPos() - viewProjection_.targetPos;
-		viewProjection_.targetPos += vec.Normalized() * 2;
-		if (vec.Magnitude() <= 2)
-		{
-			viewProjection_.target = player->GetPos();
-			isCameraMoveStep = 2;
-		}
-	}
-	if (isCameraMoveStep == 2)
-	{
-		cameraMoveVec = viewProjection_.targetPos - viewProjection_.eyePos;
-
-		if (cameraMoveVec.Magnitude() <= 15)
-		{
-			SlowMotion::GetInstance()->StartSlowMotion(0.05, 480);
-			isCameraMoveStep = 3;
-		}
-	}
-	if (isCameraMoveStep == 3)
-	{
-		if (stagePcrogress == Staging && cameraMoveVec.Magnitude() <= 0.5)
-		{
-			isCameraMoveStep = 4;
-			stagePcrogress = End;
-			sceneChange->StartSceneChange();
-
-		}
-	}
-	if (isCameraMoveStep == 2 || isCameraMoveStep == 3)
-	{
-		if (stagePcrogress == Staging && cameraMoveVec.Magnitude() > 0.5)
-		{
-			viewProjection_.target = player->GetPos();
-			viewProjection_.eye += cameraMoveVec.Normalized() * 2 *
-				SlowMotion::GetInstance()->GetSlowExrate();
-		}
+		viewProjection_.eyePos += (player->GetPos() + Vector3{ 0, 0, -8 } - viewProjection_.eyePos) * 0.3;
+		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{0, 0, 1};
 	}
 }
 
