@@ -328,7 +328,7 @@ void Stage::GameOverCameraUpdate()
 		viewProjection_.eyePos += vec * 0.4;
 		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{ 0, 0, 1 };
 
-		if (vec.Magnitude() <= 0.001 && isPlayerDieEffectGenerate == false)
+		if (vec.Magnitude() <= 0.000005 && isPlayerDieEffectGenerate == false)
 		{
 			//sceneChange->StartSceneChange();
 			player->DieEffectGenerate();

@@ -269,7 +269,7 @@ void Player::AttackUpdate()
 
 void Player::SetisDamage(const bool& isDamage)
 {
-	if (damageTimer == 0)
+	if (damageTimer == 0 && life > 0)
 	{
 		this->isDamage = isDamage;
 		pushKeyFream = 0;
