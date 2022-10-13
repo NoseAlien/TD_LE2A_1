@@ -80,15 +80,21 @@ void Star::Update()
 	}
 	else
 	{
+		int sign = 1;
+		if (dirVec.x < 0)
+		{
+			sign = -1;
+		}
+
 		if (generateType == 0)
 		{
 			trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),0.0001 };
-			trans->rotation_.z += dirVec.Normalized().x * 0.05 * slowMotion->GetSlowExrate();
+			trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
 		}
 		else if (generateType == 1 || generateType == 2)
 		{
 			trans->scale_ = trans->scale_ = { 1.5,1.5,0.0001 };
-			trans->rotation_.z += dirVec.Normalized().x * 0.05 * slowMotion->GetSlowExrate();
+			trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
 		}
 	}
 
