@@ -106,10 +106,7 @@ public:
 				};
 				shakeVector *= shakeValue * (shakeTimer / (float)shakeMaxTimer);
 			}
-			//target += shakeValue;
-
 			shakeTimer--;
-
 		}
 		else
 		{
