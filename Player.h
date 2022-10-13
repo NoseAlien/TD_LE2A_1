@@ -71,6 +71,11 @@ private:
 	int addScaleStep = 0;
 	float maxSize = 2.5;
 
+public:
+	// パターン２のやつ作るために使うやつ
+	bool place = false;
+
+
 private:
 	void MoveUpdate();
 	void AttackUpdate();

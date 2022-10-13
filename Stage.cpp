@@ -150,7 +150,8 @@ void Stage::Update()
 				isMoveClearTime = true;
 			}
 
-			if (stagePcrogress == Staging && player->GetPos().y >= 20 &&
+			// •ÏX
+			if (stagePcrogress == Staging/* && player->GetPos().y >= 20*/ &&
 				SlowMotion::GetInstance()->GetisSlowMotion() == false)
 			{
 				stagePcrogress = End;
@@ -491,7 +492,7 @@ void Stage::PlayerUpdate()
 		if (collision->SphereHitSphere(
 			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius()))
 		{
-			if (temp->GetisCanHit() == true)
+			if (temp->GetisCanHit() == true && player->GetisEngulfAttack() == true)
 			{
 				player->HaveStarNumIncriment();
 				stars.remove(temp);
@@ -510,27 +511,14 @@ void Stage::PlayerUpdate()
 // °
 void Stage::FloorUpdate()
 {
-	// °‚Æ‚Ì“–‚½‚è”»’è
-	//SquareCollider playerCollider =
-	//{
-	//	{ player->GetPos().x,player->GetPos().y },
-	//	{ player->GetScale().x,player->GetScale().y },
-	//};
-	//SquareCollider floorCollider =
-	//{
-	//	{ ground->GetPos().x,ground->GetPos().y },
-	//	{ ground->GetScale().x,ground->GetScale().y },
-	//};
-
-	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + 1)
+	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + 2)
 	{
 		player->SetPos(
 			{
 				player->GetPos().x,
-				ground->GetPos().y + ground->GetScale().y + 1,
+				ground->GetPos().y + ground->GetScale().y + 2,
 				player->GetPos().z
 			});
-		//player->SetScale({ 0,0,0 });
 
 		player->SetisReverse(true);
 
@@ -661,10 +649,6 @@ void Stage::StarUpdate()
 					tempStar->SetSpeed(0);
 				}
 			}
-		}
-		else
-		{
-
 		}
 
 		for (const auto& tempBlock : blocks)

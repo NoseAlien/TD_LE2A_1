@@ -133,33 +133,35 @@ void Player::MoveUpdate()
 {
 	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
 	//if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
-	if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
-	if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
-	if (trans->translation_.x >= 39.5)
-	{
-		trans->translation_.x = 39.5;
-	}
-	if (trans->translation_.x <= -39.5)
-	{
-		trans->translation_.x = -39.5;
-	}
+	//if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
+	//if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
+	//if (trans->translation_.x >= 39.5)
+	//{
+	//	trans->translation_.x = 39.5;
+	//}
+	//if (trans->translation_.x <= -39.5)
+	//{
+	//	trans->translation_.x = -39.5;
+	//}
 
 
 	// ˆÚ“®ˆ—
-	//trans->translation_.x += speed * slowMotion->GetSlowExrate();
+	trans->translation_.x += speed * slowMotion->GetSlowExrate();
 
-	//if (stageType != RaceStage)
-	//{
-	//	if (trans->translation_.x >= 43)
-	//	{
-	//		trans->translation_.x = -43;
-	//	}
-	//}
+	if (stageType != RaceStage)
+	{
+		if (trans->translation_.x >= 43)
+		{
+			trans->translation_.x = -43;
+		}
+	}
 	if (trans->translation_.y >= 20)
 	{
 		trans->translation_.y = 20;
 	}
 }
+
+
 void Player::AttackUpdate()
 {
 	// UŒ‚‚ÌŽí—Þ‚ð”»’f‚·‚éˆ—
@@ -167,66 +169,136 @@ void Player::AttackUpdate()
 	{
 		if (input_->PushKey(DIK_SPACE))
 		{
-			pushKeyFream++;
+			if (trans->translation_.y == 20)
+			{
+				pushKeyFream++;
+				isReverse = false;
+			}
 		}
 
 		if (input_->ReleasedKey(DIK_SPACE))
 		{
-			isAttack = true;
-			addScaleStep = 1;
-			if (pushKeyFream < maxPushKeyFream)
+			if (trans->translation_.y == 20)
 			{
-				isWeakAttack = true;
-				maxSize = 2.5;
+				isAttack = true;
+				addScaleStep = 1;
+				if (pushKeyFream < maxPushKeyFream)
+				{
+					isWeakAttack = true;
+					maxSize = 2.5;
+				}
+				else if (pushKeyFream >= maxPushKeyFream)
+				{
+					isHeavyAttack = true;
+					maxSize = 4;
+					viewProjection_.SetShakeValue(0.5, 10);
+				}
 			}
-			else if (pushKeyFream >= maxPushKeyFream)
+			else
 			{
-				isHeavyAttack = true;
-				maxSize = 4;
-				viewProjection_.SetShakeValue(0.5, 10);
+				trans->translation_.y = 20;
 			}
 
 			audio->PlayWave(jumpSE);
 		}
+
+		//if (input_->ReleasedKey(DIK_SPACE))
+		//{
+		//	isAttack = true;
+		//	addScaleStep = 1;
+		//	if (pushKeyFream < maxPushKeyFream)
+		//	{
+		//		isWeakAttack = true;
+		//		maxSize = 2.5;
+		//	}
+		//	else if (pushKeyFream >= maxPushKeyFream)
+		//	{
+		//		isHeavyAttack = true;
+		//		maxSize = 4;
+		//		viewProjection_.SetShakeValue(0.5, 10);
+		//	}
+
+		//	audio->PlayWave(jumpSE);
+		//}
 	}
 
 	// UŒ‚ˆ—
 	if (isAttack == true)
 	{
 		pushKeyFream = 0;
-		//trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
-
-		if (isReverse == false)
+		if (isWeakAttack == true)
 		{
-			trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
-		}
-		else
-		{
-			if (addScaleStep == 1)
+			if (isReverse == false)
 			{
-				trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
-				trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
-				trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
-				if (trans->scale_.y <= 0)
+				trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
+			}
+			else
+			{
+				if (addScaleStep == 1)
 				{
-					trans->translation_.y = 20;
-					trans->scale_ = { 0,0,0 };
-					addScaleStep = 2;
+					trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+					trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+					trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
+					if (trans->scale_.y <= 0)
+					{
+						trans->translation_.y = 20;
+						trans->scale_ = { 0,0,0 };
+						addScaleStep = 2;
+					}
+				}
+				else if (addScaleStep == 2)
+				{
+					stopTimer++;
+
+					if (stopTimer >= 1)
+					{
+						trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
+						trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
+						trans->scale_.z += 0.05 * slowMotion->GetSlowExrate();
+
+						if (trans->scale_.x >= 1)
+						{
+							isReverse = false;		// ”½“]ƒtƒ‰ƒO
+							isWeakAttack = false;	// ŽãUŒ‚
+							isHeavyAttack = false;	// ‹­UŒ‚
+							isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
+							isAttack = false;		// UŒ‚ƒtƒ‰ƒO
+
+							stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
+							trans->scale_ = { 1,1,1 };
+						}
+					}
 				}
 			}
-			else if (addScaleStep == 2)
+		}
+		if (isHeavyAttack == true)
+		{
+			if (isReverse == false)
 			{
-				stopTimer++;
-
-				if (stopTimer >= 1)
+				trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
+			}
+			else
+			{
+				if (addScaleStep == 1)
 				{
-					//trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
-					trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
-					trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
-					trans->scale_.z += 0.05 * slowMotion->GetSlowExrate();
-
-					if (trans->scale_.x >= 1)
+					trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+					trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+					trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
+					if (trans->scale_.y <= 0.5)
 					{
+						//trans->translation_.y = 20;
+						addScaleStep = 2;
+					}
+				}
+				if (addScaleStep == 2)
+				{
+					trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
+					trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
+					trans->scale_.z -= addScaleValue / 2 * slowMotion->GetSlowExrate();
+					if (trans->scale_.y >= 1)
+					{
+						//trans->translation_.y = 20;
+						addScaleStep = 0;
 						isReverse = false;		// ”½“]ƒtƒ‰ƒO
 						isWeakAttack = false;	// ŽãUŒ‚
 						isHeavyAttack = false;	// ‹­UŒ‚
@@ -234,31 +306,105 @@ void Player::AttackUpdate()
 						isAttack = false;		// UŒ‚ƒtƒ‰ƒO
 
 						stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
-						//pushKeyFream = 0;		// ‰Ÿ‚µ‚½Žž‚ÌƒtƒŒ[ƒ€
 						trans->scale_ = { 1,1,1 };
 					}
 				}
 			}
 		}
 
-		// ‚Ü‚í‚è‚Ì¯‚ð‰ó‚·ˆ—
-		if (input_->TriggerKey(DIK_SPACE))
+		/*if (isAttack == false)
 		{
-			if (isWeakAttack == true)
+			if (input_->PushKey(DIK_SPACE))
 			{
-				if (stopTimer >= 2)
-				{
-					isEngulfAttack = true;
-				}
+				pushKeyFream++;
 			}
-			else if (isHeavyAttack == true)
+
+			if (input_->ReleasedKey(DIK_SPACE))
 			{
-				if (stopTimer >= 4)
+				isAttack = true;
+				addScaleStep = 1;
+				if (pushKeyFream < maxPushKeyFream)
 				{
-					isEngulfAttack = true;
+					isWeakAttack = true;
+					maxSize = 2.5;
 				}
+				else if (pushKeyFream >= maxPushKeyFream)
+				{
+					isHeavyAttack = true;
+					maxSize = 4;
+					viewProjection_.SetShakeValue(0.5, 10);
+				}
+
+				audio->PlayWave(jumpSE);
 			}
-		}
+		}*/
+
+		//if (isAttack == true)
+		//{
+		//	pushKeyFream = 0;
+		// 
+		//	if (isReverse == false)
+		//	{
+		//		trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
+		//	}
+		//	else
+		//	{
+		//		if (addScaleStep == 1)
+		//		{
+		//			trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+		//			trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+		//			trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
+		//			if (trans->scale_.y <= 0)
+		//			{
+		//				trans->translation_.y = 20;
+		//				trans->scale_ = { 0,0,0 };
+		//				addScaleStep = 2;
+		//			}
+		//		}
+		//		else if (addScaleStep == 2)
+		//		{
+		//			stopTimer++;
+		//
+		//			if (stopTimer >= 1)
+		//			{
+		//				//trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
+		//				trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
+		//				trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
+		//				trans->scale_.z += 0.05 * slowMotion->GetSlowExrate();
+		//
+		//				if (trans->scale_.x >= 1)
+		//				{
+		//					isReverse = false;		// ”½“]ƒtƒ‰ƒO
+		//					isWeakAttack = false;	// ŽãUŒ‚
+		//					isHeavyAttack = false;	// ‹­UŒ‚
+		//					isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
+		//					isAttack = false;		// UŒ‚ƒtƒ‰ƒO
+		//
+		//					stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
+		//					trans->scale_ = { 1,1,1 };
+		//				}
+		//			}
+		//		}
+		//	}
+
+		// ‚Ü‚í‚è‚Ì¯‚ð‰ó‚·ˆ—
+		//if (input_->TriggerKey(DIK_SPACE))
+		//{
+		//	if (isWeakAttack == true)
+		//	{
+		//		if (stopTimer >= 2)
+		//		{
+		//			isEngulfAttack = true;
+		//		}
+		//	}
+		//	else if (isHeavyAttack == true)
+		//	{
+		//		if (stopTimer >= 4)
+		//		{
+		//			isEngulfAttack = true;
+		//		}
+		//	}
+		//}
 	}
 }
 void Player::SetisDamage(const bool& isDamage)
