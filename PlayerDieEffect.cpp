@@ -40,6 +40,8 @@ void PlayerDieEffect::Update()
 		if (tempScale.x <= 0) tempScale = { 0,0,0 };
 		particles[i]->SetScale(tempScale);
 
+		particles[i]->SetSpeed(particles[i]->GetSpeed() * 0.9);
+
 		particles[i]->Update();
 	}
 
