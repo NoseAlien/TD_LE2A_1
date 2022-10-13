@@ -89,6 +89,7 @@ void GameScene::Update()
 			viewProjection_.target = { 0,0,0 };
 			viewProjection_.Initialize();
 			isSelectEnd = false;
+			SlowMotion::GetInstance()->Init();
 		}
 
 		if (sceneChange->GetisChange() == true)
@@ -213,6 +214,7 @@ void GameScene::Draw()
 	if (gameState == isGame)
 	{
 		stages[currentStage]->DrawCountDown();
+		stages[currentStage]->DrawClearTime();
 	}
 
 	sceneChange->Draw();
@@ -230,7 +232,6 @@ IScene* GameScene::GetNextScene()
 {
 	return nullptr;
 }
-
 
 void GameScene::CurrentStageInit()
 {
