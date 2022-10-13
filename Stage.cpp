@@ -478,6 +478,10 @@ void Stage::PlayerUpdate()
 
 			if (collision->SquareHitSquare(playerCollider, blockCollider))
 			{
+				if (temp->GetHaveStar() == true)
+				{
+					BlockGenerateStar(temp->GetPos(), 5);
+				}
 				blocks.remove(temp);
 				break;
 			}

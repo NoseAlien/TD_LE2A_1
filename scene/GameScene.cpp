@@ -249,7 +249,7 @@ void GameScene::CurrentStageInit()
 	{
 	case 0:	// デバッグ用のステージ
 		ground->Init(10000);
-		stages[currentStage]->GenerateBlock({ 20,0,0 }, false, { 20,2,2 });
+		//stages[currentStage]->GenerateBlock({ 20,0,0 }, false, { 20,2,2 });
 
 		break;
 	case 1:

@@ -124,43 +124,37 @@ void Player::EffectDraw()
 	heavyAttackEffect->Draw();
 	playerDieEffect->Draw();
 }
-
 void Player::DieEffectGenerate()
 {
 	playerDieEffect->Generate(trans->translation_);
 }
 
-//int tempAngle1 = 0;
-//int tempAngle2 = 255;
-//int tempAngle3 = 0;
 void Player::MoveUpdate()
 {
 	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
 	//if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
-	//if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
-	//if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
+	if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
+	if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
+	if (trans->translation_.x >= 39.5)
+	{
+		trans->translation_.x = 39.5;
+	}
+	if (trans->translation_.x <= -39.5)
+	{
+		trans->translation_.x = -39.5;
+	}
 
-	//if (input_->PushKey(DIK_D))	tempAngle1++;
-	//if (input_->PushKey(DIK_A)) tempAngle1--;
-	//if (input_->PushKey(DIK_W)) tempAngle2++;
-	//if (input_->PushKey(DIK_S)) tempAngle2--;
-	//if (input_->PushKey(DIK_Q)) tempAngle3++;
-	//if (input_->PushKey(DIK_E)) tempAngle3--;
-
-	//trans->rotation_.x = DegreeToRad(tempAngle2);
-	//trans->rotation_.y = DegreeToRad(tempAngle1);
-	//trans->rotation_.z = DegreeToRad(tempAngle3);
 
 	// ˆÚ“®ˆ—
-	trans->translation_.x += speed * slowMotion->GetSlowExrate();
+	//trans->translation_.x += speed * slowMotion->GetSlowExrate();
 
-	if (stageType != RaceStage)
-	{
-		if (trans->translation_.x >= 43)
-		{
-			trans->translation_.x = -43;
-		}
-	}
+	//if (stageType != RaceStage)
+	//{
+	//	if (trans->translation_.x >= 43)
+	//	{
+	//		trans->translation_.x = -43;
+	//	}
+	//}
 	if (trans->translation_.y >= 20)
 	{
 		trans->translation_.y = 20;
@@ -252,14 +246,14 @@ void Player::AttackUpdate()
 		{
 			if (isWeakAttack == true)
 			{
-				if (stopTimer <= 8)
+				if (stopTimer >= 2)
 				{
 					isEngulfAttack = true;
 				}
 			}
 			else if (isHeavyAttack == true)
 			{
-				if (stopTimer <= 4)
+				if (stopTimer >= 4)
 				{
 					isEngulfAttack = true;
 				}
@@ -267,7 +261,6 @@ void Player::AttackUpdate()
 		}
 	}
 }
-
 void Player::SetisDamage(const bool& isDamage)
 {
 	if (damageTimer == 0 && life > 0)
