@@ -69,10 +69,11 @@ struct ViewProjection {
 	/// </summary>
 	void TransferMatrix();
 
+public:
+	Vector3 eyePos = eye;
+	Vector3 targetPos = target;
 
 private:
-	Vector3 prevPos = eye;
-	Vector3 prevTarget = target;
 	Vector3 shakeVector = { 0,0,0 };
 	float shakeValue = 0;
 	int shakeTimer = 0;
@@ -83,8 +84,6 @@ public:
 
 	inline void SetShakeValue(const float& shakeValue, const int& shakeTimer, const int& shakePerFrame = 1)
 	{
-		prevPos = eye;
-		prevTarget = target;
 		this->shakeValue = shakeValue;
 		this->shakeTimer = max(shakeTimer, 1);
 		this->shakeMaxTimer = max(shakeTimer,1);
@@ -95,11 +94,8 @@ public:
 	{
 		if (shakeTimer > 0)
 		{
-			if(shakeTimer % shakePerFrame == 0)
+			if(shakeTimer % shakePerFrame == 0 || shakeTimer == shakeMaxTimer)
 			{
-				eye = prevPos;
-				target = prevTarget;
-
 				float shakeVecRad = Random::RangeF(0, 2 * 3.1415926);
 
 				shakeVector =
@@ -109,24 +105,14 @@ public:
 					0
 				};
 				shakeVector *= shakeValue * (shakeTimer / (float)shakeMaxTimer);
-
-				eye += shakeVector;
-				target += shakeVector;
 			}
-			//target += shakeValue;
-
 			shakeTimer--;
-			if (shakeTimer <= 0)
-			{
-				eye = prevPos;
-				target = prevTarget;
-				//target = prevTarget;
-				//isShack = false;
-			}
 		}
 		else
 		{
 			shakeVector = { 0,0,0 };
 		}
+		eye = eyePos + shakeVector;
+		target = targetPos + shakeVector;
 	}
 };
