@@ -99,7 +99,7 @@ public:
 	inline int GetWeakAttackDamage() { return weakAttackDamage; }
 	inline int GetHeavyAttackDamage() { return heavyAttackDamage; }
 	inline float GetAttackMoveSpeed() { return attackMoveSpeed; }
-	inline bool GetisReverse() { return isReverse && addScaleStep == 3; }
+	inline bool GetisReverse() { return isReverse && addScaleStep == 2; }
 
 	inline int GetStopTimer() { return stopTimer; }
 	inline int GetLife() { return life; }
@@ -107,6 +107,7 @@ public:
 	inline void HaveStarNumIncriment() { haveStarNum++; }
 
 	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
+	inline void SetScale(const Vector3& scale) { trans->scale_ = scale; }
 	inline void SetisReverse(bool isReverse) { this->isReverse = isReverse; }
 	inline void SetisEngulfAttack(const bool& isEngulfAttack) { this->isEngulfAttack = isEngulfAttack; }
 	inline void SetHaveStarNum(const int& haveStarNum) { this->haveStarNum = haveStarNum; }

@@ -104,11 +104,12 @@ public:
 					cos(shakeVecRad),
 					0
 				};
-
 				shakeVector *= shakeValue * (shakeTimer / (float)shakeMaxTimer);
 			}
+			//target += shakeValue;
 
 			shakeTimer--;
+
 		}
 		else
 		{

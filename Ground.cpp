@@ -45,6 +45,7 @@ void Ground::Init(const int& maxhp)
 
 	breakGroundEffect = move(make_unique<BreakGroundEffect>());
 	isGeneEffect = false;
+	isHit = 0;
 }
 
 void Ground::Update()

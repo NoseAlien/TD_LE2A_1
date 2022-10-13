@@ -155,9 +155,9 @@ void Stage::Update()
 
 	GameOverCameraUpdate();
 
-	auto text = DebugText::GetInstance();
-	text->SetPos(20, 60);
-	text->Printf("isCameraMoveStep = %d", isCameraMoveStep);
+	//auto text = DebugText::GetInstance();
+	//text->SetPos(20, 60);
+	//text->Printf("isCameraMoveStep = %d", isCameraMoveStep);
 
 	viewProjection_.ShakeUpdate();
 	viewProjection_.UpdateMatrix();
@@ -330,7 +330,6 @@ void Stage::GameOverCameraUpdate()
 	}
 }
 
-
 void Stage::GenerateThorn(const Vector3& pos, const Vector3& scale)
 {
 	thorns.emplace_back(move(make_unique<Thorn>()));
@@ -440,22 +439,34 @@ void Stage::PlayerUpdate()
 void Stage::FloorUpdate()
 {
 	// 床との当たり判定
-	SquareCollider playerCollider =
-	{
-		{ player->GetPos().x,player->GetPos().y },
-		{ player->GetScale().x,player->GetScale().y },
-	};
-	SquareCollider floorCollider =
-	{
-		{ ground->GetPos().x,ground->GetPos().y },
-		{ ground->GetScale().x,ground->GetScale().y },
-	};
+	//SquareCollider playerCollider =
+	//{
+	//	{ player->GetPos().x,player->GetPos().y },
+	//	{ player->GetScale().x,player->GetScale().y },
+	//};
+	//SquareCollider floorCollider =
+	//{
+	//	{ ground->GetPos().x,ground->GetPos().y },
+	//	{ ground->GetScale().x,ground->GetScale().y },
+	//};
 
-	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetScale().y)
+	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + 1)
 	{
+		player->SetPos(
+			{
+				player->GetPos().x,
+				ground->GetPos().y + ground->GetScale().y + 1,
+				player->GetPos().z
+			});
+		//player->SetScale({ 0,0,0 });
+
 		player->SetisReverse(true);
-		// タイマ－にした、瞬間的なフラグが欲しかったため
-		if (player->GetStopTimer() == 0)
+
+		if (ground->GetisHit() == 0)
+		{
+			ground->SetisHit(1);
+		}
+		if (ground->GetisHit() == 1)
 		{
 			player->EffectGenerate(
 				{
@@ -468,6 +479,7 @@ void Stage::FloorUpdate()
 			{
 				ground->Damage(player->GetHaveStarNum() * player->GetStarAttackDamage());
 				player->SetHaveStarNum(0);
+				ground->SetisHit(2);
 			}
 			else
 			{
@@ -475,15 +487,21 @@ void Stage::FloorUpdate()
 				{
 					PlayerGenerateStar(player->GetPos());
 					ground->Damage(player->GetHeavyAttackDamage());
+					ground->SetisHit(2);
 				}
 				else if (player->GetisWeakAttack() == true)
 				{
 					ground->Damage(player->GetWeakAttackDamage());
+					ground->SetisHit(2);
 				}
 			}
 		}
 	}
 
+	if (player->GetPos().y >= 20)
+	{
+		ground->SetisHit(0);
+	}
 	// 大きくなる処理
 	if (stars.size() >= 10 && ground->GetisAddScaleCountDown() == 0)
 	{
@@ -667,20 +685,28 @@ void Stage::BlockUpdate()
 			player->SetPos(
 				{
 					player->GetPos().x,
-					temp->GetPos().y + temp->GetScale().y + player->GetScale().y,
+					temp->GetPos().y + temp->GetScale().y + 1,
 					player->GetPos().z
 				});
 			player->SetisReverse(true);
 
-			if (player->GetisWeakAttack() == true)
+			if (temp->GetisHit() == 0)
 			{
-				temp->Damage(player->GetWeakAttackDamage());
+				temp->SetisHit(1);
 			}
-			if (player->GetisHeavyAttack() == true)
+			if (temp->GetisHit() == 1)
 			{
-				temp->Damage(player->GetHeavyAttackDamage());
+				if (player->GetisWeakAttack() == true)
+				{
+					temp->Damage(player->GetWeakAttackDamage());
+					temp->SetisHit(2);
+				}
+				if (player->GetisHeavyAttack() == true)
+				{
+					temp->Damage(player->GetHeavyAttackDamage());
+					temp->SetisHit(2);
+				}
 			}
-
 		}
 		else if (collision->SquareHitSquare(floorCollider, blockCollider))
 		{
@@ -692,7 +718,17 @@ void Stage::BlockUpdate()
 				});
 		}
 
+		if (player->GetPos().y >= 20 && temp->GetisHit() == 2)
+		{
+			temp->SetisHit(0);
+		}
+
 	}
+	//if (player->GetPos().y <= 4)
+	//{
+	//	int a = 10;
+	//}
+
 	// 更新処理
 	for (const auto& temp : blocks)
 	{
