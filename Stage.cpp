@@ -13,20 +13,29 @@ using namespace std;
 uint32_t Stage::starTexture = 0;
 uint32_t Stage::thornTexture = 0;
 vector<uint32_t> Stage::startTextTextures = {};
+vector<uint32_t> Stage::numberSheet = {};
+uint32_t Stage::timeStrTexture = 0;
 
 Stage::Stage(const int& stageType) :
-	stageType(stageType), playerIsHitGoal(false), stagePcrogress(Start)
+	stageType(stageType), playerIsHitGoal(false), stagePcrogress(Start), clearTimeDights(6)
 {
 	goal = nullptr;
-	//startTextSprites[0] = Sprite::Create(startTextTextures[0], { 960,540 });
 
 	for (int i = 0; i < startTextTextures.size(); i++)
 	{
 		startTextSprites[i] = Sprite::Create(startTextTextures[i], { 960,540 });
 		startTextSprites[i]->SetAnchorPoint({ 0.5, 0.5 });
 	}
+	for (int i = 0; i < clearTimeDights; i++)
+	{
+		clearTimeSprites[i] = Sprite::Create(numberSheet[i], { -128,-128 });
+		clearTimeSprites[i]->SetAnchorPoint({ 0.5,0.5 });
+		clearTimeSprites[i]->SetSize({ 64,64 });
+	}
 
-
+	timeStrSprite = Sprite::Create(timeStrTexture, { -128,-128 });
+	timeStrSprite->SetAnchorPoint({ 0.5, 0.5 });
+	timeStrSprite->SetSize({ 128,64 });
 }
 Stage::~Stage()
 {
@@ -34,7 +43,12 @@ Stage::~Stage()
 	{
 		delete startTextSprites[i];
 	}
+	for (int i = 0; i < clearTimeDights; i++)
+	{
+		delete clearTimeSprites[i];
+	}
 
+	delete timeStrSprite;
 }
 
 void Stage::Load()
@@ -45,6 +59,13 @@ void Stage::Load()
 	startTextTextures.emplace_back(TextureManager::Load("Text/StartText4.png"));
 	starTexture = TextureManager::Load("star.png");
 	thornTexture = TextureManager::Load("thorn.png");
+	string filepath;
+	for (int i = 0; i < 10; i++)
+	{
+		filepath = "NumberSheet/number" + to_string(i) + ".png";
+		numberSheet.emplace_back(TextureManager::Load(filepath.c_str()));
+	}
+	timeStrTexture = TextureManager::Load("TimeStr.png");
 }
 void Stage::Init()
 {
@@ -72,6 +93,9 @@ void Stage::Init()
 	startTime = 0;
 	endTime = 0;
 	clearTime = 0;
+	isShowClearTime = false;
+	clearTimeLastDightPos = { 2500,952 };
+	isMoveClearTime = false;
 
 	linePos1 = { -50,0,0 };
 	linePos2 = { +50,0,0 };
@@ -116,10 +140,12 @@ void Stage::Update()
 			if (stagePcrogress == Play)
 			{
 				stagePcrogress = Staging;
-				SlowMotion::GetInstance()->StartSlowMotion(0.05, 180);
+				SlowMotion::GetInstance()->StartSlowMotion(0.05, 480);
+				endTime = GetNowTime();
+				clearTime = endTime - startTime;
+				isShowClearTime = true;
+				isMoveClearTime = true;
 			}
-			endTime = GetNowTime();
-			clearTime = endTime - startTime;
 
 			if (stagePcrogress == Staging && player->GetPos().y >= 20 &&
 				SlowMotion::GetInstance()->GetisSlowMotion() == false)
@@ -154,6 +180,11 @@ void Stage::Update()
 	}
 
 	GameOverCameraUpdate();
+	ClearTimeUpdate();
+	//if (isShowClearTime == true)
+	//{
+
+	//}
 
 	//auto text = DebugText::GetInstance();
 	//text->SetPos(20, 60);
@@ -199,7 +230,6 @@ void Stage::Draw()
 	player->EffectDraw();
 	ground->EffectDraw();
 }
-
 void Stage::DrawLine()
 {
 	PrimitiveDrawer::GetInstance()->DrawLine3d(linePos1, linePos2, { 255,0,0,255 });
@@ -287,6 +317,7 @@ void Stage::DrawCountDown()
 		startTextSprites[startTextIndex]->Draw();
 	}
 }
+
 void Stage::GameOverCameraUpdate()
 {
 	if (isCameraMoveStep == 1)
@@ -295,10 +326,8 @@ void Stage::GameOverCameraUpdate()
 		viewProjection_.targetPos += vec.Normalized() * 2;
 		if (vec.Magnitude() <= 2)
 		{
-			viewProjection_.targetPos = player->GetPos();
-			//isCameraMoveTarget = false;
+			viewProjection_.target = player->GetPos();
 			isCameraMoveStep = 2;
-			//isCameraMovePos = true;
 		}
 	}
 	if (isCameraMoveStep == 2)
@@ -307,14 +336,13 @@ void Stage::GameOverCameraUpdate()
 
 		if (cameraMoveVec.Magnitude() <= 15)
 		{
-			SlowMotion::GetInstance()->StartSlowMotion(0.01, 60);
-
+			SlowMotion::GetInstance()->StartSlowMotion(0.05, 480);
 			isCameraMoveStep = 3;
 		}
 	}
 	if (isCameraMoveStep == 3)
 	{
-		if (stagePcrogress == Staging && SlowMotion::GetInstance()->GetisSlowMotion() == false)
+		if (stagePcrogress == Staging && cameraMoveVec.Magnitude() <= 0.5)
 		{
 			isCameraMoveStep = 4;
 			stagePcrogress = End;
@@ -324,9 +352,56 @@ void Stage::GameOverCameraUpdate()
 	}
 	if (isCameraMoveStep == 2 || isCameraMoveStep == 3)
 	{
-		viewProjection_.targetPos = player->GetPos();
-		viewProjection_.eyePos += cameraMoveVec.Normalized() * 2 *
-			SlowMotion::GetInstance()->GetSlowExrate();
+		if (stagePcrogress == Staging && cameraMoveVec.Magnitude() > 0.5)
+		{
+			viewProjection_.target = player->GetPos();
+			viewProjection_.eye += cameraMoveVec.Normalized() * 2 *
+				SlowMotion::GetInstance()->GetSlowExrate();
+		}
+	}
+}
+
+void Stage::ClearTimeUpdate()
+{
+	if (isShowClearTime == true)
+	{
+		if (isMoveClearTime == true)
+		{
+			clearTimeLastDightPos.x -= 30;
+			if (clearTimeLastDightPos.x <= 1856)
+			{
+				clearTimeLastDightPos.x = 1856;
+			}
+		}
+		dightsNumber = GetDightsNumber(clearTime);
+		for (int i = 0; i < dightsNumber.size(); i++)
+		{
+			clearTimeSprites[i]->SetTextureHandle(numberSheet[dightsNumber[i]]);
+			clearTimeSprites[i]->SetPosition(
+				{
+					clearTimeLastDightPos.x - (dightsNumber.size() - (float)i) * 48,
+					clearTimeLastDightPos.y
+				});
+
+		}
+		timeStrSprite->SetPosition(
+			{
+				clearTimeLastDightPos.x - dightsNumber.size() * 48 - 128,
+				clearTimeLastDightPos.y
+
+			});
+	}
+}
+void Stage::DrawClearTime()
+{
+	if (isShowClearTime == true)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			clearTimeSprites[i]->Draw();
+		}
+
+		timeStrSprite->Draw();
 	}
 }
 

@@ -4,10 +4,13 @@
 #include "Vector3.h"
 #include "Matrix4.h"
 #include <windows.h>
+#include <vector>
 
 float DegreeToRad(float num);
 float RadToDegree(float num);
 DWORD GetNowTime();
+int GetDigit(const int& number);
+std::vector<int> GetDightsNumber(const int& number);
 
 namespace MathUtility {
 
