@@ -84,6 +84,8 @@ public:
 	void EffectUpdate();
 	void EffectDraw();
 
+	void SetisDamage(const bool& isDamage);
+
 	inline void UpdateMatrix() { trans->UpdateMatrix(); }
 
 	inline Vector3 GetPos() { return trans->translation_; }
@@ -112,18 +114,6 @@ public:
 	inline void SetisEngulfAttack(const bool& isEngulfAttack) { this->isEngulfAttack = isEngulfAttack; }
 	inline void SetHaveStarNum(const int& haveStarNum) { this->haveStarNum = haveStarNum; }
 	inline void SetStageType(const int& stageType) { this->stageType = stageType; }
-
-	inline void SetisDamage(const bool& isDamage)
-	{
-		if (damageTimer == 0)
-		{
-			this->isDamage = isDamage;
-			pushKeyFream = 0;
-			life--;
-
-			audio->PlayWave(damageSE);
-		}
-	}
 
 public:
 	static Player* GetInstance();

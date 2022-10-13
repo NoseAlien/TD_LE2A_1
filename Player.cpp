@@ -244,9 +244,21 @@ void Player::AttackUpdate()
 			}
 		}
 	}
-
-
 }
+
+void Player::SetisDamage(const bool& isDamage)
+{
+	if (damageTimer == 0)
+	{
+		this->isDamage = isDamage;
+		pushKeyFream = 0;
+		life--;
+
+		viewProjection_.SetShakeValue(2, 15, 2);
+		audio->PlayWave(damageSE);
+	}
+}
+
 void Player::DamageUpdate()
 {
 	if (isDamage == true)
