@@ -36,6 +36,7 @@ private:
 
 
 	int life;
+	bool isAlive;
 
 	float speed;	// ˆÚ“®‘¬“x
 
@@ -86,6 +87,7 @@ public:
 	void EffectUpdate();
 	void EffectDraw();
 	void DieEffectGenerate();
+	inline bool GetDieEffectisEnd() { return playerDieEffect->GetisEnd(); }
 
 	void SetisDamage(const bool& isDamage);
 
@@ -108,6 +110,7 @@ public:
 
 	inline int GetStopTimer() { return stopTimer; }
 	inline int GetLife() { return life; }
+	inline bool GetisAlive() { return isAlive; }
 
 	inline void HaveStarNumIncriment() { haveStarNum++; }
 

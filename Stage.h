@@ -59,6 +59,7 @@ private:
 	// ‰‰oŠÖ˜A
 	bool isCameraMoveStep;
 	Vector3 cameraMoveVec;
+	bool isPlayerDieEffectGenerate = false;
 
 private:
 	std::list<std::unique_ptr<Star>> stars;

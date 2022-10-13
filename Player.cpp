@@ -60,6 +60,7 @@ void Player::Init()
 
 	damageTimer = 0;
 
+	isAlive = true;
 	life = 3;
 }
 void Player::Update()
@@ -269,7 +270,7 @@ void Player::AttackUpdate()
 
 void Player::SetisDamage(const bool& isDamage)
 {
-	if (damageTimer == 0)
+	if (damageTimer == 0 && life > 0)
 	{
 		this->isDamage = isDamage;
 		pushKeyFream = 0;

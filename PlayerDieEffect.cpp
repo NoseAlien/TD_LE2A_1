@@ -11,6 +11,8 @@ PlayerDieEffect::~PlayerDieEffect()
 
 void PlayerDieEffect::Generate(const Vector3& pos)
 {
+	isEnd = false;
+	count = 0;
 	for (int i = 0; i < maxParticle; i++)
 	{
 		float radian = DegreeToRad(360 / maxParticle * i);
@@ -40,13 +42,20 @@ void PlayerDieEffect::Update()
 
 		particles[i]->Update();
 	}
+
 	for (int i = 0; i < particles.size(); i++)
 	{
 		if (particles[i]->GetScale().x <= 0)
 		{
 			particles.erase(particles.begin() + i);
+			count++;
 			break;
 		}
+	}
+
+	if (count >= maxParticle)
+	{
+		isEnd = true;
 	}
 }
 

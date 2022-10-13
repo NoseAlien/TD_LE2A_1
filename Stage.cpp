@@ -67,7 +67,6 @@ void Stage::Load()
 	}
 	timeStrTexture = TextureManager::Load("TimeStr.png");
 }
-bool isPlayerDieEffectGenerate = false;
 
 void Stage::Init()
 {
@@ -156,7 +155,6 @@ void Stage::Update()
 			{
 				stagePcrogress = End;
 				sceneChange->StartSceneChange();
-
 				gameClear = true;
 
 			}
@@ -180,6 +178,11 @@ void Stage::Update()
 		{
 			viewProjection_.eyePos = { player->GetPos().x,0,-50 };
 			viewProjection_.targetPos = { player->GetPos().x ,0,0 };
+		}
+		if (player->GetDieEffectisEnd() == true)
+		{
+			stagePcrogress = End;
+			sceneChange->StartSceneChange();
 		}
 	}
 
