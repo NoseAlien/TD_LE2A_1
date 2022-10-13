@@ -75,8 +75,6 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
-
-
 	if (gameState == isGame)
 	{
 		if (input_->TriggerKey(DIK_ESCAPE))

@@ -100,7 +100,7 @@ void Stage::Init()
 	linePos1 = { -50,0,0 };
 	linePos2 = { +50,0,0 };
 
-	isCameraMoveStep = 0;
+	isCameraMoveStep = false;
 	stagePcrogress = Start;
 	cameraMoveVec = { 0,0,0 };
 
@@ -165,14 +165,14 @@ void Stage::Update()
 			if (stagePcrogress == Play)
 			{
 				stagePcrogress = Staging;
-				isCameraMoveStep = 1;
+				isCameraMoveStep = true;
 
 			}
 			gameOver = true;
 			endTime = GetNowTime();
 			clearTime = endTime - startTime;
 		}
-		if (stageType == RaceStage && isCameraMoveStep == 0)
+		if (stageType == RaceStage && !isCameraMoveStep)
 		{
 			viewProjection_.eyePos = { player->GetPos().x,0,-50 };
 			viewProjection_.targetPos = { player->GetPos().x ,0,0 };
@@ -320,9 +320,9 @@ void Stage::DrawCountDown()
 
 void Stage::GameOverCameraUpdate()
 {
-	if (isCameraMoveStep == 1)
+	if (isCameraMoveStep)
 	{
-		viewProjection_.eyePos += (player->GetPos() + Vector3{ 0, 0, -8 } - viewProjection_.eyePos) * 0.3;
+		viewProjection_.eyePos += (player->GetPos() + Vector3{ 0, 0, -8 } - viewProjection_.eyePos) * 0.4;
 		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{0, 0, 1};
 	}
 }

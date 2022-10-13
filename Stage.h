@@ -57,7 +57,7 @@ private:
 
 private:
 	// ‰‰oŠÖ˜A
-	int isCameraMoveStep;
+	bool isCameraMoveStep;
 	Vector3 cameraMoveVec;
 
 private:
