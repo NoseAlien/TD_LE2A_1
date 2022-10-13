@@ -48,8 +48,8 @@ void Stage::Load()
 }
 void Stage::Init()
 {
-	viewProjection_.eye = { 0,0,-50 };
-	viewProjection_.target = { 0,0,0 };
+	viewProjection_.eyePos = { 0,0,-50 };
+	viewProjection_.targetPos = { 0,0,0 };
 	viewProjection_.up = { 0,1,0 };
 	viewProjection_.UpdateMatrix();
 	stars.clear();
@@ -148,8 +148,8 @@ void Stage::Update()
 		}
 		if (stageType == RaceStage && isCameraMoveStep == 0)
 		{
-			viewProjection_.eye = { player->GetPos().x,0,-50 };
-			viewProjection_.target = { player->GetPos().x ,0,0 };
+			viewProjection_.eyePos = { player->GetPos().x,0,-50 };
+			viewProjection_.targetPos = { player->GetPos().x ,0,0 };
 		}
 	}
 
@@ -291,11 +291,11 @@ void Stage::GameOverCameraUpdate()
 {
 	if (isCameraMoveStep == 1)
 	{
-		Vector3 vec = player->GetPos() - viewProjection_.target;
-		viewProjection_.target += vec.Normalized() * 2;
+		Vector3 vec = player->GetPos() - viewProjection_.targetPos;
+		viewProjection_.targetPos += vec.Normalized() * 2;
 		if (vec.Magnitude() <= 2)
 		{
-			viewProjection_.target = player->GetPos();
+			viewProjection_.targetPos = player->GetPos();
 			//isCameraMoveTarget = false;
 			isCameraMoveStep = 2;
 			//isCameraMovePos = true;
@@ -303,7 +303,7 @@ void Stage::GameOverCameraUpdate()
 	}
 	if (isCameraMoveStep == 2)
 	{
-		cameraMoveVec = viewProjection_.target - viewProjection_.eye;
+		cameraMoveVec = viewProjection_.targetPos - viewProjection_.eyePos;
 
 		if (cameraMoveVec.Magnitude() <= 15)
 		{
@@ -324,8 +324,8 @@ void Stage::GameOverCameraUpdate()
 	}
 	if (isCameraMoveStep == 2 || isCameraMoveStep == 3)
 	{
-		viewProjection_.target = player->GetPos();
-		viewProjection_.eye += cameraMoveVec.Normalized() * 2 *
+		viewProjection_.targetPos = player->GetPos();
+		viewProjection_.eyePos += cameraMoveVec.Normalized() * 2 *
 			SlowMotion::GetInstance()->GetSlowExrate();
 	}
 }

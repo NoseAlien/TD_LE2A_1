@@ -58,8 +58,8 @@ void GameScene::Initialize()
 	stageSelect = move(make_unique<StageSelect>());
 
 	viewProjection_.fovAngleY = DegreeToRad(50);
-	viewProjection_.eye = { 0,0,-50 };
-	viewProjection_.target = { 0,0,0 };
+	viewProjection_.eyePos = { 0,0,-50 };
+	viewProjection_.targetPos = { 0,0,0 };
 	viewProjection_.up = { 0,1,0 };
 	viewProjection_.Initialize();
 
@@ -85,8 +85,8 @@ void GameScene::Update()
 			player->Init();
 
 			stageSelect->ResetObjPos();
-			viewProjection_.eye = { 0,0,-50 };
-			viewProjection_.target = { 0,0,0 };
+			viewProjection_.eyePos = { 0,0,-50 };
+			viewProjection_.targetPos = { 0,0,0 };
 			viewProjection_.Initialize();
 			isSelectEnd = false;
 		}
@@ -97,8 +97,8 @@ void GameScene::Update()
 
 			player->Init();
 			stageSelect->ResetObjPos();
-			viewProjection_.eye = { 0,0,-50 };
-			viewProjection_.target = { 0,0,0 };
+			viewProjection_.eyePos = { 0,0,-50 };
+			viewProjection_.targetPos = { 0,0,0 };
 			viewProjection_.Initialize();
 			isSelectEnd = false;
 			sceneChange->SetisChange(false);
