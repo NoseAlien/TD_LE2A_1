@@ -52,10 +52,16 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
-	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
 	stages.emplace_back(move(make_unique<Stage>(RaceStage)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
 
-	stageSelect = move(make_unique<StageSelect>());
+
+	stageSelect = move(make_unique<StageSelect>(stages.size()));
 
 	viewProjection_.fovAngleY = DegreeToRad(50);
 	viewProjection_.eyePos = { 0,0,-50 };
@@ -67,7 +73,7 @@ void GameScene::Initialize()
 
 	player->Init();
 
-	stageSelect->Initialize(stages.size());
+	stageSelect->Initialize();
 
 	currentStage = 0;
 	gameState = isSelect;
@@ -77,14 +83,24 @@ void GameScene::Update()
 {
 	if (gameState == isGame)
 	{
+		if (input_->TriggerKey(DIK_RETURN))
+		{
+			pause = !pause;
+		}
+
+		if (!pause)
+		{
+			stages[currentStage]->Update();
+		}
+
 		if (input_->TriggerKey(DIK_ESCAPE))
 		{
 			gameState = isSelect;
 			player->Init();
 
 			stageSelect->ResetObjPos();
-			viewProjection_.eyePos = { 0,0,-50 };
-			viewProjection_.targetPos = { 0,0,0 };
+			viewProjection_.eye = { 0,0,-50 };
+			viewProjection_.target = { 0,0,0 };
 			viewProjection_.Initialize();
 			isSelectEnd = false;
 			SlowMotion::GetInstance()->Init();
@@ -96,21 +112,11 @@ void GameScene::Update()
 
 			player->Init();
 			stageSelect->ResetObjPos();
-			viewProjection_.eyePos = { 0,0,-50 };
-			viewProjection_.targetPos = { 0,0,0 };
-			viewProjection_.Initialize();
+			viewProjection_.eye = { 0,0,-50 };
+			viewProjection_.target = { 0,0,0 };
+			viewProjection_.UpdateMatrix();
 			isSelectEnd = false;
 			sceneChange->SetisChange(false);
-		}
-
-		if (input_->TriggerKey(DIK_RETURN))
-		{
-			pause = !pause;
-		}
-
-		if (!pause)
-		{
-			stages[currentStage]->Update();
 		}
 	}
 	else if (gameState == isSelect)
@@ -121,7 +127,6 @@ void GameScene::Update()
 		{
 			//player->SetPos({ 0,20,0 });
 
-			CurrentStageInit();
 			sceneChange->StartSceneChange();
 			isSelectEnd = false;
 		}
@@ -134,6 +139,7 @@ void GameScene::Update()
 		if (sceneChange->GetisChange() == true)
 		{
 			gameState = isGame;
+			CurrentStageInit();
 			sceneChange->SetisChange(false);
 
 		}
@@ -241,12 +247,9 @@ void GameScene::CurrentStageInit()
 
 	switch (currentStage)
 	{
-	case 0:
+	case 0:	// デバッグ用のステージ
 		ground->Init(10000);
-		stages[currentStage]->GenerateBlock({ 20,0,0 }, { 20,2,2 });
-		//stages[currentStage]->GenerateBlock({ 1,0,0 }, { 1,1,1 });
-		//stages[currentStage]->GenerateBlock({ 2,0,0 }, { 1,1,1 });
-		//stages[currentStage]->GenerateBlock({ 3,0,0 }, { 1,1,1 });
+		stages[currentStage]->GenerateBlock({ 20,0,0 }, false, { 20,2,2 });
 
 		break;
 	case 1:
@@ -258,16 +261,39 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateThorn({ -20,20,0 });
 		break;
 	case 3:
-		ground->Init(100);
+		ground->Init(80);
+		stages[currentStage]->GenerateThorn({ 20,20,0 });
+		stages[currentStage]->GenerateThorn({ -20,20,0 });
+		break;
+	case 4:
+		ground->Init(50);
+		stages[currentStage]->GenerateGoal({ 100,20,0 });
+		break;
+	case 5:
+		ground->Init(55);
+		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
+		break;
+	case 6:
+		ground->Init(60);
+		stages[currentStage]->GenerateBlock({ 20,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ -20,0,0 }, true, { 2,2,2 });
+		break;
+	case 7:
+		ground->Init(50);
+		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 4,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ -4,0,0 }, true, { 2,2,2 });
+		break;
+	case 8:
+		ground->Init(80);
 		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
 		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
 		break;
-	case 4:
-		ground->Init(25);
-		stages[currentStage]->GenerateGoal({ 100,20,0 });
-		//stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
-		//stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
-		break;
+	case 9:
+		ground->Init(40);
+		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
+		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
 	}
 }
 
@@ -345,7 +371,6 @@ void GameScene::SelectUpdate()
 			tempScale2.y = 5;
 		}
 		stageSelect->SetSelectScale(tempScale2, currentStage);
-
 	}
 
 }

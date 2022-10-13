@@ -26,6 +26,7 @@ Stage::Stage(const int& stageType) :
 		startTextSprites[i] = Sprite::Create(startTextTextures[i], { 960,540 });
 		startTextSprites[i]->SetAnchorPoint({ 0.5, 0.5 });
 	}
+
 	for (int i = 0; i < clearTimeDights; i++)
 	{
 		clearTimeSprites[i] = Sprite::Create(numberSheet[i], { -128,-128 });
@@ -67,6 +68,7 @@ void Stage::Load()
 	}
 	timeStrTexture = TextureManager::Load("TimeStr.png");
 }
+
 void Stage::Init()
 {
 	viewProjection_.eyePos = { 0,0,-50 };
@@ -103,6 +105,8 @@ void Stage::Init()
 	isCameraMoveStep = false;
 	stagePcrogress = Start;
 	cameraMoveVec = { 0,0,0 };
+
+	isPlayerDieEffectGenerate = false;
 
 }
 
@@ -152,7 +156,6 @@ void Stage::Update()
 			{
 				stagePcrogress = End;
 				sceneChange->StartSceneChange();
-
 				gameClear = true;
 
 			}
@@ -176,6 +179,11 @@ void Stage::Update()
 		{
 			viewProjection_.eyePos = { player->GetPos().x,0,-50 };
 			viewProjection_.targetPos = { player->GetPos().x ,0,0 };
+		}
+		if (player->GetDieEffectisEnd() == true)
+		{
+			stagePcrogress = End;
+			sceneChange->StartSceneChange();
 		}
 	}
 
@@ -225,7 +233,6 @@ void Stage::Draw()
 		goal->Draw(viewProjection_, thornTexture);
 	}
 
-	//PrimitiveDrawer::GetInstance()->DrawLine3d(linePos1, linePos2, { 255,0,0,255 });
 
 	player->EffectDraw();
 	ground->EffectDraw();
@@ -233,7 +240,6 @@ void Stage::Draw()
 void Stage::DrawLine()
 {
 	PrimitiveDrawer::GetInstance()->DrawLine3d(linePos1, linePos2, { 255,0,0,255 });
-	//PrimitiveDrawer::GetInstance()->DrawLine3d({ -50,0,0 }, { 50,0,0 }, { 255,0,0,255 });
 }
 
 void Stage::CountDownUpdate()
@@ -322,8 +328,16 @@ void Stage::GameOverCameraUpdate()
 {
 	if (isCameraMoveStep)
 	{
-		viewProjection_.eyePos += (player->GetPos() + Vector3{ 0, 0, -8 } - viewProjection_.eyePos) * 0.4;
-		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{0, 0, 1};
+		Vector3 vec = (player->GetPos() + Vector3{ 0, 0, -8 } - viewProjection_.eyePos);
+		viewProjection_.eyePos += vec * 0.4;
+		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{ 0, 0, 1 };
+
+		if (vec.Magnitude() <= 0.000005 && isPlayerDieEffectGenerate == false)
+		{
+			//sceneChange->StartSceneChange();
+			player->DieEffectGenerate();
+			isPlayerDieEffectGenerate = true;
+		}
 	}
 }
 
@@ -376,10 +390,10 @@ void Stage::GenerateThorn(const Vector3& pos, const Vector3& scale)
 	thorns.emplace_back(move(make_unique<Thorn>()));
 	thorns.back()->Generate(pos, scale);
 }
-void Stage::GenerateBlock(const Vector3& pos, const Vector3& scale)
+void Stage::GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale)
 {
 	blocks.emplace_back(move(make_unique<Block>()));
-	blocks.back()->Generate(pos, scale);
+	blocks.back()->Generate(pos, scale, haveStar);
 }
 void Stage::GenerateCannon(const Vector3& pos, const Vector3& rot)
 {
@@ -392,7 +406,7 @@ void Stage::GenerateGoal(const Vector3& pos)
 	goal->Generate(pos);
 }
 
-void Stage::PlayerGenerateStar(const Vector3 pos)
+void Stage::PlayerGenerateStar(const Vector3& pos)
 {
 	for (int i = 0; i < 2; i++)
 	{
@@ -408,6 +422,23 @@ void Stage::PlayerGenerateStar(const Vector3 pos)
 			stars.back()->SetSpeed(1.3);
 		}
 	}
+}
+void Stage::CannonGenerateStar(const Vector3& pos, const Vector3& dieVec)
+{
+	stars.emplace_back(move(make_unique<Star>()));
+	stars.back()->Generate(pos, dieVec, 1);
+	stars.back()->SetSpeed(Random::RangeF(0.5, 2.2));
+}
+void Stage::BlockGenerateStar(const Vector3& pos, const int& num)
+{
+	for (int i = 0; i < num; i++)
+	{
+		float angle = Random::Range(30, 150);
+		stars.emplace_back(move(make_unique<Star>()));
+		stars.back()->Generate(pos, { cosf(angle),sinf(angle),0 }, 1);
+		stars.back()->SetSpeed(Random::RangeF(0.5, 1.5));
+	}
+
 }
 
 // Ž©‹@
@@ -781,6 +812,10 @@ void Stage::BlockUpdate()
 	{
 		if (temp->GetisDestroy() == true)
 		{
+			if (temp->GetHaveStar() == true)
+			{
+				BlockGenerateStar(temp->GetPos(), 5);
+			}
 			blocks.remove(temp);
 			break;
 		}
@@ -794,9 +829,7 @@ void Stage::CannonUpdate()
 	{
 		if (temp->GetisShot() == 1)
 		{
-			stars.emplace_back(move(make_unique<Star>()));
-			stars.back()->Generate(temp->GetPos(), temp->GetDirVec(), 1);
-			stars.back()->SetSpeed(Random::RangeF(0.5, 2.2));
+			CannonGenerateStar(temp->GetPos(), temp->GetDirVec());
 			temp->SetisShot(false);
 		}
 	}

@@ -7,6 +7,7 @@
 
 #include "WeakAttackEffect.h"
 #include "HeavyAttackEffect.h"
+#include "PlayerDieEffect.h"
 #include "SlowMotion.h"
 
 class Player
@@ -17,6 +18,7 @@ public:
 private:
 	std::unique_ptr<WeakAttackEffect> weakAttackEffect;
 	std::unique_ptr<HeavyAttackEffect> heavyAttackEffect;
+	std::unique_ptr<PlayerDieEffect> playerDieEffect;
 
 private:
 	Input* input_ = nullptr;
@@ -34,6 +36,7 @@ private:
 
 
 	int life;
+	bool isAlive;
 
 	float speed;	// ˆÚ“®‘¬“x
 
@@ -83,6 +86,8 @@ public:
 	void EffectGenerate(const Vector3& pos);
 	void EffectUpdate();
 	void EffectDraw();
+	void DieEffectGenerate();
+	inline bool GetDieEffectisEnd() { return playerDieEffect->GetisEnd(); }
 
 	void SetisDamage(const bool& isDamage);
 
@@ -105,6 +110,7 @@ public:
 
 	inline int GetStopTimer() { return stopTimer; }
 	inline int GetLife() { return life; }
+	inline bool GetisAlive() { return isAlive; }
 
 	inline void HaveStarNumIncriment() { haveStarNum++; }
 

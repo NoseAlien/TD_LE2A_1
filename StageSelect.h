@@ -10,14 +10,14 @@ private:
 	std::vector<std::unique_ptr<WorldTransform>> stageSelectTrans;
 	std::vector<Model*> stageTextModel;
 	std::vector<std::unique_ptr<WorldTransform>> stageTextTrans;
-	int stagesSize;
+	int stageSize;
 	int currentStage;
 	float moveSpeed;
 
 public:
-	StageSelect();
+	StageSelect(const int& stageSize);
 	~StageSelect();
-	void Initialize(int stagesSize);
+	void Initialize();
 	void Update();
 	void Draw();
 	void ResetObjPos();

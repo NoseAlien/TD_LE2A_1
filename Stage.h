@@ -59,6 +59,7 @@ private:
 	// ââèoä÷òA
 	bool isCameraMoveStep;
 	Vector3 cameraMoveVec;
+	bool isPlayerDieEffectGenerate = false;
 
 private:
 	std::list<std::unique_ptr<Star>> stars;
@@ -80,7 +81,9 @@ private:
 	int stageType;
 
 private:
-	void PlayerGenerateStar(const Vector3 pos);
+	void PlayerGenerateStar(const Vector3& pos);
+	void CannonGenerateStar(const Vector3& pos, const Vector3& dieVec);
+	void BlockGenerateStar(const Vector3& pos ,const int& num);
 
 	void CountDownUpdate();
 	void ClearTimeUpdate();
@@ -107,7 +110,7 @@ public:
 	void DrawCountDown();
 
 	void GenerateThorn(const Vector3& pos, const Vector3& scale = { 1,1,1 });
-	void GenerateBlock(const Vector3& pos, const Vector3& scale = { 1,1,1 });
+	void GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale = { 2,2,2 });
 	void GenerateCannon(const Vector3& pos, const Vector3& rot);
 	void GenerateGoal(const Vector3& pos);
 
