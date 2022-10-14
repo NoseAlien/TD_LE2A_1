@@ -38,6 +38,7 @@ private:
 	int life;
 	bool isAlive;
 
+	float maxSpeed;	// ˆÚ“®‘¬“x
 	float speed;	// ˆÚ“®‘¬“x
 
 	bool isAttack;	// UŒ‚‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
