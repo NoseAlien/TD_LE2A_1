@@ -7,7 +7,7 @@ class Star
 {
 private:
 	WorldTransform* trans = nullptr;
-	Model* starModel = nullptr;		// モデル
+	static Model* starModel; //= nullptr;		// モデル
 	uint32_t starTexture;
 
 	Input* input_ = nullptr;
@@ -24,13 +24,19 @@ private:
 	float collisionRadius;
 
 	bool isAngleShake;
-	Vector3 angleShakeValue;
 
 	int generateType;	// ０プレイヤー生成,１大砲生成
+
+private: // アニメーション関連
+	int animeIndex;
+	int fream;
+	int maxFream;
 
 public:
 	Star();
 	~Star();
+	static void Load();
+	static void UnLoad();
 	void Generate(const Vector3& pos, const Vector3& dirVec, const int& generateType);
 	void Update();
 	void Draw(const ViewProjection& viewProjection_, const uint32_t& starTexture);
@@ -47,6 +53,6 @@ public:
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
 	inline float GetRadius() { return collisionRadius; }
-	inline void SetAngleShakeValue(const Vector3& angleShakeValue) { this->angleShakeValue = angleShakeValue; }
+	//inline void SetAngleShakeValue(const Vector3& angleShakeValue) { this->angleShakeValue = angleShakeValue; }
 };
 

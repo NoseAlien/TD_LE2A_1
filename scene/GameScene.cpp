@@ -15,14 +15,15 @@ using namespace MathUtility;
 ViewProjection viewProjection_{};
 
 Audio* GameScene::audio = nullptr;
+Model* GameScene::backCubeModel = nullptr;
 
 GameScene::GameScene()
 {
 }
-
 GameScene::~GameScene()
 {
 	Particle::UnLoad();
+	delete backCubeModel;	// 今はデストラクター一回しか呼ばないためエラー起こらない
 }
 
 void GameScene::Load()
@@ -34,6 +35,8 @@ void GameScene::Load()
 	player->Load();
 	ground->Load();
 	Particle::Load();
+
+	backCubeModel = Model::CreateFromOBJ("backCube", true);
 }
 
 void GameScene::Initialize()
@@ -60,7 +63,6 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
 
-
 	stageSelect = move(make_unique<StageSelect>(stages.size()));
 
 	viewProjection_.fovAngleY = DegreeToRad(50);
@@ -77,10 +79,23 @@ void GameScene::Initialize()
 
 	currentStage = 0;
 	gameState = isSelect;
+
+	//for (int i = 0; i < 20; i++)
+	//{
+	//	GenerateBackCube(
+	//		{
+	//			(float)Random::Range(-100,100),
+	//			//0.0f,
+	//			(float)Random::Range(-50,50),
+	//			(float)Random::Range(50,100),
+	//		});
+	//}
 }
 
 void GameScene::Update()
 {
+	//BackGroundUpdate();
+
 	if (gameState == isGame)
 	{
 		if (input_->TriggerKey(DIK_RETURN))
@@ -149,7 +164,6 @@ void GameScene::Update()
 	slowMotion->Update();
 	sceneChange->Update();
 
-
 	debugText_->SetPos(20, 20);
 	debugText_->Printf("CurrentStage = %d", currentStage);
 
@@ -186,6 +200,8 @@ void GameScene::Draw()
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	//BackGroundDraw();
 
 	if (gameState == isGame)
 	{
@@ -373,4 +389,53 @@ void GameScene::SelectUpdate()
 		stageSelect->SetSelectScale(tempScale2, currentStage);
 	}
 
+}
+
+void GameScene::GenerateBackCube(const Vector3& pos)
+{
+	backCubeTrans.emplace_back(move(make_unique<WorldTransform>()));
+	backCubeTrans.back()->Initialize();
+	backCubeTrans.back()->translation_ = pos;
+	float scale = Random::RangeF(5, 10);
+	backCubeTrans.back()->scale_ = { scale,scale,scale };
+	backCubeTrans.back()->rotation_ = { 0,0,0 };
+	backCubeTrans.back()->rotation_ =
+	{
+		DegreeToRad(Random::Range(0, 360)),
+		DegreeToRad(Random::Range(0, 360)),
+		DegreeToRad(Random::Range(0, 360)),
+	};
+	backCubeMoveSpeed.emplace_back(Random::RangeF(0.01, 0.05));
+	backCubeMoveAngle.emplace_back(Random::RangeF(0.5, 1));
+	int sign = Random::Range(-1, 1) >= 0 ? 1 : -1;
+	backCubeAngleSign.emplace_back(sign);
+}
+void GameScene::BackGroundUpdate()
+{
+	// 更新
+	for (int i = 0; i < backCubeTrans.size(); i++)
+	{
+		backCubeTrans[i]->translation_.x -= backCubeMoveSpeed[i];
+		backCubeTrans[i]->rotation_.x += backCubeAngleSign[i] * DegreeToRad(backCubeMoveAngle[i]);
+		backCubeTrans[i]->rotation_.y += backCubeAngleSign[i] * DegreeToRad(backCubeMoveAngle[i]);
+		backCubeTrans[i]->rotation_.z += backCubeAngleSign[i] * DegreeToRad(backCubeMoveAngle[i]);
+		backCubeTrans[i]->UpdateMatrix();
+	}
+	// 削除
+	for (int i = 0; i < backCubeTrans.size(); i++)
+	{
+		if (backCubeTrans[i]->translation_.x <= -120)
+		{
+			backCubeTrans[i]->translation_.x = 120;
+			//backCubeTrans.erase(backCubeTrans.begin() + i);
+			//break;
+		}
+	}
+}
+void GameScene::BackGroundDraw()
+{
+	for (int i = 0; i < backCubeTrans.size(); i++)
+	{
+		backCubeModel->Draw(*backCubeTrans[i].get(), viewProjection_);
+	}
 }

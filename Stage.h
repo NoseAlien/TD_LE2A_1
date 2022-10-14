@@ -54,6 +54,8 @@ private:
 	int clearTimeDights;
 	std::vector<int> dightsNumber;
 	bool isShowClearTime;
+	static uint32_t clearStrTexture;
+	Sprite* clearStrSprite;
 
 private:
 	// ââèoä÷òA
@@ -83,7 +85,7 @@ private:
 private:
 	void PlayerGenerateStar(const Vector3& pos);
 	void CannonGenerateStar(const Vector3& pos, const Vector3& dieVec);
-	void BlockGenerateStar(const Vector3& pos ,const int& num);
+	void BlockGenerateStar(const Vector3& pos, const int& num);
 
 	void CountDownUpdate();
 	void ClearTimeUpdate();

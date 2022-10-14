@@ -53,6 +53,11 @@ void Ground::Update()
 {
 	if (isAlive == false) return;
 
+	if (isAddScaleCountDown == 0)
+	{
+		addScaleCount = 240;
+	}
+
 	if (isAddScaleCountDown == 1)
 	{
 		addScaleCount--;
@@ -68,7 +73,7 @@ void Ground::Update()
 
 	if (isAddScale == true)
 	{
-		const float difference = 4;
+		const float difference = (fabs(trans->translation_.y) - 9.5) / 3;
 		addScale += 0.1;
 		trans->scale_.y += addScale;
 		if (trans->scale_.y - preScaleY >= difference)

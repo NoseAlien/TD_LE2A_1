@@ -4,6 +4,7 @@
 #include "Ground.h"
 #include "Collision.h"
 #include "SceneChange.h"
+#include "Star.h"
 
 SceneManager::SceneManager()
 {
@@ -17,11 +18,13 @@ SceneManager::~SceneManager()
 	ground->DestroyInstance();
 	collision->DestroyInstance();
 	sceneChange->DestroyInstance();
+	Star::UnLoad();
 }
 
 void SceneManager::Initialize()
 {
 	GameScene::Load();
+	Star::Load();
 	sceneChange->Load();
 	scene->Initialize();
 }

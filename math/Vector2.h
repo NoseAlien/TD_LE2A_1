@@ -23,6 +23,7 @@ public:
 	Vector2& operator*=(float s);
 	Vector2& operator/=(float s);
 
+
 	Vector2 operator+(const Vector2& v) const
 	{
 		return { x + v.x,y + v.y };
@@ -32,4 +33,10 @@ public:
 	{
 		return { x - v.x,y - v.y };
 	}
+
+	Vector2 operator*(const float& num) const
+	{
+		return { x * num, y * num };
+	}
+
 };

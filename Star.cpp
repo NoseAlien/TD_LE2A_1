@@ -2,7 +2,10 @@
 #include "Random.h"
 #include "Stage.h"
 #include "SlowMotion.h"
+#include "Player.h"
 using namespace MathUtility;
+
+Model* Star::starModel = nullptr;
 
 Star::Star() :
 	gravity(2), collisionRadius(1),
@@ -10,19 +13,34 @@ Star::Star() :
 {
 	trans = new WorldTransform();
 	trans->Initialize();
-	starModel = Model::Create();
 }
 
 Star::~Star()
 {
 	delete trans;
+}
+
+void Star::Load()
+{
+	starModel = Model::CreateFromOBJ("star", true);
+}
+
+void Star::UnLoad()
+{
 	delete starModel;
 }
 
 void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& generateType)
 {
+	// アニメーション関連
+	animeIndex = 0;
+	fream = 0;
+	maxFream = 5;
+
+	//------
 	trans->translation_ = pos;
-	trans->scale_ = { 1.5,1.5,0.0001 };
+	trans->scale_ = { 1.5,1.5,1.5 };
+	trans->rotation_ = { 0,DegreeToRad(180),0 };
 	trans->UpdateMatrix();
 	gravity = 1;
 	collisionRadius = trans->scale_.x;
@@ -61,25 +79,16 @@ void Star::Update()
 		isCanHit = true;
 	}
 
-	trans->rotation_ = { 0,0,trans->rotation_.z };
+	//trans->rotation_ = { 0,0,trans->rotation_.z };
 
 	if (isAngleShake == true)
 	{
-		/*angleShakeValue =
-		{
-			Random::RangeF(-10, 10),
-			Random::RangeF(-10, 10),
-			Random::RangeF(-10, 10),
-		};
-
-		trans->rotation_ = { DegreeToRad(angleShakeValue.x),
-		DegreeToRad(angleShakeValue.y),
-		DegreeToRad(angleShakeValue.z) };*/
-
 		trans->rotation_.z = DegreeToRad(Random::RangeF(-20, 20));
 	}
 	else
 	{
+		trans->rotation_.z = 0;
+
 		int sign = 1;
 		if (dirVec.x < 0)
 		{
@@ -89,12 +98,12 @@ void Star::Update()
 		if (generateType == 0)
 		{
 			trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),0.0001 };
-			trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
+			//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
 		}
 		else if (generateType == 1 || generateType == 2)
 		{
 			trans->scale_ = trans->scale_ = { 1.5,1.5,0.0001 };
-			trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
+			//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
 		}
 	}
 
@@ -103,5 +112,16 @@ void Star::Update()
 
 void Star::Draw(const ViewProjection& viewProjection_, const uint32_t& starTexture)
 {
-	starModel->Draw(*trans, viewProjection_, starTexture);
+	fream++;
+	if (fream > maxFream)
+	{
+		animeIndex++;
+		if (animeIndex > 8)
+		{
+			animeIndex = 0;
+		}
+		fream = 0;
+	}
+	starModel->Draw(*trans, viewProjection_, Player::playerTexAnime[animeIndex]);
 }
+

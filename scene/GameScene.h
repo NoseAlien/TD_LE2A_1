@@ -60,8 +60,6 @@ public: // メンバ関数
 	static void Load();
 	IScene* GetNextScene();
 
-	void InitOnce();
-
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -83,6 +81,17 @@ private: // メンバ変数
 
 	HitStop* hitstop;
 	SlowMotion* slowMotion;
+
+private:
+	// 背景関連
+	static Model* backCubeModel;
+	std::vector<std::unique_ptr<WorldTransform>> backCubeTrans;
+	std::vector<float> backCubeMoveSpeed;
+	std::vector<float> backCubeMoveAngle;
+	std::vector<int> backCubeAngleSign;
+	void GenerateBackCube(const Vector3& pos);
+	void BackGroundUpdate();
+	void BackGroundDraw();
 
 private:
 	void CurrentStageInit();

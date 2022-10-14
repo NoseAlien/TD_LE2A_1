@@ -15,6 +15,7 @@ uint32_t Stage::thornTexture = 0;
 vector<uint32_t> Stage::startTextTextures = {};
 vector<uint32_t> Stage::numberSheet = {};
 uint32_t Stage::timeStrTexture = 0;
+uint32_t Stage::clearStrTexture = 0;
 
 Stage::Stage(const int& stageType) :
 	stageType(stageType), playerIsHitGoal(false), stagePcrogress(Start), clearTimeDights(6)
@@ -37,6 +38,10 @@ Stage::Stage(const int& stageType) :
 	timeStrSprite = Sprite::Create(timeStrTexture, { -128,-128 });
 	timeStrSprite->SetAnchorPoint({ 0.5, 0.5 });
 	timeStrSprite->SetSize({ 128,64 });
+
+	clearStrSprite = Sprite::Create(clearStrTexture, { 960,270 });
+	clearStrSprite->SetAnchorPoint({ 0.5, 0.5 });
+	clearStrSprite->SetSize({ 0,0 });
 }
 Stage::~Stage()
 {
@@ -50,27 +55,33 @@ Stage::~Stage()
 	}
 
 	delete timeStrSprite;
+	delete clearStrSprite;
 }
 
+Vector2 clearStrSize(0, 0);
+float addSizeValue = 512;
 void Stage::Load()
 {
-	startTextTextures.emplace_back(TextureManager::Load("Text/StartText1.png"));
-	startTextTextures.emplace_back(TextureManager::Load("Text/StartText2.png"));
-	startTextTextures.emplace_back(TextureManager::Load("Text/StartText3.png"));
-	startTextTextures.emplace_back(TextureManager::Load("Text/StartText4.png"));
+	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText1.png"));
+	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText2.png"));
+	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText3.png"));
+	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText4.png"));
 	starTexture = TextureManager::Load("star.png");
 	thornTexture = TextureManager::Load("thorn.png");
 	string filepath;
 	for (int i = 0; i < 10; i++)
 	{
-		filepath = "NumberSheet/number" + to_string(i) + ".png";
+		filepath = "SpriteTexture/NumberSheet/number" + to_string(i) + ".png";
 		numberSheet.emplace_back(TextureManager::Load(filepath.c_str()));
 	}
-	timeStrTexture = TextureManager::Load("TimeStr.png");
+	timeStrTexture = TextureManager::Load("SpriteTexture/TimeStr.png");
+	clearStrTexture = TextureManager::Load("SpriteTexture/clear.png");
 }
-
 void Stage::Init()
 {
+	clearStrSize = { 0,0 };
+	addSizeValue = 512;
+
 	viewProjection_.eyePos = { 0,0,-50 };
 	viewProjection_.targetPos = { 0,0,0 };
 	viewProjection_.up = { 0,1,0 };
@@ -107,7 +118,6 @@ void Stage::Init()
 	cameraMoveVec = { 0,0,0 };
 
 	isPlayerDieEffectGenerate = false;
-
 }
 
 void Stage::Update()
@@ -130,7 +140,6 @@ void Stage::Update()
 		else if (stageType == RaceStage)
 		{
 			RaceUpdate();
-
 		}
 		if (player->GetLife() > 0)
 		{
@@ -143,21 +152,19 @@ void Stage::Update()
 			if (stagePcrogress == Play)
 			{
 				stagePcrogress = Staging;
-				SlowMotion::GetInstance()->StartSlowMotion(0.05, 480);
+				SlowMotion::GetInstance()->StartSlowMotion(0.05, 240);
 				endTime = GetNowTime();
 				clearTime = endTime - startTime;
-				isShowClearTime = true;
 				isMoveClearTime = true;
+				gameClear = true;
 			}
 
 			// •ÏX
-			if (stagePcrogress == Staging/* && player->GetPos().y >= 20*/ &&
+			if (stagePcrogress == Staging &&
 				SlowMotion::GetInstance()->GetisSlowMotion() == false)
 			{
 				stagePcrogress = End;
 				sceneChange->StartSceneChange();
-				gameClear = true;
-
 			}
 		}
 
@@ -167,9 +174,9 @@ void Stage::Update()
 		{
 			if (stagePcrogress == Play)
 			{
+				player->SetLife(0);
 				stagePcrogress = Staging;
 				isCameraMoveStep = true;
-
 			}
 			gameOver = true;
 			endTime = GetNowTime();
@@ -325,11 +332,11 @@ void Stage::GameOverCameraUpdate()
 {
 	if (isCameraMoveStep)
 	{
-		Vector3 vec = (player->GetPos() + Vector3{ 0, 0, -8 } - viewProjection_.eyePos);
+		Vector3 vec = player->GetPos() + Vector3{ 0, -2, -8 } - viewProjection_.eyePos;
 		viewProjection_.eyePos += vec * 0.4;
 		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{ 0, 0, 1 };
 
-		if (vec.Magnitude() <= 0.000005 && isPlayerDieEffectGenerate == false)
+		if (vec.Magnitude() <= 0.00005 && isPlayerDieEffectGenerate == false)
 		{
 			//sceneChange->StartSceneChange();
 			player->DieEffectGenerate();
@@ -340,6 +347,23 @@ void Stage::GameOverCameraUpdate()
 
 void Stage::ClearTimeUpdate()
 {
+	if (gameClear == true)
+	{
+		addSizeValue--;
+		if (addSizeValue <= 0)
+		{
+			addSizeValue = 0;
+		}
+		clearStrSize.x += addSizeValue * 0.05;
+		clearStrSize.y += addSizeValue * 0.05;
+		if (clearStrSize.x >= 512)
+		{
+			clearStrSize = { 512,512 };
+			isShowClearTime = true;
+		}
+		clearStrSprite->SetSize(clearStrSize);
+	}
+
 	if (isShowClearTime == true)
 	{
 		if (isMoveClearTime == true)
@@ -371,6 +395,11 @@ void Stage::ClearTimeUpdate()
 }
 void Stage::DrawClearTime()
 {
+	if (gameClear == true)
+	{
+		clearStrSprite->Draw();
+	}
+
 	if (isShowClearTime == true)
 	{
 		for (int i = 0; i < 4; i++)
@@ -410,12 +439,12 @@ void Stage::PlayerGenerateStar(const Vector3& pos)
 		stars.emplace_back(move(make_unique<Star>()));
 		if (i == 0)
 		{
-			stars.back()->Generate(pos, { -1,0,0 }, 0);
+			stars.back()->Generate({ pos.x,pos.y - 2,pos.z }, { -1,0,0 }, 0);
 			stars.back()->SetSpeed(1.3);
 		}
 		if (i == 1)
 		{
-			stars.back()->Generate(pos, { 1,0,0 }, 0);
+			stars.back()->Generate({ pos.x,pos.y - 2,pos.z }, { 1,0,0 }, 0);
 			stars.back()->SetSpeed(1.3);
 		}
 	}
@@ -450,6 +479,7 @@ void Stage::PlayerUpdate()
 			{ 15,4 },
 		};
 
+		// ¯‚ðŠª‚«ž‚Þˆ—
 		for (const auto& temp : stars)
 		{
 			SquareCollider starCollider
@@ -482,7 +512,6 @@ void Stage::PlayerUpdate()
 				blocks.remove(temp);
 				break;
 			}
-
 		}
 	}
 
@@ -492,7 +521,7 @@ void Stage::PlayerUpdate()
 		if (collision->SphereHitSphere(
 			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius()))
 		{
-			if (temp->GetisCanHit() == true && player->GetisEngulfAttack() == true)
+			if (temp->GetisCanHit() == true && player->GetisGround() == false)
 			{
 				player->HaveStarNumIncriment();
 				stars.remove(temp);
@@ -505,25 +534,24 @@ void Stage::PlayerUpdate()
 	player->Update();
 
 	//auto text = DebugText::GetInstance();
-
 }
 
 // °
 void Stage::FloorUpdate()
 {
-	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + 2)
+	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2)
 	{
-		player->SetPos(
-			{
-				player->GetPos().x,
-				ground->GetPos().y + ground->GetScale().y + 2,
-				player->GetPos().z
-			});
-
-		player->SetisReverse(true);
-
 		if (ground->GetisHit() == 0)
 		{
+			player->SetPos(
+				{
+					player->GetPos().x,
+					ground->GetPos().y + ground->GetScale().y + player->GetRadius(),
+					player->GetPos().z
+				});
+
+			player->SetisReverse(true);
+
 			ground->SetisHit(1);
 		}
 		if (ground->GetisHit() == 1)
@@ -537,7 +565,10 @@ void Stage::FloorUpdate()
 
 			if (player->GetHaveStarNum() > 0)
 			{
-				ground->LargeDamage(player->GetHaveStarNum() * player->GetStarAttackDamage());
+				ground->LargeDamage(
+					player->GetWeakAttackDamage() +
+					player->GetHaveStarNum() *
+					player->GetStarAttackDamage());
 				player->SetHaveStarNum(0);
 				ground->SetisHit(2);
 			}
@@ -556,6 +587,15 @@ void Stage::FloorUpdate()
 				}
 			}
 		}
+		//if (player->GetScale().y == 2)
+		//{
+		//	player->SetPos(
+		//		{
+		//			player->GetPos().x,
+		//			ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
+		//			player->GetPos().z
+		//		});
+		//}
 	}
 
 	if (player->GetPos().y >= 20)
@@ -563,7 +603,8 @@ void Stage::FloorUpdate()
 		ground->SetisHit(0);
 	}
 	// ‘å‚«‚­‚È‚éˆ—
-	if (stars.size() >= 10 && ground->GetisAddScaleCountDown() == 0)
+	const int starSize = 1;
+	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
 	{
 		ground->SetisAddScaleCountDown(1);
 	}
@@ -574,8 +615,10 @@ void Stage::FloorUpdate()
 			temp->SetisAngleShacke(true);
 		}
 	}
-	if (stars.size() < 10)
+	if (stars.size() < starSize)
 	{
+		ground->SetisAddScaleCountDown(0);
+		ground->SetisSuctionStar(false);
 		for (const auto& temp : stars)
 		{
 			temp->SetisAngleShacke(false);
@@ -635,7 +678,7 @@ void Stage::StarUpdate()
 		};
 		if (ground->GetHP() > 0)
 		{
-			if (collision->SquareHitSquare(starCollider, floorCollider))
+			if (collision->SquareHitSquare(starCollider, floorCollider) && tempStar->GetisCanHit() == true)
 			{
 				tempStar->SetPos(
 					{
@@ -675,7 +718,7 @@ void Stage::StarUpdate()
 	{
 		if (stageType != RaceStage)
 		{
-			if (temp->GetPos().x >= 44 || temp->GetPos().x <= -44)
+			if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40)
 			{
 				stars.remove(temp);
 				break;
@@ -718,7 +761,7 @@ void Stage::BlockUpdate()
 {
 	SquareCollider playerCollider =
 	{
-		{ player->GetPos().x,player->GetPos().y },
+		{ player->GetPos().x,player->GetPos().y - 2 },
 		{ player->GetScale().x,player->GetScale().y },
 	};
 	SquareCollider floorCollider =

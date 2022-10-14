@@ -20,6 +20,12 @@ private:
 	std::unique_ptr<HeavyAttackEffect> heavyAttackEffect;
 	std::unique_ptr<PlayerDieEffect> playerDieEffect;
 
+public:	// テクスチャー
+	static uint32_t playerTexAnime[9];		// テクスチャーアニメション
+	int animeIndex;
+	int fream;
+	int maxFream;
+
 private:
 	Input* input_ = nullptr;
 
@@ -29,16 +35,16 @@ private:
 	uint32_t jumpSE = 0;
 	uint32_t damageSE = 0;
 
-	uint32_t playerTexture = 0;		// テクスチャー
 	uint32_t redPixel = 0;			// テクスチャー
 
 	SlowMotion* slowMotion;
-
 
 	int life;
 	bool isAlive;
 
 	float speed;	// 移動速度
+	float radius;	// 半径
+	float bigRadius; // 溜めてる時の半径
 
 	bool isAttack;	// 攻撃しているかどうか
 	float attackMoveSpeed;	// 攻撃時の移動速度
@@ -61,7 +67,7 @@ private:
 	bool isDamage;
 	int damageTimer;
 	int maxDamageTimer;
-	bool isHit;
+	bool isGround;	// 地面にいるかどうかのフラグ
 
 	const int starAttackDamage;
 	const int weakAttackDamage;
@@ -74,7 +80,6 @@ private:
 public:
 	// パターン２のやつ作るために使うやつ
 	bool place = false;
-
 
 private:
 	void MoveUpdate();
@@ -100,9 +105,9 @@ public:
 	inline void UpdateMatrix() { trans->UpdateMatrix(); }
 
 	inline Vector3 GetPos() { return trans->translation_; }
-	inline Vector3 GetScale() { return { 1,1,1 };/*return trans->scale_;*/ }
+	inline Vector3 GetScale() { /*return { 1,1,1 };*/return trans->scale_; }
 	inline float GetSpeed() { return speed; }
-	inline float GetRadius() { return collisionRadius; }
+	inline float GetRadius() { return radius; }
 	inline bool GetisWeakAttack() { return isWeakAttack; }
 	inline bool GetisHeavyAttack() { return isHeavyAttack; }
 	inline bool GetisEngulfAttack() { return isEngulfAttack; }
@@ -117,15 +122,17 @@ public:
 	inline int GetStopTimer() { return stopTimer; }
 	inline int GetLife() { return life; }
 	inline bool GetisAlive() { return isAlive; }
+	inline bool GetisGround() { return isGround; }
 
 	inline void HaveStarNumIncriment() { haveStarNum++; }
 
 	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
 	inline void SetScale(const Vector3& scale) { trans->scale_ = scale; }
-	inline void SetisReverse(bool isReverse) { this->isReverse = isReverse; }
+	inline void SetisReverse(const bool& isReverse) { this->isReverse = isReverse; }
 	inline void SetisEngulfAttack(const bool& isEngulfAttack) { this->isEngulfAttack = isEngulfAttack; }
 	inline void SetHaveStarNum(const int& haveStarNum) { this->haveStarNum = haveStarNum; }
 	inline void SetStageType(const int& stageType) { this->stageType = stageType; }
+	inline void SetLife(const int& life) { this->life = life; }
 
 public:
 	static Player* GetInstance();
