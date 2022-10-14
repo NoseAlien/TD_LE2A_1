@@ -10,7 +10,7 @@ Audio* Player::audio = nullptr;
 uint32_t Player::playerTexAnime[9] = {};
 
 Player::Player() :
-	isAttack(false), speed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
+	isAttack(false), maxSpeed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
 	isWeakAttack(false), isHeavyAttack(false),
 	collisionRadius(1), maxDamageTimer(180),
 	starAttackDamage(5), weakAttackDamage(5), heavyAttackDamage(10),
@@ -66,6 +66,8 @@ void Player::Init()
 	isWeakAttack = false;
 	isHeavyAttack = false;
 	isEngulfAttack = false;
+
+	//speed = 0;
 
 	attackMoveSpeed = 3;
 	haveStarNum = 0;
@@ -175,6 +177,12 @@ void Player::MoveUpdate()
 	//{
 	//	trans->translation_.x = -39.5;
 	//}
+
+	if (!isAttack)
+	{
+		speed += 0.003;
+	}
+	speed = min(speed, maxSpeed);
 	// ˆÚ“®ˆ—
 	if (isAlive == true)
 	{
@@ -231,9 +239,11 @@ void Player::AttackUpdate()
 					isWeakAttack = true;
 					maxSize = 1;
 					trans->scale_ = { 2,2,2 };
+					speed *= 0.5;
 				}
-				else if (pushKeyFream >= maxPushKeyFream)
+				else
 				{
+					speed = 0;
 					isHeavyAttack = true;
 					maxSize = 2;
 					viewProjection_.SetShakeValue(0.5, 10);

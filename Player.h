@@ -42,6 +42,7 @@ private:
 	int life;
 	bool isAlive;
 
+	float maxSpeed;	// ˆÚ“®‘¬“x
 	float speed;	// ˆÚ“®‘¬“x
 	float radius;	// ”¼Œa
 	float bigRadius; // —­‚ß‚Ä‚éŽž‚Ì”¼Œa
