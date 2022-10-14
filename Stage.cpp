@@ -602,6 +602,16 @@ void Stage::FloorUpdate()
 	{
 		ground->SetisHit(0);
 	}
+	if (ground->GetisHit() == 2)
+	{
+		player->SetPos(
+			{
+				player->GetPos().x,
+				ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
+				player->GetPos().z
+			});
+	}
+
 	// ‘å‚«‚­‚È‚éˆ—
 	const int starSize = 1;
 	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
