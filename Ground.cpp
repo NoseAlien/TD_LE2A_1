@@ -30,7 +30,7 @@ void Ground::Load()
 void Ground::Init(const int& maxhp)
 {
 	trans->translation_ = { 0,-22.5,0 };
-	trans->scale_ = { 50,10,5 };
+	trans->scale_ = { 46,10,5 };
 	trans->UpdateMatrix();
 
 	isAlive = true;
