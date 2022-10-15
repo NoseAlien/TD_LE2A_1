@@ -218,7 +218,7 @@ void Player::AttackUpdate()
 				}
 				else
 				{
-					trans->scale_ += 0.0166;
+					trans->scale_ += 1 / (float)maxPushKeyFream;
 					trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 				}
 				isReverse = false;
@@ -293,12 +293,12 @@ void Player::AttackUpdate()
 				if (addScaleStep == 1)
 				{
 					stopTimer++;
-					//trans->translation_.y -= 0.05 * slowMotion->GetSlowExrate();
 
+					//trans->translation_.y -= radius / (2 / (addScaleValue / maxSize));
+					trans->translation_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
 					trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
 					trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
 					trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
-					//trans->translation_.y -= ((3 - trans->scale_.y) / 0.125);
 					if (trans->scale_.y <= 0)
 					{
 						trans->translation_.y = 20;

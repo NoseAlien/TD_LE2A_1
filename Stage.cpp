@@ -539,78 +539,117 @@ void Stage::PlayerUpdate()
 // °
 void Stage::FloorUpdate()
 {
-	if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2)
+	SquareCollider playerCollider =
 	{
-		if (ground->GetisHit() == 0)
+		{ player->GetPos().x, player->GetPos().y - player->GetRadius() - player->GetAttackMoveSpeed()},
+		{ player->GetScale().x, player->GetScale().y },
+	};
+	SquareCollider groundCollider =
+	{
+		{ ground->GetPos().x, ground->GetPos().y },
+		{ ground->GetScale().x, ground->GetScale().y },
+	};
+	if (ground->GetisHit() == 0)
+	{
+		while (collision->SquareHitSquare(playerCollider, groundCollider))
 		{
-			player->SetPos(
-				{
-					player->GetPos().x,
-					ground->GetPos().y + ground->GetScale().y + player->GetRadius(),
-					player->GetPos().z
-				});
+			auto tempPos = player->GetPos();
+			tempPos.y -= 0.1f;
+			player->SetPos(tempPos);
+			player->UpdateMatrix();
 
-			player->SetisReverse(true);
-
-			ground->SetisHit(1);
-		}
-		if (ground->GetisHit() == 1)
-		{
-			player->EffectGenerate(
-				{
-					player->GetPos().x ,
-					ground->GetPos().y + ground->GetScale().y,
-					player->GetPos().z
-				});
-
-			if (player->GetHaveStarNum() > 0)
+			SquareCollider tempCollider =
 			{
-				ground->LargeDamage(
-					player->GetWeakAttackDamage() +
-					player->GetHaveStarNum() *
-					player->GetStarAttackDamage());
-				player->SetHaveStarNum(0);
+				{ player->GetPos().x, player->GetPos().y - player->GetRadius() },
+				{ player->GetRadius(), player->GetRadius() },
+			};
+			if (collision->SquareHitSquare(tempCollider, groundCollider))
+			{
+				//if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2)
+				//{
+				//player->SetPos(
+				//	{
+				//		player->GetPos().x,
+				//		ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
+				//		player->GetPos().z
+				//	});
+				//player->UpdateMatrix();
+				player->SetisReverse(true);
+				ground->SetisHit(1);
+				//}
+				break;
+			}
+		}
+	}
+	//if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2)
+	//{
+	//	if (ground->GetisHit() == 0)
+	//	{
+	//		player->SetPos(
+	//			{
+	//				player->GetPos().x,
+	//				ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
+	//				player->GetPos().z
+	//			});
+
+	//		player->SetisReverse(true);
+
+	//		ground->SetisHit(1);
+	//	}
+	if (ground->GetisHit() == 1)
+	{
+		player->EffectGenerate(
+			{
+				player->GetPos().x ,
+				ground->GetPos().y + ground->GetScale().y,
+				player->GetPos().z
+			});
+
+		if (player->GetHaveStarNum() > 0)
+		{
+			ground->LargeDamage(
+				player->GetWeakAttackDamage() +
+				player->GetHaveStarNum() *
+				player->GetStarAttackDamage());
+			player->SetHaveStarNum(0);
+			ground->SetisHit(2);
+		}
+		else
+		{
+			if (player->GetisHeavyAttack())
+			{
+				player->SetPos(
+					{
+						player->GetPos().x,
+						ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
+						player->GetPos().z
+					});
+
+				PlayerGenerateStar(player->GetPos());
+				ground->LargeDamage(player->GetHeavyAttackDamage());
 				ground->SetisHit(2);
 			}
-			else
+			else if (player->GetisWeakAttack())
 			{
-				if (player->GetisHeavyAttack())
-				{
-					PlayerGenerateStar(player->GetPos());
-					ground->LargeDamage(player->GetHeavyAttackDamage());
-					ground->SetisHit(2);
-				}
-				else if (player->GetisWeakAttack())
-				{
-					ground->Damage(player->GetWeakAttackDamage());
-					ground->SetisHit(2);
-				}
+				ground->Damage(player->GetWeakAttackDamage());
+				ground->SetisHit(2);
 			}
 		}
-		//if (player->GetScale().y == 2)
-		//{
-		//	player->SetPos(
-		//		{
-		//			player->GetPos().x,
-		//			ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
-		//			player->GetPos().z
-		//		});
-		//}
 	}
 
 	if (player->GetPos().y >= 20)
 	{
 		ground->SetisHit(0);
 	}
-	if (ground->GetisHit() == 2)
-	{
-		player->SetPos(
-			{
-				player->GetPos().x,
-				ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
-				player->GetPos().z
-			});
-	}
+	//if (ground->GetisHit() == 2)
+	//{
+	//	player->SetPos(
+	//		{
+	//			player->GetPos().x,
+	//			ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
+	//			player->GetPos().z
+	//		});
+	//}
 
 	// ‘å‚«‚­‚È‚éˆ—
 	const int starSize = 1;
