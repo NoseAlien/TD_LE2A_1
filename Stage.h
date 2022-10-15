@@ -57,6 +57,8 @@ private:
 	static uint32_t clearStrTexture;
 	Sprite* clearStrSprite;
 
+	int clearScreenClock;
+
 private:
 	// ‰‰oŠÖ˜A
 	bool isCameraMoveStep;

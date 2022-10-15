@@ -17,6 +17,12 @@ vector<uint32_t> Stage::numberSheet = {};
 uint32_t Stage::timeStrTexture = 0;
 uint32_t Stage::clearStrTexture = 0;
 
+const float lerp(const float& start, const float& end, const double progress)
+{
+	double clampedProgress = min(max(progress,0),1);
+	return start * (1.0f - clampedProgress) + end * clampedProgress;
+}
+
 Stage::Stage(const int& stageType) :
 	stageType(stageType), playerIsHitGoal(false), stagePcrogress(Start), clearTimeDights(6)
 {
@@ -347,33 +353,17 @@ void Stage::GameOverCameraUpdate()
 
 void Stage::ClearTimeUpdate()
 {
-	if (gameClear == true)
+	if (gameClear)
 	{
-		addSizeValue--;
-		if (addSizeValue <= 0)
-		{
-			addSizeValue = 0;
-		}
-		clearStrSize.x += addSizeValue * 0.05;
-		clearStrSize.y += addSizeValue * 0.05;
-		if (clearStrSize.x >= 512)
-		{
-			clearStrSize = { 512,512 };
-			isShowClearTime = true;
-		}
-		clearStrSprite->SetSize(clearStrSize);
-	}
+		clearScreenClock++;
 
-	if (isShowClearTime == true)
-	{
-		if (isMoveClearTime == true)
-		{
-			clearTimeLastDightPos.x -= 30;
-			if (clearTimeLastDightPos.x <= 1856)
-			{
-				clearTimeLastDightPos.x = 1856;
-			}
-		}
+		float clearStrPosY = lerp(1700.0, 270, pow((clearScreenClock - 50) / 30.0, 0.2));
+
+		clearStrSprite->SetPosition({ 960,clearStrPosY });
+		clearStrSprite->SetSize({ 512,512 });
+
+		clearTimeLastDightPos.x = lerp(2400, 1856, pow((clearScreenClock - 100) / 30.0, 0.2));
+
 		dightsNumber = GetDightsNumber(clearTime);
 		for (int i = 0; i < dightsNumber.size(); i++)
 		{
@@ -389,19 +379,18 @@ void Stage::ClearTimeUpdate()
 			{
 				clearTimeLastDightPos.x - dightsNumber.size() * 48 - 128,
 				clearTimeLastDightPos.y
-
 			});
+	}
+	else
+	{
+		clearScreenClock = 0;
 	}
 }
 void Stage::DrawClearTime()
 {
-	if (gameClear == true)
+	if (gameClear)
 	{
 		clearStrSprite->Draw();
-	}
-
-	if (isShowClearTime == true)
-	{
 		for (int i = 0; i < 4; i++)
 		{
 			clearTimeSprites[i]->Draw();
