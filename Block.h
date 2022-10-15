@@ -5,8 +5,8 @@
 class Block
 {
 private:
+	static Model* blockModel;		// ƒ‚ƒfƒ‹
 	WorldTransform* trans = nullptr;
-	Model* blockModel = nullptr;		// ƒ‚ƒfƒ‹
 	uint32_t blockTexture;
 
 	int hp;
@@ -18,9 +18,11 @@ private:
 public:
 	Block();
 	~Block();
+	static void Load();
+	static void UnLoad();
 	void Generate(const Vector3& pos, const Vector3& scale, const bool& haveStar);
 	void Update();
-	void Draw(const ViewProjection& viewProjection_, const uint32_t& starTexture);
+	void Draw(const ViewProjection& viewProjection_);
 
 	inline void Damage(const int& subhp) { hp -= subhp; }
 

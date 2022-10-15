@@ -1,16 +1,26 @@
 #include "Block.h"
 
+Model* Block::blockModel = nullptr;
+
 Block::Block() :
 	maxhp(10)
 {
 	trans = new WorldTransform();
 	trans->Initialize();
-	blockModel = Model::Create();
 }
 
 Block::~Block()
 {
 	delete trans;
+}
+
+void Block::Load()
+{
+	blockModel = Model::CreateFromOBJ("block", true);
+}
+
+void Block::UnLoad()
+{
 	delete blockModel;
 }
 
@@ -36,7 +46,7 @@ void Block::Update()
 	trans->UpdateMatrix();
 }
 
-void Block::Draw(const ViewProjection& viewProjection_, const uint32_t& starTexture)
+void Block::Draw(const ViewProjection& viewProjection_)
 {
-	blockModel->Draw(*trans, viewProjection_, starTexture);
+	blockModel->Draw(*trans, viewProjection_);
 }

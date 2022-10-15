@@ -94,11 +94,13 @@ void Stage::Init()
 	// ƒ‰ƒCƒ“ŠÖ˜A
 	lineTrans = move(make_unique<WorldTransform>());
 	lineTrans->Initialize();
-	lineTrans->translation_ = { 0,0,1 };
+	lineTrans->translation_ = { 0,0,5 };
+	lineTrans->scale_ = { 1.1,1,1 };
 	lineTrans->UpdateMatrix();
 	lineTrans2 = move(make_unique<WorldTransform>());
 	lineTrans2->Initialize();
-	lineTrans2->translation_ = { 84,0,1 };
+	lineTrans2->translation_ = { 92.4,0,5 };
+	lineTrans2->scale_ = { 1.1,1,1 };
 	lineTrans2->UpdateMatrix();
 
 	clearStrSize = { 0,0 };
@@ -247,7 +249,7 @@ void Stage::Draw()
 
 	for (const auto& temp : blocks)
 	{
-		temp->Draw(viewProjection_, thornTexture);
+		temp->Draw(viewProjection_);
 	}
 
 	for (const auto& temp : cannons)
@@ -889,9 +891,9 @@ void Stage::RaceUpdate()
 			tempGroundPos.z,
 		});
 
-	if (player->GetPos().x >= 84)
+	if (player->GetPos().x >= 92.4)
 	{
-		lineTrans->translation_.x = 168;
+		lineTrans->translation_.x = 184.8;
 		lineTrans->UpdateMatrix();
 	}
 

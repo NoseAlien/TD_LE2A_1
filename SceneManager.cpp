@@ -20,12 +20,14 @@ SceneManager::~SceneManager()
 	sceneChange->DestroyInstance();
 	Star::UnLoad();
 	Stage::UnLoad();
+	Block::UnLoad();
 }
 
 void SceneManager::Initialize()
 {
 	GameScene::Load();
 	Star::Load();
+	Block::Load();
 	sceneChange->Load();
 	scene->Initialize();
 }
