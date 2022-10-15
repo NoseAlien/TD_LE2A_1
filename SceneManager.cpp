@@ -19,6 +19,7 @@ SceneManager::~SceneManager()
 	collision->DestroyInstance();
 	sceneChange->DestroyInstance();
 	Star::UnLoad();
+	Stage::UnLoad();
 }
 
 void SceneManager::Initialize()

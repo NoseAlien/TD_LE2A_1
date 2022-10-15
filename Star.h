@@ -39,7 +39,7 @@ public:
 	static void UnLoad();
 	void Generate(const Vector3& pos, const Vector3& dirVec, const int& generateType);
 	void Update();
-	void Draw(const ViewProjection& viewProjection_, const uint32_t& starTexture);
+	void Draw(const ViewProjection& viewProjection_);
 
 	WorldTransform* GetTrans() { return trans; }
 	inline bool GetisCanHit() { return isCanHit; }

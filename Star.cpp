@@ -110,7 +110,7 @@ void Star::Update()
 	trans->UpdateMatrix();
 }
 
-void Star::Draw(const ViewProjection& viewProjection_, const uint32_t& starTexture)
+void Star::Draw(const ViewProjection& viewProjection_)
 {
 	fream++;
 	if (fream > maxFream)

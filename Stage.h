@@ -66,16 +66,18 @@ private:
 	bool isPlayerDieEffectGenerate = false;
 
 private:
+	// ライン関連
+	static Model* lineModel;
+	std::unique_ptr<WorldTransform> lineTrans;
+	std::unique_ptr<WorldTransform> lineTrans2;
+
+private:
 	std::list<std::unique_ptr<Star>> stars;
 	std::list<std::unique_ptr<Thorn>> thorns;
 	std::list<std::unique_ptr<Block>> blocks;
 	std::list<std::unique_ptr<Cannon>> cannons;
 	std::unique_ptr<Goal> goal;
-	static uint32_t starTexture;			// 星テクスチャー
 	static uint32_t thornTexture;		// トゲテクスチャー
-
-	Vector3 linePos1;
-	Vector3 linePos2;
 
 	bool gameClear;
 	bool gameOver;
@@ -106,10 +108,10 @@ public:
 	Stage(const int& stageType);
 	~Stage();
 	static void Load();
+	static void UnLoad();
 	void Init();
 	void Update();
 	void Draw();
-	void DrawLine();
 	void DrawClearTime();
 	void DrawCountDown();
 

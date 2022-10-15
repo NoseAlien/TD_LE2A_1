@@ -10,12 +10,12 @@
 
 using namespace std;
 
-uint32_t Stage::starTexture = 0;
 uint32_t Stage::thornTexture = 0;
 vector<uint32_t> Stage::startTextTextures = {};
 vector<uint32_t> Stage::numberSheet = {};
 uint32_t Stage::timeStrTexture = 0;
 uint32_t Stage::clearStrTexture = 0;
+Model* Stage::lineModel = nullptr;
 
 const float lerp(const float& start, const float& end, const double progress)
 {
@@ -72,7 +72,6 @@ void Stage::Load()
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText2.png"));
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText3.png"));
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText4.png"));
-	starTexture = TextureManager::Load("star.png");
 	thornTexture = TextureManager::Load("thorn.png");
 	string filepath;
 	for (int i = 0; i < 10; i++)
@@ -82,9 +81,26 @@ void Stage::Load()
 	}
 	timeStrTexture = TextureManager::Load("SpriteTexture/TimeStr.png");
 	clearStrTexture = TextureManager::Load("SpriteTexture/clear.png");
+
+	lineModel = Model::CreateFromOBJ("lineModel", true);
+
+}
+void Stage::UnLoad()
+{
+	delete lineModel;
 }
 void Stage::Init()
 {
+	// ƒ‰ƒCƒ“ŠÖ˜A
+	lineTrans = move(make_unique<WorldTransform>());
+	lineTrans->Initialize();
+	lineTrans->translation_ = { 0,0,1 };
+	lineTrans->UpdateMatrix();
+	lineTrans2 = move(make_unique<WorldTransform>());
+	lineTrans2->Initialize();
+	lineTrans2->translation_ = { 84,0,1 };
+	lineTrans2->UpdateMatrix();
+
 	clearStrSize = { 0,0 };
 	addSizeValue = 512;
 
@@ -115,9 +131,6 @@ void Stage::Init()
 	isShowClearTime = false;
 	clearTimeLastDightPos = { 2500,952 };
 	isMoveClearTime = false;
-
-	linePos1 = { -50,0,0 };
-	linePos2 = { +50,0,0 };
 
 	isCameraMoveStep = false;
 	stagePcrogress = Start;
@@ -215,12 +228,16 @@ void Stage::Update()
 }
 void Stage::Draw()
 {
+	lineModel->Draw(*lineTrans, viewProjection_);
+	lineModel->Draw(*lineTrans2, viewProjection_);
+
+
 	player->Draw(viewProjection_);
 	ground->Draw(viewProjection_);
 
 	for (const auto& temp : stars)
 	{
-		temp->Draw(viewProjection_, starTexture);
+		temp->Draw(viewProjection_);
 	}
 
 	for (const auto& temp : thorns)
@@ -246,10 +263,6 @@ void Stage::Draw()
 
 	player->EffectDraw();
 	ground->EffectDraw();
-}
-void Stage::DrawLine()
-{
-	PrimitiveDrawer::GetInstance()->DrawLine3d(linePos1, linePos2, { 255,0,0,255 });
 }
 
 void Stage::CountDownUpdate()
@@ -876,8 +889,11 @@ void Stage::RaceUpdate()
 			tempGroundPos.z,
 		});
 
-	linePos1.x += player->GetSpeed() * SlowMotion::GetInstance()->GetSlowExrate();
-	linePos2.x += player->GetSpeed() * SlowMotion::GetInstance()->GetSlowExrate();
+	if (player->GetPos().x >= 84)
+	{
+		lineTrans->translation_.x = 168;
+		lineTrans->UpdateMatrix();
+	}
 
 	if (player->GetPos().x >= goal->GetPos().x - goal->GetScale().x)
 	{

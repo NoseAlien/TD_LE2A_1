@@ -19,11 +19,13 @@ Model* GameScene::backCubeModel = nullptr;
 
 GameScene::GameScene()
 {
+
 }
 GameScene::~GameScene()
 {
 	Particle::UnLoad();
-	delete backCubeModel;	// 今はデストラクター一回しか呼ばないためエラー起こらない
+	// 今はデストラクター一回しか呼ばないためエラー起こらない
+	delete backCubeModel;
 }
 
 void GameScene::Load()
@@ -37,8 +39,8 @@ void GameScene::Load()
 	Particle::Load();
 
 	backCubeModel = Model::CreateFromOBJ("backCube", true);
-}
 
+}
 void GameScene::Initialize()
 {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -91,7 +93,6 @@ void GameScene::Initialize()
 	//		});
 	//}
 }
-
 void GameScene::Update()
 {
 	//BackGroundUpdate();
@@ -172,7 +173,6 @@ void GameScene::Update()
 	debugText_->SetPos(20, 60);
 	debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
 }
-
 void GameScene::Draw()
 {
 	// コマンドリストの取得
@@ -214,12 +214,6 @@ void GameScene::Draw()
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
-
-	if (gameState == isGame)
-	{
-		stages[currentStage]->DrawLine();
-	}
-
 #pragma endregion
 
 #pragma region 前景スプライト描画
@@ -311,7 +305,6 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
 	}
 }
-
 void GameScene::SelectUpdate()
 {
 	float speed = player->GetAttackMoveSpeed() / 2;

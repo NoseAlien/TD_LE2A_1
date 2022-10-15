@@ -82,6 +82,7 @@ private: // メンバ変数
 	HitStop* hitstop;
 	SlowMotion* slowMotion;
 
+
 private:
 	// 背景関連
 	static Model* backCubeModel;
