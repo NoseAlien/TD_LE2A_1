@@ -136,7 +136,6 @@ void GameScene::Update()
 	}
 	else if (gameState == isSelect)
 	{
-		//if (player->GetPos().y >= 20 && isSelectEnd == true)
 
 		if (stageSelect->GetTextPos(currentStage).y >= 5 && isSelectEnd == true)
 		{

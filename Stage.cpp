@@ -560,21 +560,6 @@ void Stage::FloorUpdate()
 			}
 		}
 	}
-	//if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2)
-	//{
-	//	if (ground->GetisHit() == 0)
-	//	{
-	//		player->SetPos(
-	//			{
-	//				player->GetPos().x,
-	//				ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
-	//				player->GetPos().z
-	//			});
-
-	//		player->SetisReverse(true);
-
-	//		ground->SetisHit(1);
-	//	}
 	if (ground->GetisHit() == 1)
 	{
 		player->EffectGenerate(
@@ -597,13 +582,6 @@ void Stage::FloorUpdate()
 		{
 			if (player->GetisHeavyAttack())
 			{
-				player->SetPos(
-					{
-						player->GetPos().x,
-						ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
-						player->GetPos().z
-					});
-
 				PlayerGenerateStar(player->GetPos());
 				ground->LargeDamage(player->GetHeavyAttackDamage());
 				ground->SetisHit(2);
@@ -629,18 +607,9 @@ void Stage::FloorUpdate()
 				player->GetPos().z
 			});
 	}
-	//if (ground->GetisHit() == 2)
-	//{
-	//	player->SetPos(
-	//		{
-	//			player->GetPos().x,
-	//			ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
-	//			player->GetPos().z
-	//		});
-	//}
 
 	// 大きくなる処理
-	const int starSize = 1;
+	const int starSize = 10;
 	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
 	{
 		ground->SetisAddScaleCountDown(1);
@@ -667,21 +636,6 @@ void Stage::FloorUpdate()
 	{
 		stars.clear();
 		ground->SetisSuctionStar(false);
-
-		//const int num = 5;
-		//if (stars.size() < num)
-		//{
-		//	stars.clear();
-		//	ground->SetisSuctionStar(false);
-		//}
-		//else
-		//{
-		//	for (int i = 0; i < num; i++)
-		//	{
-		//		stars.pop_front();
-		//	}
-		//	ground->SetisSuctionStar(false);
-		//}
 	}
 
 	// 八個集まったか
@@ -798,8 +752,8 @@ void Stage::BlockUpdate()
 {
 	SquareCollider playerCollider =
 	{
-		{ player->GetPos().x,player->GetPos().y - 2 },
-		{ player->GetScale().x,player->GetScale().y },
+		{ player->GetPos().x, player->GetPos().y - player->GetRadius() - player->GetAttackMoveSpeed()},
+		{ player->GetScale().x, player->GetScale().y },
 	};
 	SquareCollider floorCollider =
 	{
@@ -816,35 +770,46 @@ void Stage::BlockUpdate()
 			{ temp->GetScale().x,temp->GetScale().y },
 		};
 
-		if (collision->SquareHitSquare(playerCollider, blockCollider))
+		// プレイヤー
+		if (temp->GetisHit() == 0)
 		{
-			player->SetPos(
-				{
-					player->GetPos().x,
-					temp->GetPos().y + temp->GetScale().y + 1,
-					player->GetPos().z
-				});
-			player->SetisReverse(true);
+			while (collision->SquareHitSquare(playerCollider, blockCollider))
+			{
+				auto tempPos = player->GetPos();
+				tempPos.y -= 0.1f;
+				player->SetPos(tempPos);
+				player->UpdateMatrix();
 
-			if (temp->GetisHit() == 0)
-			{
-				temp->SetisHit(1);
-			}
-			if (temp->GetisHit() == 1)
-			{
-				if (player->GetisWeakAttack() == true)
+				SquareCollider tempCollider =
 				{
-					temp->Damage(player->GetWeakAttackDamage());
-					temp->SetisHit(2);
-				}
-				if (player->GetisHeavyAttack() == true)
+					{ player->GetPos().x, player->GetPos().y - player->GetRadius() },
+					{ player->GetRadius(), player->GetRadius() },
+				};
+				if (collision->SquareHitSquare(tempCollider, blockCollider))
 				{
-					temp->Damage(player->GetHeavyAttackDamage());
-					temp->SetisHit(2);
+					player->SetisReverse(true);
+					temp->SetisHit(1);
+					break;
 				}
+
 			}
 		}
-		else if (collision->SquareHitSquare(floorCollider, blockCollider))
+		if (temp->GetisHit() == 1)
+		{
+			if (player->GetisWeakAttack() == true)
+			{
+				temp->Damage(player->GetWeakAttackDamage());
+				temp->SetisHit(2);
+			}
+			if (player->GetisHeavyAttack() == true)
+			{
+				temp->Damage(player->GetHeavyAttackDamage());
+				temp->SetisHit(2);
+			}
+		}
+
+		// 地面
+		if (collision->SquareHitSquare(floorCollider, blockCollider))
 		{
 			temp->SetPos(
 				{
@@ -860,10 +825,6 @@ void Stage::BlockUpdate()
 		}
 
 	}
-	//if (player->GetPos().y <= 4)
-	//{
-	//	int a = 10;
-	//}
 
 	// 更新処理
 	for (const auto& temp : blocks)
