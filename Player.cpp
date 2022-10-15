@@ -231,7 +231,6 @@ void Player::AttackUpdate()
 
 			if (trans->translation_.y == 20)
 			{
-				isGround = false;
 				isAttack = true;
 				addScaleStep = 1;
 				if (pushKeyFream < maxPushKeyFream)
@@ -253,6 +252,7 @@ void Player::AttackUpdate()
 			else
 			{
 				trans->translation_.y = 20;
+				isGround = false;
 			}
 
 			audio->PlayWave(jumpSE);
@@ -294,8 +294,7 @@ void Player::AttackUpdate()
 				{
 					stopTimer++;
 
-					//trans->translation_.y -= radius / (2 / (addScaleValue / maxSize));
-					trans->translation_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+					trans->translation_.y -= 1;
 					trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
 					trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
 					trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
@@ -374,7 +373,7 @@ void Player::AttackUpdate()
 
 						stopTimer = 0;			// 止まるタイマー
 						trans->scale_ = { radius,radius,radius };
-						trans->translation_.y = ground->GetPos().y + ground->GetScale().y + radius * 2;
+						//trans->translation_.y = ground->GetPos().y + ground->GetScale().y + radius * 2;
 
 					}
 				}

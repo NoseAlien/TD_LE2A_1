@@ -119,6 +119,7 @@ public:
 	inline int GetHeavyAttackDamage() { return heavyAttackDamage; }
 	inline float GetAttackMoveSpeed() { return attackMoveSpeed; }
 	inline bool GetisReverse() { return isReverse && addScaleStep == 2; }
+	inline bool GetisReverse2() { return isReverse; }
 
 	inline int GetStopTimer() { return stopTimer; }
 	inline int GetLife() { return life; }

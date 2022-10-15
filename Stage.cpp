@@ -19,7 +19,7 @@ uint32_t Stage::clearStrTexture = 0;
 
 const float lerp(const float& start, const float& end, const double progress)
 {
-	double clampedProgress = min(max(progress,0),1);
+	double clampedProgress = min(max(progress, 0), 1);
 	return start * (1.0f - clampedProgress) + end * clampedProgress;
 }
 
@@ -554,18 +554,8 @@ void Stage::FloorUpdate()
 			};
 			if (collision->SquareHitSquare(tempCollider, groundCollider))
 			{
-				//if (player->GetPos().y <= ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2)
-				//{
-				//player->SetPos(
-				//	{
-				//		player->GetPos().x,
-				//		ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
-				//		player->GetPos().z
-				//	});
-				//player->UpdateMatrix();
 				player->SetisReverse(true);
 				ground->SetisHit(1);
-				//}
 				break;
 			}
 		}
@@ -629,6 +619,15 @@ void Stage::FloorUpdate()
 	if (player->GetPos().y >= 20)
 	{
 		ground->SetisHit(0);
+	}
+	if (player->GetisGround() == true)
+	{
+		player->SetPos(
+			{
+				player->GetPos().x,
+				ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
+				player->GetPos().z
+			});
 	}
 	//if (ground->GetisHit() == 2)
 	//{

@@ -316,15 +316,16 @@ void GameScene::CurrentStageInit()
 void GameScene::SelectUpdate()
 {
 	float speed = player->GetAttackMoveSpeed() / 2;
-	if (player->GetisReverse() == false && player->GetPos().y <=
-		stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + 1)
+
+	if (player->GetisReverse() == false && player->GetisGround() == false &&
+		player->GetPos().y - player->GetRadius() * 3 <=
+		stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y)
 	{
-		//player->SetScale({ 0,0,0 });
 		player->SetPos(
 			{
 				0,
-				stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + 1
-				,0
+				stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + player->GetRadius() + 2,
+				0
 			});
 
 		// テキストの座標
@@ -336,6 +337,7 @@ void GameScene::SelectUpdate()
 		}
 		stageSelect->SetTextPos(tempPos1, currentStage);
 
+		// 板の座標
 		auto tempPos2 = stageSelect->GetSelectPos(currentStage);
 		tempPos2.y -= speed;
 		if (tempPos2.y <= -5)
@@ -344,6 +346,7 @@ void GameScene::SelectUpdate()
 		}
 		stageSelect->SetSelectPos(tempPos2, currentStage);
 
+		// 板のスケール
 		auto tempScale2 = stageSelect->GetSelectScale(currentStage);
 		tempScale2.y -= speed;
 
@@ -353,8 +356,10 @@ void GameScene::SelectUpdate()
 		}
 		stageSelect->SetSelectScale(tempScale2, currentStage);
 
-		if (player->GetPos().y <= 2)
+		//if (player->GetPos().y <= 2)
+		if (player->GetPos().y <= -3.5 + player->GetRadius() * 2.5)
 		{
+			player->SetPos({ player->GetPos().x, -3.5f + player->GetRadius(), player->GetPos().z });
 			player->SetisReverse(true);
 		}
 	}
@@ -364,7 +369,7 @@ void GameScene::SelectUpdate()
 
 		// テキストの座標
 		auto tempPos1 = stageSelect->GetTextPos(currentStage);
-		tempPos1.y += speed;
+		tempPos1.y += speed * 2;
 		if (tempPos1.y >= 5)
 		{
 			tempPos1.y = 5;
@@ -387,8 +392,16 @@ void GameScene::SelectUpdate()
 			tempScale2.y = 5;
 		}
 		stageSelect->SetSelectScale(tempScale2, currentStage);
+		if (player->GetisGround() == true)
+		{
+			player->SetPos(
+				{
+					0,
+					stageSelect->GetTextPos(currentStage).y + stageSelect->GetTextScale(currentStage).y + player->GetRadius() + 2,
+					0
+				});
+		}
 	}
-
 }
 
 void GameScene::GenerateBackCube(const Vector3& pos)
