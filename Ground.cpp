@@ -3,6 +3,7 @@
 using namespace std;
 
 Audio* Ground::audio = nullptr;
+Model* Ground::enemyModel = nullptr;
 
 Ground::Ground() :
 	collisionRadius(10)
@@ -20,8 +21,8 @@ void Ground::Load()
 	damageSE = audio->LoadWave("se/floor_damage.wav");
 	largeDamageSE = audio->LoadWave("se/floor_damage_L.wav");
 	defeatSE = audio->LoadWave("se/floor_break.wav");
-	enemyTexture = TextureManager::Load("red1x1.png");
-	enemyTexture2 = TextureManager::Load("blue1x1.png");
+	enemyTexture = TextureManager::Load("groundColor1x1.png");
+	enemyDangerTexture = TextureManager::Load("red1x1.png");
 	enemyModel = Model::Create();
 	trans = new WorldTransform();
 	trans->Initialize();
@@ -109,11 +110,11 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 
 	if (isDanger == true)
 	{
-		enemyModel->Draw(*trans, viewProjection_, enemyTexture);
+		enemyModel->Draw(*trans, viewProjection_, enemyDangerTexture);
 	}
 	else
 	{
-		enemyModel->Draw(*trans, viewProjection_, enemyTexture2);
+		enemyModel->Draw(*trans, viewProjection_, enemyTexture);
 	}
 }
 
