@@ -14,9 +14,10 @@ uint32_t Stage::thornTexture = 0;
 vector<uint32_t> Stage::startTextTextures = {};
 vector<uint32_t> Stage::numberSheet = {};
 uint32_t Stage::timeStrTexture = 0;
+uint32_t Stage::dotStrTexture = 0;
 uint32_t Stage::clearStrTexture = 0;
 Model* Stage::lineModel = nullptr;
-
+uint32_t Stage::lineModelTexture;
 const float lerp(const float& start, const float& end, const double progress)
 {
 	double clampedProgress = min(max(progress, 0), 1);
@@ -45,9 +46,29 @@ Stage::Stage(const int& stageType) :
 	timeStrSprite->SetAnchorPoint({ 0.5, 0.5 });
 	timeStrSprite->SetSize({ 128,64 });
 
+	dotStrSprite = Sprite::Create(dotStrTexture, { -128,-128 });
+	dotStrSprite->SetAnchorPoint({ 0.5, 0.5 });
+	dotStrSprite->SetSize({ 64,64 });
+
 	clearStrSprite = Sprite::Create(clearStrTexture, { 960,270 });
 	clearStrSprite->SetAnchorPoint({ 0.5, 0.5 });
 	clearStrSprite->SetSize({ 0,0 });
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (i == 0)
+		{
+			enduranceTimeSprites[i] = Sprite::Create(numberSheet[3], { 1820,64 });
+		}
+		else if (i == 1)
+		{
+			enduranceTimeSprites[i] = Sprite::Create(numberSheet[0], { 1844,64 });
+		}
+		enduranceTimeSprites[i]->SetPosition({ (float)(1844 - ((1 - i) * 24)),64 });
+		enduranceTimeSprites[i]->SetAnchorPoint({ 0.5, 0.5 });
+		enduranceTimeSprites[i]->SetSize({ 32,32 });
+	}
+
 }
 Stage::~Stage()
 {
@@ -62,6 +83,12 @@ Stage::~Stage()
 
 	delete timeStrSprite;
 	delete clearStrSprite;
+	delete dotStrSprite;
+
+	for (int i = 0; i < 2; i++)
+	{
+		delete enduranceTimeSprites[i];
+	}
 }
 
 Vector2 clearStrSize(0, 0);
@@ -81,9 +108,10 @@ void Stage::Load()
 	}
 	timeStrTexture = TextureManager::Load("SpriteTexture/TimeStr.png");
 	clearStrTexture = TextureManager::Load("SpriteTexture/clear.png");
+	dotStrTexture = TextureManager::Load("SpriteTexture/Dot.png");
 
 	lineModel = Model::CreateFromOBJ("lineModel", true);
-
+	lineModelTexture = TextureManager::Load("lineModel/lineModel2.png");
 }
 void Stage::UnLoad()
 {
@@ -95,12 +123,12 @@ void Stage::Init()
 	lineTrans = move(make_unique<WorldTransform>());
 	lineTrans->Initialize();
 	lineTrans->translation_ = { 0,0,5 };
-	lineTrans->scale_ = { 1.1,1,1 };
+	lineTrans->scale_ = { 1.1,0.5,1 };
 	lineTrans->UpdateMatrix();
 	lineTrans2 = move(make_unique<WorldTransform>());
 	lineTrans2->Initialize();
 	lineTrans2->translation_ = { 92.4,0,5 };
-	lineTrans2->scale_ = { 1.1,1,1 };
+	lineTrans2->scale_ = { 1.1,0.5,1 };
 	lineTrans2->UpdateMatrix();
 
 	clearStrSize = { 0,0 };
@@ -118,6 +146,7 @@ void Stage::Init()
 	gameOver = false;
 	playerIsHitGoal = false;
 
+	// スタートカウント関連
 	startTextIndex = 0;
 	startTextTimer = 0;
 	startTextMaxTimer = 80;
@@ -127,6 +156,7 @@ void Stage::Init()
 	isStartTextEnd = false;
 	stagePcrogress = Start;
 
+	// クリア関連
 	startTime = 0;
 	endTime = 0;
 	clearTime = 0;
@@ -139,6 +169,20 @@ void Stage::Init()
 	cameraMoveVec = { 0,0,0 };
 
 	isPlayerDieEffectGenerate = false;
+
+	// 耐久戦関連
+	isEndurance = false;
+	isGetTime = 0;
+	enduranceTime = 30;
+	enduranceNowTime = 0;
+	enduranceStartTime = 0;
+	enduranceEndTime = 0;
+
+	enduranceLineTrans = move(make_unique<WorldTransform>());
+	enduranceLineTrans->Initialize();
+	enduranceLineTrans->translation_ = { 0,-3.85,5 };
+	enduranceLineTrans->scale_ = { 1.1,0.5,1 };
+	enduranceLineTrans->UpdateMatrix();
 }
 
 void Stage::Update()
@@ -162,13 +206,17 @@ void Stage::Update()
 		{
 			RaceUpdate();
 		}
+		if (isEndurance == true)
+		{
+			EnduranceUpdate();
+		}
 		if (player->GetLife() > 0)
 		{
 			PlayerUpdate();
 		}
 
 		// ゲームクリアの時
-		if (ground->GetHP() <= 0)
+		if (ground->GetHP() <= 0 || isGetTime == 2)
 		{
 			if (stagePcrogress == Play)
 			{
@@ -198,10 +246,10 @@ void Stage::Update()
 				player->SetLife(0);
 				stagePcrogress = Staging;
 				isCameraMoveStep = true;
+				endTime = GetNowTime();
+				clearTime = endTime - startTime;
 			}
 			gameOver = true;
-			endTime = GetNowTime();
-			clearTime = endTime - startTime;
 		}
 		if (stageType == RaceStage && !isCameraMoveStep)
 		{
@@ -233,6 +281,10 @@ void Stage::Draw()
 	lineModel->Draw(*lineTrans, viewProjection_);
 	lineModel->Draw(*lineTrans2, viewProjection_);
 
+	if (isEndurance == true)
+	{
+		lineModel->Draw(*enduranceLineTrans, viewProjection_, lineModelTexture);
+	}
 
 	player->Draw(viewProjection_);
 	ground->Draw(viewProjection_);
@@ -266,7 +318,36 @@ void Stage::Draw()
 	player->EffectDraw();
 	ground->EffectDraw();
 }
+void Stage::DrawSprite()
+{
+	// 耐久戦タイマー
+	if (isEndurance == true)
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			enduranceTimeSprites[i]->Draw();
+		}
+	}
 
+	// カウントダウン
+	if (startTextIndex < 4)
+	{
+		startTextSprites[startTextIndex]->Draw();
+	}
+
+	// クリア描画
+	if (gameClear)
+	{
+		clearStrSprite->Draw();
+		for (int i = 0; i < dightsNumber.size(); i++)
+		{
+			clearTimeSprites[i]->Draw();
+		}
+		dotStrSprite->Draw();
+
+		timeStrSprite->Draw();
+	}
+}
 void Stage::CountDownUpdate()
 {
 	if (isStartTextEnd == true) return;
@@ -341,31 +422,6 @@ void Stage::CountDownUpdate()
 		}
 	}
 }
-void Stage::DrawCountDown()
-{
-	if (startTextIndex < 4)
-	{
-		startTextSprites[startTextIndex]->Draw();
-	}
-}
-
-void Stage::GameOverCameraUpdate()
-{
-	if (isCameraMoveStep)
-	{
-		Vector3 vec = player->GetPos() + Vector3{ 0, -2, -8 } - viewProjection_.eyePos;
-		viewProjection_.eyePos += vec * 0.4;
-		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{ 0, 0, 1 };
-
-		if (vec.Magnitude() <= 0.00005 && isPlayerDieEffectGenerate == false)
-		{
-			//sceneChange->StartSceneChange();
-			player->DieEffectGenerate();
-			isPlayerDieEffectGenerate = true;
-		}
-	}
-}
-
 void Stage::ClearTimeUpdate()
 {
 	if (gameClear)
@@ -388,7 +444,14 @@ void Stage::ClearTimeUpdate()
 					clearTimeLastDightPos.x - (dightsNumber.size() - (float)i) * 48,
 					clearTimeLastDightPos.y
 				});
-
+			if (i == dightsNumber.size() - 2)
+			{
+				dotStrSprite->SetPosition(
+					{
+						clearTimeLastDightPos.x - (dightsNumber.size() - (float)i) * 48,
+						clearTimeLastDightPos.y
+					});
+			}
 		}
 		timeStrSprite->SetPosition(
 			{
@@ -401,17 +464,20 @@ void Stage::ClearTimeUpdate()
 		clearScreenClock = 0;
 	}
 }
-void Stage::DrawClearTime()
+void Stage::GameOverCameraUpdate()
 {
-	if (gameClear)
+	if (isCameraMoveStep)
 	{
-		clearStrSprite->Draw();
-		for (int i = 0; i < 4; i++)
-		{
-			clearTimeSprites[i]->Draw();
-		}
+		Vector3 vec = player->GetPos() + Vector3{ 0, -2, -8 } - viewProjection_.eyePos;
+		viewProjection_.eyePos += vec * 0.4;
+		viewProjection_.targetPos = viewProjection_.eyePos + Vector3{ 0, 0, 1 };
 
-		timeStrSprite->Draw();
+		if (vec.Magnitude() <= 0.00005 && isPlayerDieEffectGenerate == false)
+		{
+			//sceneChange->StartSceneChange();
+			player->DieEffectGenerate();
+			isPlayerDieEffectGenerate = true;
+		}
 	}
 }
 
@@ -443,12 +509,24 @@ void Stage::PlayerGenerateStar(const Vector3& pos)
 		stars.emplace_back(move(make_unique<Star>()));
 		if (i == 0)
 		{
-			stars.back()->Generate({ pos.x,pos.y - 2,pos.z }, { -1,0,0 }, 0);
+			stars.back()->Generate(
+				{
+					pos.x,
+					ground->GetPos().y + ground->GetScale().y + 1.5f,
+					pos.z
+				},
+				{ -1,0,0 }, 0);
 			stars.back()->SetSpeed(1.3);
 		}
 		if (i == 1)
 		{
-			stars.back()->Generate({ pos.x,pos.y - 2,pos.z }, { 1,0,0 }, 0);
+			stars.back()->Generate(
+				{
+					pos.x,
+					ground->GetPos().y + ground->GetScale().y + 1.5f,
+					pos.z
+				},
+				{ 1,0,0 }, 0);
 			stars.back()->SetSpeed(1.3);
 		}
 	}
@@ -908,3 +986,48 @@ void Stage::RaceUpdate()
 	}
 }
 
+// 耐久戦
+std::vector<int> enduranceTimeDightsNumber;
+void Stage::EnduranceUpdate()
+{
+	if (isGetTime == 0)
+	{
+		if (ground->GetPos().y + ground->GetScale().y >= -3.85)
+		{
+			isGetTime = 1;
+			enduranceStartTime = GetNowTime() / 100;
+		}
+	}
+	if (isGetTime == 1 && ground->GetPos().y + ground->GetScale().y <= 0)
+	{
+		enduranceNowTime = GetNowTime() / 100;
+		enduranceEndTime = enduranceNowTime - enduranceStartTime;
+		if (enduranceEndTime == enduranceTime)
+		{
+			isGetTime = 2;
+		}
+	}
+
+	enduranceTimeDightsNumber.resize(2);
+
+	if (GetDightsNumber(enduranceTime - enduranceEndTime).size() == 2)
+	{
+		enduranceTimeDightsNumber[0] = GetDightsNumber(enduranceTime - enduranceEndTime)[0];
+		enduranceTimeDightsNumber[1] = GetDightsNumber(enduranceTime - enduranceEndTime)[1];
+	}
+	else if (GetDightsNumber(enduranceTime - enduranceEndTime).size() == 1)
+	{
+		enduranceTimeDightsNumber[0] = 0;
+		enduranceTimeDightsNumber[1] = GetDightsNumber(enduranceTime - enduranceEndTime)[0];
+	}
+	else if (GetDightsNumber(enduranceTime - enduranceEndTime).size() == 0)
+	{
+		enduranceTimeDightsNumber[0] = 0;
+		enduranceTimeDightsNumber[1] = 0;
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+		enduranceTimeSprites[i]->SetTextureHandle(numberSheet[enduranceTimeDightsNumber[i]]);
+	}
+}

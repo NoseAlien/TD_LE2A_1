@@ -16,10 +16,10 @@ private:
 	uint32_t largeDamageSE;
 	uint32_t defeatSE;
 
+	static Model* enemyModel;			// モデル
 	WorldTransform* trans = nullptr;	// トランスフォーム
-	Model* enemyModel = nullptr;		// モデル
 	uint32_t enemyTexture = 0;			// テクスチャー
-	uint32_t enemyTexture2 = 0;			// テクスチャー
+	uint32_t enemyDangerTexture = 0;	// テクスチャー
 
 	bool isAlive;
 	int hp;

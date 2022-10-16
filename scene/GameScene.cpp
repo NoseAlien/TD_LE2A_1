@@ -64,6 +64,7 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
 
 	stageSelect = move(make_unique<StageSelect>(stages.size()));
 
@@ -226,8 +227,8 @@ void GameScene::Draw()
 
 	if (gameState == isGame)
 	{
-		stages[currentStage]->DrawCountDown();
-		stages[currentStage]->DrawClearTime();
+		stages[currentStage]->DrawSprite();
+		//stages[currentStage]->DrawClearTime();
 	}
 
 	sceneChange->Draw();
@@ -301,6 +302,11 @@ void GameScene::CurrentStageInit()
 	case 9:
 		ground->Init(40);
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
+		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+	case 10:
+		ground->Init(1000000);
+		stages[currentStage]->SetisEndurance(true);
 		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
 		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
 	}
