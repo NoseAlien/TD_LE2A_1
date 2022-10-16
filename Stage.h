@@ -15,6 +15,7 @@ enum StageType
 	BaseStage,
 	RaceStage,
 	CannonStage,
+	EnduranceStage,
 };
 
 enum StageProgress
@@ -23,7 +24,6 @@ enum StageProgress
 	Play,
 	Staging,
 	End,
-
 };
 
 class Stage
@@ -51,6 +51,8 @@ private:
 	Sprite* clearTimeSprites[6];
 	static uint32_t timeStrTexture;
 	Sprite* timeStrSprite;
+	static uint32_t dotStrTexture;
+	Sprite* dotStrSprite;
 	int clearTimeDights;
 	std::vector<int> dightsNumber;
 	bool isShowClearTime;
@@ -68,8 +70,21 @@ private:
 private:
 	// ƒ‰ƒCƒ“ŠÖ˜A
 	static Model* lineModel;
+	static uint32_t lineModelTexture;
 	std::unique_ptr<WorldTransform> lineTrans;
 	std::unique_ptr<WorldTransform> lineTrans2;
+
+private:
+	// ‘Ï‹víŠÖ˜A
+	bool isEndurance;
+	int isGetTime;
+	int enduranceTime;
+	int enduranceNowTime;
+	int enduranceStartTime;
+	int enduranceEndTime;
+	std::unique_ptr<WorldTransform> enduranceLineTrans;
+
+	Sprite* enduranceTimeSprites[2];
 
 private:
 	std::list<std::unique_ptr<Star>> stars;
@@ -100,6 +115,7 @@ private:
 	void BlockUpdate();
 	void CannonUpdate();
 	void RaceUpdate();
+	void EnduranceUpdate();
 
 	void GameOverCameraUpdate();
 
@@ -112,8 +128,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
-	void DrawClearTime();
-	void DrawCountDown();
+	void DrawSprite();
 
 	void GenerateThorn(const Vector3& pos, const Vector3& scale = { 1,1,1 });
 	void GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale = { 2,2,2 });
@@ -122,5 +137,7 @@ public:
 
 	inline int GetStageType() { return stageType; }
 	inline int GetStageProgress() { return stagePcrogress; }
+
+	inline void SetisEndurance(const bool& isEndurance) { this->isEndurance = isEndurance; }
 };
 
