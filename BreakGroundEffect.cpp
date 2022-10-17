@@ -80,6 +80,6 @@ void BreakGroundEffect::Draw()
 {
 	for (int i = 0; i < particles.size(); i++)
 	{
-		particles[i]->Draw(1);
+		particles[i]->DrawModel(1);
 	}
 }

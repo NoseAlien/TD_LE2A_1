@@ -71,6 +71,6 @@ void HeavyAttackEffect::Draw()
 {
 	for (int i = 0; i < particles.size(); i++)
 	{
-		particles[i]->Draw();
+		particles[i]->DrawModel();
 	}
 }

@@ -22,9 +22,24 @@ void WeakAttackEffect::Generate(const Vector3& pos)
 
 		particles.emplace_back(move(make_unique<Particle>()));
 		particles.back()->SetPos(pos);
-		particles.back()->SetScale({ 0.25,0.25,0.25 });
 		particles.back()->SetSpeed(0.5);
 		particles.back()->SetVec(Vector3(cosf(radian), 1.5, sinf(radian)).Normalized());
+		particles.back()->SetSpriteColor({ 0.25,0.85,1,1 });
+		particles.back()->SetScale({ 0.5,0.5,0.5 });
+		//particles.back()->SetOutLineSpriteColor({ 0,1,1,1 });
+
+		switch (Random::Range(1, 3))
+		{
+		case 1:
+			particles.back()->SetSpriteColor({ 0.25,1,1,1 });
+			break;
+		case 2:
+			particles.back()->SetSpriteColor({ 0.25,1,0.5,1 });
+			break;
+		case 3:
+			particles.back()->SetSpriteColor({ 0.24,0.5,1,1 });
+			break;
+		}
 	}
 }
 
@@ -35,14 +50,16 @@ void WeakAttackEffect::Update()
 	for (int i = 0; i < particles.size(); i++)
 	{
 		auto tempScale = particles[i]->GetScale();
-		tempScale -= 0.01 * slowMotion->GetSlowExrate();
+		tempScale -= 0.025 * slowMotion->GetSlowExrate();
 		if (tempScale.x <= 0) tempScale = { 0,0,0 };
 		particles[i]->SetScale(tempScale);
+		particles[i]->SetSpriteSize({ 100 * tempScale.x,100 * tempScale.y });
+		particles[i]->SetOutLineSpriteSize({ 110 * tempScale.x,110 * tempScale.y });
 	}
 
 	for (int i = 0; i < particles.size(); i++)
 	{
-		particles[i]->Update();
+		particles[i]->UpdateSpirte();
 	}
 
 	for (int i = 0; i < particles.size(); i++)
@@ -59,6 +76,6 @@ void WeakAttackEffect::Draw()
 {
 	for (int i = 0; i < particles.size(); i++)
 	{
-		particles[i]->Draw();
+		particles[i]->DrawSprite();
 	}
 }

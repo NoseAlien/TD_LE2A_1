@@ -86,7 +86,7 @@ public:
 	{
 		this->shakeValue = shakeValue;
 		this->shakeTimer = max(shakeTimer, 1);
-		this->shakeMaxTimer = max(shakeTimer,1);
+		this->shakeMaxTimer = max(shakeTimer, 1);
 		this->shakePerFrame = max(shakePerFrame, 1);
 	}
 
@@ -94,7 +94,7 @@ public:
 	{
 		if (shakeTimer > 0)
 		{
-			if(shakeTimer % shakePerFrame == 0 || shakeTimer == shakeMaxTimer)
+			if (shakeTimer % shakePerFrame == 0 || shakeTimer == shakeMaxTimer)
 			{
 				float shakeVecRad = Random::RangeF(0, 2 * 3.1415926);
 

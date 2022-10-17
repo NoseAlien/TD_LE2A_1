@@ -127,6 +127,10 @@ void Player::Draw(const ViewProjection& viewProjection_)
 		}
 	}
 }
+void Player::DrawSprite()
+{
+	weakAttackEffect->Draw();
+}
 
 void Player::EffectGenerate(const Vector3& pos)
 {
@@ -149,7 +153,6 @@ void Player::EffectUpdate()
 }
 void Player::EffectDraw()
 {
-	weakAttackEffect->Draw();
 	heavyAttackEffect->Draw();
 	playerDieEffect->Draw();
 }
@@ -473,6 +476,7 @@ void Player::AttackUpdate()
 	}
 
 }
+
 void Player::SetisDamage(const bool& isDamage)
 {
 	if (damageTimer == 0 && life > 0)

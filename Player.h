@@ -94,6 +94,7 @@ public:
 	void Update();
 	void SelectSceneUpdate();
 	void Draw(const ViewProjection& viewProjection_);
+	void DrawSprite();
 	void EffectGenerate(const Vector3& pos);
 	void EffectUpdate();
 	void EffectDraw();

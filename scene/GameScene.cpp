@@ -21,15 +21,28 @@ GameScene::GameScene()
 {
 
 }
+Sprite* temp;
+Sprite* temp2;
+uint32_t tempTex;
 GameScene::~GameScene()
 {
 	Particle::UnLoad();
 	// 今はデストラクター一回しか呼ばないためエラー起こらない
 	delete backCubeModel;
+	delete temp;
+	delete temp2;
 }
 
 void GameScene::Load()
 {
+	tempTex = TextureManager::Load("SpriteTexture/circleGauge.png");
+	temp = Sprite::Create(tempTex, { 128,128 });
+	temp->SetAnchorPoint({ 0.5,0.5 });
+	temp->SetColor({ 1,1,1,0.5 });
+	temp2 = Sprite::Create(tempTex, { 160,128 });
+	temp2->SetAnchorPoint({ 0.5,0.5 });
+	temp2->SetColor({ 1,1,1,0.5 });
+
 	Random::Initialize();
 	Stage::Load();
 	Player::audio = audio;
@@ -96,6 +109,13 @@ void GameScene::Initialize()
 }
 void GameScene::Update()
 {
+	//int lenght = 50;
+	//Vector2 p1 = { cosf(DegreeToRad(90)) * lenght,sinf(DegreeToRad(90)) * lenght };
+	//Vector2 p2 = { cosf(DegreeToRad(180)) * lenght,sinf(DegreeToRad(180)) * lenght };
+	//Vector2 p3 = { cosf(DegreeToRad(90)),sinf(DegreeToRad(90)) };
+	//Vector2 p4 = { cosf(DegreeToRad(90)),sinf(DegreeToRad(90)) };
+	//temp->SetTextureRect(p3, p2, p4, p1);
+
 	//BackGroundUpdate();
 
 	if (gameState == isGame)
@@ -173,6 +193,12 @@ void GameScene::Update()
 
 	debugText_->SetPos(20, 60);
 	debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
+
+	Vector2 testPos = WolrdToScreen({ 4.17,-12.92,0 }, viewProjection_);
+	debugText_->SetPos(20, 100);
+	debugText_->Printf("TestPos = %f,%f", testPos.x, testPos.y);
+	temp2->SetPosition(testPos);
+
 }
 void GameScene::Draw()
 {
@@ -228,15 +254,23 @@ void GameScene::Draw()
 	if (gameState == isGame)
 	{
 		stages[currentStage]->DrawSprite();
-		//stages[currentStage]->DrawClearTime();
 	}
-
 	sceneChange->Draw();
+
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
-	//
+
 	// スプライト描画後処理
+	Sprite::PostDraw();
+
+	Sprite::PreDraw(commandList, Sprite::BlendMode::kNormal);
+	if (gameState == isGame)
+	{
+		stages[currentStage]->DrawEffect();
+	}
+	//temp->Draw();
+	//temp2->Draw();
 	Sprite::PostDraw();
 
 #pragma endregion
@@ -450,3 +484,4 @@ void GameScene::BackGroundDraw()
 		backCubeModel->Draw(*backCubeTrans[i].get(), viewProjection_);
 	}
 }
+

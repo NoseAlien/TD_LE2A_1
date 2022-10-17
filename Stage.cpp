@@ -348,6 +348,12 @@ void Stage::DrawSprite()
 		timeStrSprite->Draw();
 	}
 }
+void Stage::DrawEffect()
+{
+	player->DrawSprite();
+}
+
+
 void Stage::CountDownUpdate()
 {
 	if (isStartTextEnd == true) return;
