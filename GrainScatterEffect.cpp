@@ -5,7 +5,7 @@
 using namespace std;
 
 GrainScatterEffect::GrainScatterEffect() :
-	maxParticle(16)
+	maxParticle(8)
 {
 }
 

@@ -5,7 +5,7 @@ class PlayerMoveEffect
 {
 private:
 	std::vector<std::unique_ptr<Particle>> particles;
-	int generateTimer;
+	float generateTimer;
 	int generateMaxTimer;
 
 public:

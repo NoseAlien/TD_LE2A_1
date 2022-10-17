@@ -48,6 +48,8 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	isAngleShake = false;
 	this->dirVec = dirVec;
 	this->generateType = generateType;
+
+	isDestroy = false;
 }
 
 void Star::Update()

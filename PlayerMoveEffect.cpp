@@ -1,4 +1,5 @@
 #include "PlayerMoveEffect.h"
+#include "SlowMotion.h"
 using namespace std;
 
 PlayerMoveEffect::PlayerMoveEffect() :
@@ -14,7 +15,7 @@ PlayerMoveEffect::~PlayerMoveEffect()
 
 void PlayerMoveEffect::Generate(const Vector3& pos, const float& radius)
 {
-	generateTimer++;
+	generateTimer += 1 * SlowMotion::GetInstance()->GetSlowExrate();
 	if (generateTimer >= generateMaxTimer)
 	{
 		particles.emplace_back(move(make_unique<Particle>(2)));

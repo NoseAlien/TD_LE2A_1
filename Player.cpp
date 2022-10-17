@@ -121,7 +121,7 @@ void Player::Update()
 				trans->translation_.x,
 				trans->translation_.y - radius,
 				trans->translation_.z
-			}, radius);
+			}, radius - 0.5);
 		playerMoveEffect->Update();
 	}
 
@@ -159,10 +159,8 @@ void Player::Draw(const ViewProjection& viewProjection_)
 }
 void Player::DrawSpriteFront()
 {
-
-
-
 	weakAttackEffect->Draw();
+	heavyAttackEffect->Draw();
 
 	for (int i = 0; i < life; i++)
 	{
@@ -184,7 +182,8 @@ void Player::EffectGenerate(const Vector3& pos)
 	if (isHeavyAttack == true)
 	{
 		viewProjection_.SetShakeValue(1.5, 40, 2);
-		heavyAttackEffect->Generate({ pos.x,pos.y - 5 - radius,pos.z });
+		//heavyAttackEffect->Generate({ pos.x,pos.y - 5 - radius,pos.z });
+		heavyAttackEffect->Generate({ pos.x,pos.y + 2 - radius,pos.z });
 	}
 }
 void Player::EffectUpdate()
@@ -195,7 +194,6 @@ void Player::EffectUpdate()
 }
 void Player::EffectDraw()
 {
-	heavyAttackEffect->Draw();
 	playerDieEffect->Draw();
 }
 void Player::DieEffectGenerate()

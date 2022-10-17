@@ -578,12 +578,12 @@ void Stage::PlayerUpdate()
 				{ temp->GetScale().x,temp->GetScale().y },
 			};
 
-			if (collision->SquareHitSquare(playerCollider, starCollider))
+			if (collision->SquareHitSquare(playerCollider, starCollider) &&
+				temp->GetisDestroy() == false)
 			{
 				ground->Damage(player->GetStarAttackDamage());
 				grainScatterEffect->Generate(temp->GetPos());
-				stars.remove(temp);
-				break;
+				temp->SetisDestroy(true);
 			}
 		}
 		for (const auto& temp : blocks)
@@ -606,18 +606,18 @@ void Stage::PlayerUpdate()
 		}
 	}
 
-	// ¯‚ðŠª‚«ž‚Þˆ—
+	// ¯‚ð‚Â‚Ô‚·ˆ—
 	for (const auto& temp : stars)
 	{
 		if (collision->SphereHitSphere(
-			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius()))
+			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius() &&
+			player->GetisGround() == false))
 		{
-			if (temp->GetisCanHit() == true && player->GetisGround() == false)
+			if (temp->GetisCanHit() == true && temp->GetisDestroy() == false)
 			{
 				player->HaveStarNumIncriment();
 				grainScatterEffect->Generate(temp->GetPos());
-				stars.remove(temp);
-				break;
+				temp->SetisDestroy(true);
 			}
 		}
 	}
@@ -813,7 +813,8 @@ void Stage::StarUpdate()
 	{
 		if (stageType != RaceStage)
 		{
-			if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40)
+			if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40 ||
+				temp->GetisDestroy() == true)
 			{
 				stars.remove(temp);
 				break;
