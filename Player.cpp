@@ -60,6 +60,7 @@ void Player::Load()
 		heartSprites.back()->SetSize({ 64,64 });
 	}
 
+
 }
 
 static int tempTimer = 0; // ƒQ[ƒ€ŠJŽn‚Æ“¯Žž‚ÉUŒ‚‚µ‚È‚¢‚½‚ß
@@ -78,11 +79,16 @@ void Player::Init()
 	radius = 2;
 	slowMotion = SlowMotion::GetInstance();
 
+	// UŒ‚ŠÖ˜A
 	isReverse = false;
 	isAttack = false;
 	isWeakAttack = false;
 	isHeavyAttack = false;
 	isEngulfAttack = false;
+	pushKeySprite.reset(Sprite::Create(Particle::texture, { 0,0 }));
+	pushKeySprite->SetColor({ 1,1,0,1 });
+	pushKeySprite->SetAnchorPoint({ 0.5,0 });
+	pushKeySprite->SetSize({ 100,100 });
 
 	//speed = 0;
 
@@ -124,6 +130,30 @@ void Player::Update()
 			}, radius - 0.5);
 		playerMoveEffect->Update();
 	}
+
+	pushKeySprite->SetPosition(WorldToScreen(
+		{
+			trans->translation_.x,
+			trans->translation_.y ,
+			trans->translation_.z
+		}, viewProjection_));
+
+
+	if (input_->PushKey(DIK_SPACE))
+	{
+		if (isGround == false && isAttack == false)
+		{
+			float tempSize =
+				200 * ((float)maxPushKeyFream - (float)pushKeyFream) / (float)maxPushKeyFream +
+				139 * ((float)pushKeyFream) / (float)maxPushKeyFream;
+			pushKeySprite->SetSize({ tempSize,	tempSize });
+		}
+	}
+	else
+	{
+		pushKeySprite->SetSize({ 139,139 });
+	}
+
 
 	trans->UpdateMatrix();
 }
@@ -170,6 +200,13 @@ void Player::DrawSpriteFront()
 void Player::DrawSpriteBack()
 {
 	playerMoveEffect->Draw();
+	if (isGround == false && isAttack == false)
+	{
+		if (input_->PushKey(DIK_SPACE))
+		{
+			pushKeySprite->Draw();
+		}
+	}
 }
 
 void Player::EffectGenerate(const Vector3& pos)

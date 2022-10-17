@@ -76,6 +76,9 @@ private:
 	int maxDamageTimer;
 	bool isGround;	// 地面にいるかどうかのフラグ
 
+private:
+	// 攻撃関連
+	std::unique_ptr<Sprite> pushKeySprite;
 	const int starAttackDamage;
 	const int weakAttackDamage;
 	const int heavyAttackDamage;

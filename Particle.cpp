@@ -64,7 +64,7 @@ void Particle::UpdateSprite()
 {
 	SlowMotion* slowMotion = SlowMotion::GetInstance();
 	Vector2 tempPos =
-		WolrdToScreen(trans->translation_ += vec * (speed * slowMotion->GetSlowExrate()), viewProjection_);
+		WorldToScreen(trans->translation_ += vec * (speed * slowMotion->GetSlowExrate()), viewProjection_);
 
 	switch (spriteType)
 	{
@@ -129,7 +129,7 @@ void Particle::UnLoad()
 	delete breakGroundModel;
 }
 
-Vector2 WolrdToScreen(const Vector3& pos, ViewProjection& viewProjection_)
+Vector2 WorldToScreen(const Vector3& pos, ViewProjection& viewProjection_)
 {
 	Matrix4 matViewport =
 	{

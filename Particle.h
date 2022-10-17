@@ -4,7 +4,7 @@
 #include "Model.h"
 #include <memory>
 
-extern Vector2 WolrdToScreen(const Vector3& pos, ViewProjection& viewProjection_);
+extern Vector2 WorldToScreen(const Vector3& pos, ViewProjection& viewProjection_);
 
 class Particle
 {
@@ -27,7 +27,7 @@ private:
 	Vector4 outLineColor;
 	float rotAngle;
 
-private:
+public:
 	static Model* breakGroundModel;
 	static uint32_t texture;
 	static uint32_t starTexture;
