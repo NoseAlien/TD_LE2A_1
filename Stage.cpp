@@ -348,11 +348,14 @@ void Stage::DrawSprite()
 		timeStrSprite->Draw();
 	}
 }
-void Stage::DrawEffect()
+void Stage::DrawEffectFront()
 {
-	player->DrawSprite();
+	player->DrawSpriteFront();
 }
-
+void Stage::DrawEffectBack()
+{
+	player->DrawSpriteBack();
+}
 
 void Stage::CountDownUpdate()
 {

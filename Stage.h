@@ -129,7 +129,8 @@ public:
 	void Update();
 	void Draw();
 	void DrawSprite();
-	void DrawEffect();
+	void DrawEffectFront();
+	void DrawEffectBack();
 
 	void GenerateThorn(const Vector3& pos, const Vector3& scale = { 1,1,1 });
 	void GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale = { 2,2,2 });

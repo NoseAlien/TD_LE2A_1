@@ -209,9 +209,10 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに背景スプライトの描画処理を追加できる
-	/// </summary>
+	if (gameState == isGame)
+	{
+		stages[currentStage]->DrawEffectBack();
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -267,7 +268,7 @@ void GameScene::Draw()
 	Sprite::PreDraw(commandList, Sprite::BlendMode::kNormal);
 	if (gameState == isGame)
 	{
-		stages[currentStage]->DrawEffect();
+		stages[currentStage]->DrawEffectFront();
 	}
 	//temp->Draw();
 	//temp2->Draw();

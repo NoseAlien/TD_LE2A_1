@@ -20,13 +20,11 @@ void WeakAttackEffect::Generate(const Vector3& pos)
 	{
 		float radian = DegreeToRad(Random::Range(0, 360));
 
-		particles.emplace_back(move(make_unique<Particle>()));
+		particles.emplace_back(move(make_unique<Particle>(1)));
 		particles.back()->SetPos(pos);
 		particles.back()->SetSpeed(0.5);
 		particles.back()->SetVec(Vector3(cosf(radian), 1.5, sinf(radian)).Normalized());
-		particles.back()->SetSpriteColor({ 0.25,0.85,1,1 });
 		particles.back()->SetScale({ 0.5,0.5,0.5 });
-		//particles.back()->SetOutLineSpriteColor({ 0,1,1,1 });
 
 		switch (Random::Range(1, 3))
 		{
@@ -59,7 +57,7 @@ void WeakAttackEffect::Update()
 
 	for (int i = 0; i < particles.size(); i++)
 	{
-		particles[i]->UpdateSpirte();
+		particles[i]->UpdateSprite();
 	}
 
 	for (int i = 0; i < particles.size(); i++)

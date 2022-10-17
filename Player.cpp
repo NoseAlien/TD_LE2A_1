@@ -19,6 +19,7 @@ Player::Player() :
 	weakAttackEffect = move(make_unique<WeakAttackEffect>());
 	heavyAttackEffect = move(make_unique<HeavyAttackEffect>());
 	playerDieEffect = move(make_unique<PlayerDieEffect>());
+	playerMoveEffect = move(make_unique<PlayerMoveEffect>());
 }
 Player::~Player()
 {
@@ -94,6 +95,14 @@ void Player::Update()
 		tempTimer = 10;
 		AttackUpdate();
 		DamageUpdate();
+
+		playerMoveEffect->Generate(
+			{
+				trans->translation_.x,
+				trans->translation_.y - radius,
+				trans->translation_.z
+			}, radius);
+		playerMoveEffect->Update();
 	}
 
 	trans->UpdateMatrix();
@@ -128,9 +137,13 @@ void Player::Draw(const ViewProjection& viewProjection_)
 		}
 	}
 }
-void Player::DrawSprite()
+void Player::DrawSpriteFront()
 {
 	weakAttackEffect->Draw();
+}
+void Player::DrawSpriteBack()
+{
+	playerMoveEffect->Draw();
 }
 
 void Player::EffectGenerate(const Vector3& pos)

@@ -112,6 +112,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerDieEffect.cpp" />
+    <ClCompile Include="PlayerMoveEffect.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerDieEffect.h" />
+    <ClInclude Include="PlayerMoveEffect.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneManager.h" />

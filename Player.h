@@ -8,6 +8,7 @@
 #include "WeakAttackEffect.h"
 #include "HeavyAttackEffect.h"
 #include "PlayerDieEffect.h"
+#include "PlayerMoveEffect.h"
 #include "SlowMotion.h"
 
 class Player
@@ -19,6 +20,7 @@ private:
 	std::unique_ptr<WeakAttackEffect> weakAttackEffect;
 	std::unique_ptr<HeavyAttackEffect> heavyAttackEffect;
 	std::unique_ptr<PlayerDieEffect> playerDieEffect;
+	std::unique_ptr<PlayerMoveEffect> playerMoveEffect;
 
 public:	// テクスチャー
 	static uint32_t playerTexAnime[9];		// テクスチャーアニメション
@@ -94,7 +96,10 @@ public:
 	void Update();
 	void SelectSceneUpdate();
 	void Draw(const ViewProjection& viewProjection_);
-	void DrawSprite();
+	void DrawSpriteBack();
+	void DrawSpriteFront();
+
+
 	void EffectGenerate(const Vector3& pos);
 	void EffectUpdate();
 	void EffectDraw();
