@@ -83,7 +83,10 @@ void Star::Update()
 
 	if (isAngleShake == true)
 	{
-		trans->rotation_.z = DegreeToRad(Random::RangeF(-20, 20));
+		trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
+		trans->scale_.z *= cos(clock() * 0.05) * 0.15 + 1;
+		trans->scale_.x *= cos(clock() * 0.05) * 0.15 + 1;
+		trans->scale_.y *= sin(clock() * 0.05) * 0.15 + 1;
 	}
 	else
 	{
@@ -97,14 +100,17 @@ void Star::Update()
 
 		if (generateType == 0)
 		{
-			trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),0.0001 };
+			trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),1.5 };
 			//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
 		}
 		else if (generateType == 1 || generateType == 2)
 		{
-			trans->scale_ = trans->scale_ = { 1.5,1.5,0.0001 };
+			trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
 			//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
 		}
+		trans->scale_.z *= cos(clock() * 0.005) * 0.1 + 1;
+		trans->scale_.x *= cos(clock() * 0.005) * 0.1 + 1;
+		trans->scale_.y *= sin(clock() * 0.005) * 0.1 + 1;
 	}
 
 	trans->UpdateMatrix();
