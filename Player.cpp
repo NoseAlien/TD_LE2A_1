@@ -95,6 +95,7 @@ void Player::Update()
 		AttackUpdate();
 		DamageUpdate();
 	}
+
 	trans->UpdateMatrix();
 }
 void Player::SelectSceneUpdate()
