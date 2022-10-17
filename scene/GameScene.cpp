@@ -21,28 +21,15 @@ GameScene::GameScene()
 {
 
 }
-Sprite* temp;
-Sprite* temp2;
-uint32_t tempTex;
 GameScene::~GameScene()
 {
 	Particle::UnLoad();
 	// 今はデストラクター一回しか呼ばないためエラー起こらない
 	delete backCubeModel;
-	delete temp;
-	delete temp2;
 }
 
 void GameScene::Load()
 {
-	tempTex = TextureManager::Load("SpriteTexture/circleGauge.png");
-	temp = Sprite::Create(tempTex, { 128,128 });
-	temp->SetAnchorPoint({ 0.5,0.5 });
-	temp->SetColor({ 1,1,1,0.5 });
-	temp2 = Sprite::Create(tempTex, { 160,128 });
-	temp2->SetAnchorPoint({ 0.5,0.5 });
-	temp2->SetColor({ 1,1,1,0.5 });
-
 	Random::Initialize();
 	Stage::Load();
 	Player::audio = audio;
@@ -193,12 +180,6 @@ void GameScene::Update()
 
 	debugText_->SetPos(20, 60);
 	debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
-
-	Vector2 testPos = WolrdToScreen({ 4.17,-12.92,0 }, viewProjection_);
-	debugText_->SetPos(20, 100);
-	debugText_->Printf("TestPos = %f,%f", testPos.x, testPos.y);
-	temp2->SetPosition(testPos);
-
 }
 void GameScene::Draw()
 {

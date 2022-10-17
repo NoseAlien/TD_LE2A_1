@@ -19,13 +19,7 @@ void PlayerDieEffect::Generate(const Vector3& pos)
 
 		particles.emplace_back(move(make_unique<Particle>()));
 		particles.back()->SetPos(pos);
-		particles.back()->SetScale(
-			{
-				1,1,1
-				//Random::RangeF(0.3,3),
-				//Random::RangeF(0.3,3),
-				//Random::RangeF(0.3,3),
-			});
+		particles.back()->SetScale({ 1,1,1 });
 		particles.back()->SetSpeed(0.5);
 		particles.back()->SetVec(Vector3(cosf(radian), sinf(radian), 0).Normalized());
 	}

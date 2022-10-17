@@ -8,6 +8,7 @@ using namespace std;
 
 Audio* Player::audio = nullptr;
 uint32_t Player::playerTexAnime[9] = {};
+uint32_t Player::heartTexture = {};
 
 Player::Player() :
 	isAttack(false), maxSpeed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
@@ -20,11 +21,16 @@ Player::Player() :
 	heavyAttackEffect = move(make_unique<HeavyAttackEffect>());
 	playerDieEffect = move(make_unique<PlayerDieEffect>());
 	playerMoveEffect = move(make_unique<PlayerMoveEffect>());
+
 }
 Player::~Player()
 {
 	delete playerModel;
 	delete trans;
+	for (int i = 0; i < 3; i++)
+	{
+		delete heartSprites[i];
+	}
 }
 
 void Player::Load()
@@ -44,6 +50,16 @@ void Player::Load()
 	playerModel = Model::CreateFromOBJ("player", true);
 	trans = new WorldTransform();
 	trans->Initialize();
+
+	heartTexture = TextureManager::Load("SpriteTexture/Heart.png");
+
+	for (int i = 0; i < 3; i++)
+	{
+		heartSprites.push_back(Sprite::Create(heartTexture, { (float)(96 + i * 80),96 }));
+		heartSprites.back()->SetAnchorPoint({ 0.5f,0.5f });
+		heartSprites.back()->SetSize({ 64,64 });
+	}
+
 }
 
 static int tempTimer = 0; // ゲーム開始と同時に攻撃しないため
@@ -77,10 +93,14 @@ void Player::Init()
 
 	damageTimer = 0;
 
-	isAlive = true;
+	// ライフ関連
 	life = 3;
+	isAlive = true;
+
 
 	isGround = false;
+
+	playerMoveEffect->Clear();
 }
 void Player::Update()
 {
@@ -139,7 +159,15 @@ void Player::Draw(const ViewProjection& viewProjection_)
 }
 void Player::DrawSpriteFront()
 {
+
+
+
 	weakAttackEffect->Draw();
+
+	for (int i = 0; i < life; i++)
+	{
+		heartSprites[i]->Draw();
+	}
 }
 void Player::DrawSpriteBack()
 {

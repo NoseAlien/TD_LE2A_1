@@ -7,6 +7,7 @@
 #include "Goal.h"
 #include "Sprite.h"
 #include "Vector2.h"
+#include "GrainScatterEffect.h"
 #include <vector>
 #include <memory>
 
@@ -85,6 +86,10 @@ private:
 	std::unique_ptr<WorldTransform> enduranceLineTrans;
 
 	Sprite* enduranceTimeSprites[2];
+
+private:
+	//エフェクト
+	std::unique_ptr<GrainScatterEffect> grainScatterEffect;
 
 private:
 	std::list<std::unique_ptr<Star>> stars;

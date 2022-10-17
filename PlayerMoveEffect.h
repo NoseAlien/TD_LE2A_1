@@ -14,5 +14,6 @@ public:
 	void Generate(const Vector3& pos, const float& radius);
 	void Update();
 	void Draw();
+	void Clear();
 };
 

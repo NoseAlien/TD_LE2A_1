@@ -69,6 +69,7 @@ Stage::Stage(const int& stageType) :
 		enduranceTimeSprites[i]->SetSize({ 32,32 });
 	}
 
+	grainScatterEffect = move(make_unique<GrainScatterEffect>());
 }
 Stage::~Stage()
 {
@@ -123,12 +124,12 @@ void Stage::Init()
 	lineTrans = move(make_unique<WorldTransform>());
 	lineTrans->Initialize();
 	lineTrans->translation_ = { 0,0,5 };
-	lineTrans->scale_ = { 1.1,0.5,1 };
+	lineTrans->scale_ = { 1,1,1 };
 	lineTrans->UpdateMatrix();
 	lineTrans2 = move(make_unique<WorldTransform>());
 	lineTrans2->Initialize();
 	lineTrans2->translation_ = { 92.4,0,5 };
-	lineTrans2->scale_ = { 1.1,0.5,1 };
+	lineTrans2->scale_ = { 1,1,1 };
 	lineTrans2->UpdateMatrix();
 
 	clearStrSize = { 0,0 };
@@ -181,7 +182,7 @@ void Stage::Init()
 	enduranceLineTrans = move(make_unique<WorldTransform>());
 	enduranceLineTrans->Initialize();
 	enduranceLineTrans->translation_ = { 0,-3.85,5 };
-	enduranceLineTrans->scale_ = { 1.1,0.5,1 };
+	enduranceLineTrans->scale_ = { 1,1,1 };
 	enduranceLineTrans->UpdateMatrix();
 }
 
@@ -267,14 +268,11 @@ void Stage::Update()
 	GameOverCameraUpdate();
 	ClearTimeUpdate();
 
-	//auto text = DebugText::GetInstance();
-	//text->SetPos(20, 60);
-	//text->Printf("isCameraMoveStep = %d", isCameraMoveStep);
-
 	viewProjection_.ShakeUpdate();
 	viewProjection_.UpdateMatrix();
 	player->EffectUpdate();
 	ground->EffectUpdate();
+	grainScatterEffect->Update();
 }
 void Stage::Draw()
 {
@@ -350,6 +348,7 @@ void Stage::DrawSprite()
 }
 void Stage::DrawEffectFront()
 {
+	grainScatterEffect->Draw();
 	player->DrawSpriteFront();
 }
 void Stage::DrawEffectBack()
@@ -582,6 +581,7 @@ void Stage::PlayerUpdate()
 			if (collision->SquareHitSquare(playerCollider, starCollider))
 			{
 				ground->Damage(player->GetStarAttackDamage());
+				grainScatterEffect->Generate(temp->GetPos());
 				stars.remove(temp);
 				break;
 			}
@@ -615,6 +615,7 @@ void Stage::PlayerUpdate()
 			if (temp->GetisCanHit() == true && player->GetisGround() == false)
 			{
 				player->HaveStarNumIncriment();
+				grainScatterEffect->Generate(temp->GetPos());
 				stars.remove(temp);
 				break;
 			}
@@ -699,6 +700,7 @@ void Stage::FloorUpdate()
 	if (player->GetPos().y >= 20)
 	{
 		ground->SetisHit(0);
+		player->SetHaveStarNum(0);
 	}
 	if (player->GetisGround() == true)
 	{

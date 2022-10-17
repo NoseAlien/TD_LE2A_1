@@ -41,6 +41,10 @@ private:
 
 	SlowMotion* slowMotion;
 
+private:
+	// ƒ‰ƒCƒtŠÖ˜A
+	static uint32_t heartTexture;
+	std::vector<Sprite*> heartSprites;
 	int life;
 	bool isAlive;
 

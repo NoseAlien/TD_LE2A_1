@@ -90,3 +90,8 @@ void PlayerMoveEffect::Draw()
 		particles[i]->DrawSprite();
 	}
 }
+
+void PlayerMoveEffect::Clear()
+{
+	particles.clear();
+}
