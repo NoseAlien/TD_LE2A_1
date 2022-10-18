@@ -139,20 +139,20 @@ void Player::Update()
 		}, viewProjection_));
 
 
-	if (input_->PushKey(DIK_SPACE))
-	{
-		if (isGround == false && isAttack == false)
-		{
-			float tempSize =
-				200 * ((float)maxPushKeyFream - (float)pushKeyFream) / (float)maxPushKeyFream +
-				139 * ((float)pushKeyFream) / (float)maxPushKeyFream;
-			pushKeySprite->SetSize({ tempSize,	tempSize });
-		}
-	}
-	else
-	{
-		pushKeySprite->SetSize({ 139,139 });
-	}
+	//if (input_->PushKey(DIK_SPACE))
+	//{
+	//	if (isGround == false && isAttack == false)
+	//	{
+	//		float tempSize =
+	//			200 * ((float)maxPushKeyFream - (float)pushKeyFream) / (float)maxPushKeyFream +
+	//			139 * ((float)pushKeyFream) / (float)maxPushKeyFream;
+	//		pushKeySprite->SetSize({ tempSize,	tempSize });
+	//	}
+	//}
+	//else
+	//{
+	//	pushKeySprite->SetSize({ 139,139 });
+	//}
 
 
 	trans->UpdateMatrix();
@@ -199,14 +199,14 @@ void Player::DrawSpriteFront()
 }
 void Player::DrawSpriteBack()
 {
-	playerMoveEffect->Draw();
-	if (isGround == false && isAttack == false)
-	{
-		if (input_->PushKey(DIK_SPACE))
-		{
-			pushKeySprite->Draw();
-		}
-	}
+	//playerMoveEffect->Draw();
+	//if (isGround == false && isAttack == false)
+	//{
+	//	if (input_->PushKey(DIK_SPACE))
+	//	{
+	//		pushKeySprite->Draw();
+	//	}
+	//}
 }
 
 void Player::EffectGenerate(const Vector3& pos)
