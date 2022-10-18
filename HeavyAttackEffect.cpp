@@ -3,7 +3,7 @@
 using namespace std;
 
 HeavyAttackEffect::HeavyAttackEffect() :
-	maxParticle(32)
+	maxParticle(16)
 {
 }
 
@@ -17,11 +17,24 @@ void HeavyAttackEffect::Generate(const Vector3& pos)
 	{
 		float radian = DegreeToRad(Random::Range(0, 360));
 
-		particles.emplace_back(move(make_unique<Particle>()));
+		particles.emplace_back(move(make_unique<Particle>(1)));
 		particles.back()->SetPos(pos);
 		particles.back()->SetScale({ 0.5,0.5,0.5 });
 		particles.back()->SetSpeed(1);
-		particles.back()->SetVec({ cosf(radian) / 5,Random::RangeF(1,1.1),sinf(radian) / 5 });
+		particles.back()->SetVec({ cosf(radian) / 5, 1,sinf(radian) / 5 });
+
+		switch (Random::Range(1, 3))
+		{
+		case 1:
+			particles.back()->SetSpriteColor({ 0.25,1,1,1 });
+			break;
+		case 2:
+			particles.back()->SetSpriteColor({ 0.25,1,0.5,1 });
+			break;
+		case 3:
+			particles.back()->SetSpriteColor({ 0.24,0.5,1,1 });
+			break;
+		}
 	}
 
 	//for (int i = 0; i < 16; i++)
@@ -43,18 +56,18 @@ void HeavyAttackEffect::Update()
 	for (int i = 0; i < particles.size(); i++)
 	{
 		auto tempScale = particles[i]->GetScale();
-		tempScale -= 0.01 * slowMotion->GetSlowExrate();
+		tempScale -= 0.005 * slowMotion->GetSlowExrate();
 		if (tempScale.x <= 0) tempScale = { 0,0,0 };
 		particles[i]->SetScale(tempScale);
+		particles[i]->SetSpriteSize({ 100 * tempScale.x,100 * tempScale.y });
 
-		auto tempVec = particles[i]->GetVec();
 		Vector3 offset = { 0,-0.05,0 };
-		particles[i]->SetVec(tempVec + offset * slowMotion->GetSlowExrate());
+		particles[i]->SetVec(particles[i]->GetVec() + offset * slowMotion->GetSlowExrate());
 	}
 
 	for (int i = 0; i < particles.size(); i++)
 	{
-		particles[i]->Update();
+		particles[i]->UpdateSprite();
 	}
 
 	for (int i = 0; i < particles.size(); i++)
@@ -71,6 +84,6 @@ void HeavyAttackEffect::Draw()
 {
 	for (int i = 0; i < particles.size(); i++)
 	{
-		particles[i]->Draw();
+		particles[i]->DrawSprite();
 	}
 }

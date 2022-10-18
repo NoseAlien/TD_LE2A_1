@@ -69,6 +69,7 @@ Stage::Stage(const int& stageType) :
 		enduranceTimeSprites[i]->SetSize({ 32,32 });
 	}
 
+	grainScatterEffect = move(make_unique<GrainScatterEffect>());
 }
 Stage::~Stage()
 {
@@ -123,12 +124,12 @@ void Stage::Init()
 	lineTrans = move(make_unique<WorldTransform>());
 	lineTrans->Initialize();
 	lineTrans->translation_ = { 0,0,5 };
-	lineTrans->scale_ = { 1.1,0.5,1 };
+	lineTrans->scale_ = { 1,1,1 };
 	lineTrans->UpdateMatrix();
 	lineTrans2 = move(make_unique<WorldTransform>());
 	lineTrans2->Initialize();
 	lineTrans2->translation_ = { 92.4,0,5 };
-	lineTrans2->scale_ = { 1.1,0.5,1 };
+	lineTrans2->scale_ = { 1,1,1 };
 	lineTrans2->UpdateMatrix();
 
 	clearStrSize = { 0,0 };
@@ -181,7 +182,7 @@ void Stage::Init()
 	enduranceLineTrans = move(make_unique<WorldTransform>());
 	enduranceLineTrans->Initialize();
 	enduranceLineTrans->translation_ = { 0,-3.85,5 };
-	enduranceLineTrans->scale_ = { 1.1,0.5,1 };
+	enduranceLineTrans->scale_ = { 1,1,1 };
 	enduranceLineTrans->UpdateMatrix();
 }
 
@@ -267,14 +268,11 @@ void Stage::Update()
 	GameOverCameraUpdate();
 	ClearTimeUpdate();
 
-	//auto text = DebugText::GetInstance();
-	//text->SetPos(20, 60);
-	//text->Printf("isCameraMoveStep = %d", isCameraMoveStep);
-
 	viewProjection_.ShakeUpdate();
 	viewProjection_.UpdateMatrix();
 	player->EffectUpdate();
 	ground->EffectUpdate();
+	grainScatterEffect->Update();
 }
 void Stage::Draw()
 {
@@ -348,6 +346,16 @@ void Stage::DrawSprite()
 		timeStrSprite->Draw();
 	}
 }
+void Stage::DrawEffectFront()
+{
+	grainScatterEffect->Draw();
+	player->DrawSpriteFront();
+}
+void Stage::DrawEffectBack()
+{
+	player->DrawSpriteBack();
+}
+
 void Stage::CountDownUpdate()
 {
 	if (isStartTextEnd == true) return;
@@ -570,11 +578,12 @@ void Stage::PlayerUpdate()
 				{ temp->GetScale().x,temp->GetScale().y },
 			};
 
-			if (collision->SquareHitSquare(playerCollider, starCollider))
+			if (collision->SquareHitSquare(playerCollider, starCollider) &&
+				temp->GetisDestroy() == false)
 			{
 				ground->Damage(player->GetStarAttackDamage());
-				stars.remove(temp);
-				break;
+				grainScatterEffect->Generate(temp->GetPos());
+				temp->SetisDestroy(true);
 			}
 		}
 		for (const auto& temp : blocks)
@@ -597,17 +606,18 @@ void Stage::PlayerUpdate()
 		}
 	}
 
-	// ¯‚ðŠª‚«ž‚Þˆ—
+	// ¯‚ð‚Â‚Ô‚·ˆ—
 	for (const auto& temp : stars)
 	{
 		if (collision->SphereHitSphere(
-			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius()))
+			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius() &&
+			player->GetisGround() == false))
 		{
-			if (temp->GetisCanHit() == true && player->GetisGround() == false)
+			if (temp->GetisCanHit() == true && temp->GetisDestroy() == false)
 			{
 				player->HaveStarNumIncriment();
-				stars.remove(temp);
-				break;
+				grainScatterEffect->Generate(temp->GetPos());
+				temp->SetisDestroy(true);
 			}
 		}
 	}
@@ -690,6 +700,7 @@ void Stage::FloorUpdate()
 	if (player->GetPos().y >= 20)
 	{
 		ground->SetisHit(0);
+		player->SetHaveStarNum(0);
 	}
 	if (player->GetisGround() == true)
 	{
@@ -802,7 +813,8 @@ void Stage::StarUpdate()
 	{
 		if (stageType != RaceStage)
 		{
-			if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40)
+			if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40 ||
+				temp->GetisDestroy() == true)
 			{
 				stars.remove(temp);
 				break;

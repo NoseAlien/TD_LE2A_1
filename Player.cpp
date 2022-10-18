@@ -8,6 +8,7 @@ using namespace std;
 
 Audio* Player::audio = nullptr;
 uint32_t Player::playerTexAnime[9] = {};
+uint32_t Player::heartTexture = {};
 
 Player::Player() :
 	isAttack(false), maxSpeed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
@@ -19,11 +20,17 @@ Player::Player() :
 	weakAttackEffect = move(make_unique<WeakAttackEffect>());
 	heavyAttackEffect = move(make_unique<HeavyAttackEffect>());
 	playerDieEffect = move(make_unique<PlayerDieEffect>());
+	playerMoveEffect = move(make_unique<PlayerMoveEffect>());
+
 }
 Player::~Player()
 {
 	delete playerModel;
 	delete trans;
+	for (int i = 0; i < 3; i++)
+	{
+		delete heartSprites[i];
+	}
 }
 
 void Player::Load()
@@ -43,6 +50,17 @@ void Player::Load()
 	playerModel = Model::CreateFromOBJ("player", true);
 	trans = new WorldTransform();
 	trans->Initialize();
+
+	heartTexture = TextureManager::Load("SpriteTexture/Heart.png");
+
+	for (int i = 0; i < 3; i++)
+	{
+		heartSprites.push_back(Sprite::Create(heartTexture, { (float)(96 + i * 80),96 }));
+		heartSprites.back()->SetAnchorPoint({ 0.5f,0.5f });
+		heartSprites.back()->SetSize({ 64,64 });
+	}
+
+
 }
 
 static int tempTimer = 0; // ゲーム開始と同時に攻撃しないため
@@ -61,11 +79,16 @@ void Player::Init()
 	radius = 2;
 	slowMotion = SlowMotion::GetInstance();
 
+	// 攻撃関連
 	isReverse = false;
 	isAttack = false;
 	isWeakAttack = false;
 	isHeavyAttack = false;
 	isEngulfAttack = false;
+	pushKeySprite.reset(Sprite::Create(Particle::texture, { 0,0 }));
+	pushKeySprite->SetColor({ 1,1,0,1 });
+	pushKeySprite->SetAnchorPoint({ 0.5,0 });
+	pushKeySprite->SetSize({ 100,100 });
 
 	//speed = 0;
 
@@ -76,10 +99,14 @@ void Player::Init()
 
 	damageTimer = 0;
 
-	isAlive = true;
+	// ライフ関連
 	life = 3;
+	isAlive = true;
+
 
 	isGround = false;
+
+	playerMoveEffect->Clear();
 }
 void Player::Update()
 {
@@ -94,7 +121,40 @@ void Player::Update()
 		tempTimer = 10;
 		AttackUpdate();
 		DamageUpdate();
+
+		playerMoveEffect->Generate(
+			{
+				trans->translation_.x,
+				trans->translation_.y - radius,
+				trans->translation_.z
+			}, radius - 0.5);
+		playerMoveEffect->Update();
 	}
+
+	pushKeySprite->SetPosition(WorldToScreen(
+		{
+			trans->translation_.x,
+			trans->translation_.y ,
+			trans->translation_.z
+		}, viewProjection_));
+
+
+	//if (input_->PushKey(DIK_SPACE))
+	//{
+	//	if (isGround == false && isAttack == false)
+	//	{
+	//		float tempSize =
+	//			200 * ((float)maxPushKeyFream - (float)pushKeyFream) / (float)maxPushKeyFream +
+	//			139 * ((float)pushKeyFream) / (float)maxPushKeyFream;
+	//		pushKeySprite->SetSize({ tempSize,	tempSize });
+	//	}
+	//}
+	//else
+	//{
+	//	pushKeySprite->SetSize({ 139,139 });
+	//}
+
+
 	trans->UpdateMatrix();
 }
 void Player::SelectSceneUpdate()
@@ -127,6 +187,27 @@ void Player::Draw(const ViewProjection& viewProjection_)
 		}
 	}
 }
+void Player::DrawSpriteFront()
+{
+	weakAttackEffect->Draw();
+	heavyAttackEffect->Draw();
+
+	for (int i = 0; i < life; i++)
+	{
+		heartSprites[i]->Draw();
+	}
+}
+void Player::DrawSpriteBack()
+{
+	//playerMoveEffect->Draw();
+	//if (isGround == false && isAttack == false)
+	//{
+	//	if (input_->PushKey(DIK_SPACE))
+	//	{
+	//		pushKeySprite->Draw();
+	//	}
+	//}
+}
 
 void Player::EffectGenerate(const Vector3& pos)
 {
@@ -138,7 +219,8 @@ void Player::EffectGenerate(const Vector3& pos)
 	if (isHeavyAttack == true)
 	{
 		viewProjection_.SetShakeValue(1.5, 40, 2);
-		heavyAttackEffect->Generate({ pos.x,pos.y - 5 - radius,pos.z });
+		//heavyAttackEffect->Generate({ pos.x,pos.y - 5 - radius,pos.z });
+		heavyAttackEffect->Generate({ pos.x,pos.y + 2 - radius,pos.z });
 	}
 }
 void Player::EffectUpdate()
@@ -149,8 +231,6 @@ void Player::EffectUpdate()
 }
 void Player::EffectDraw()
 {
-	weakAttackEffect->Draw();
-	heavyAttackEffect->Draw();
 	playerDieEffect->Draw();
 }
 void Player::DieEffectGenerate()
@@ -473,6 +553,7 @@ void Player::AttackUpdate()
 	}
 
 }
+
 void Player::SetisDamage(const bool& isDamage)
 {
 	if (damageTimer == 0 && life > 0)

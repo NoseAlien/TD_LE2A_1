@@ -7,6 +7,7 @@
 #include "Goal.h"
 #include "Sprite.h"
 #include "Vector2.h"
+#include "GrainScatterEffect.h"
 #include <vector>
 #include <memory>
 
@@ -87,6 +88,10 @@ private:
 	Sprite* enduranceTimeSprites[2];
 
 private:
+	//エフェクト
+	std::unique_ptr<GrainScatterEffect> grainScatterEffect;
+
+private:
 	std::list<std::unique_ptr<Star>> stars;
 	std::list<std::unique_ptr<Thorn>> thorns;
 	std::list<std::unique_ptr<Block>> blocks;
@@ -129,6 +134,8 @@ public:
 	void Update();
 	void Draw();
 	void DrawSprite();
+	void DrawEffectFront();
+	void DrawEffectBack();
 
 	void GenerateThorn(const Vector3& pos, const Vector3& scale = { 1,1,1 });
 	void GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale = { 2,2,2 });

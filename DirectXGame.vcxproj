@@ -104,6 +104,7 @@
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Goal.cpp" />
+    <ClCompile Include="GrainScatterEffect.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="HeavyAttackEffect.cpp" />
     <ClCompile Include="HitStop.cpp" />
@@ -112,6 +113,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerDieEffect.cpp" />
+    <ClCompile Include="PlayerMoveEffect.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -152,6 +154,7 @@
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Goal.h" />
+    <ClInclude Include="GrainScatterEffect.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="HeavyAttackEffect.h" />
     <ClInclude Include="HitStop.h" />
@@ -165,6 +168,7 @@
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerDieEffect.h" />
+    <ClInclude Include="PlayerMoveEffect.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneManager.h" />

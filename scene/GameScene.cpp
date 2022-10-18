@@ -96,6 +96,13 @@ void GameScene::Initialize()
 }
 void GameScene::Update()
 {
+	//int lenght = 50;
+	//Vector2 p1 = { cosf(DegreeToRad(90)) * lenght,sinf(DegreeToRad(90)) * lenght };
+	//Vector2 p2 = { cosf(DegreeToRad(180)) * lenght,sinf(DegreeToRad(180)) * lenght };
+	//Vector2 p3 = { cosf(DegreeToRad(90)),sinf(DegreeToRad(90)) };
+	//Vector2 p4 = { cosf(DegreeToRad(90)),sinf(DegreeToRad(90)) };
+	//temp->SetTextureRect(p3, p2, p4, p1);
+
 	//BackGroundUpdate();
 
 	if (gameState == isGame)
@@ -183,9 +190,10 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに背景スプライトの描画処理を追加できる
-	/// </summary>
+	if (gameState == isGame)
+	{
+		stages[currentStage]->DrawEffectBack();
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -228,15 +236,23 @@ void GameScene::Draw()
 	if (gameState == isGame)
 	{
 		stages[currentStage]->DrawSprite();
-		//stages[currentStage]->DrawClearTime();
 	}
-
 	sceneChange->Draw();
+
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
-	//
+
 	// スプライト描画後処理
+	Sprite::PostDraw();
+
+	Sprite::PreDraw(commandList, Sprite::BlendMode::kNormal);
+	if (gameState == isGame)
+	{
+		stages[currentStage]->DrawEffectFront();
+	}
+	//temp->Draw();
+	//temp2->Draw();
 	Sprite::PostDraw();
 
 #pragma endregion
@@ -450,3 +466,4 @@ void GameScene::BackGroundDraw()
 		backCubeModel->Draw(*backCubeTrans[i].get(), viewProjection_);
 	}
 }
+

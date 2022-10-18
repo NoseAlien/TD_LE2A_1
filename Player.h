@@ -8,6 +8,7 @@
 #include "WeakAttackEffect.h"
 #include "HeavyAttackEffect.h"
 #include "PlayerDieEffect.h"
+#include "PlayerMoveEffect.h"
 #include "SlowMotion.h"
 
 class Player
@@ -19,6 +20,7 @@ private:
 	std::unique_ptr<WeakAttackEffect> weakAttackEffect;
 	std::unique_ptr<HeavyAttackEffect> heavyAttackEffect;
 	std::unique_ptr<PlayerDieEffect> playerDieEffect;
+	std::unique_ptr<PlayerMoveEffect> playerMoveEffect;
 
 public:	// テクスチャー
 	static uint32_t playerTexAnime[9];		// テクスチャーアニメション
@@ -39,6 +41,10 @@ private:
 
 	SlowMotion* slowMotion;
 
+private:
+	// ライフ関連
+	static uint32_t heartTexture;
+	std::vector<Sprite*> heartSprites;
 	int life;
 	bool isAlive;
 
@@ -70,6 +76,9 @@ private:
 	int maxDamageTimer;
 	bool isGround;	// 地面にいるかどうかのフラグ
 
+private:
+	// 攻撃関連
+	std::unique_ptr<Sprite> pushKeySprite;
 	const int starAttackDamage;
 	const int weakAttackDamage;
 	const int heavyAttackDamage;
@@ -94,6 +103,10 @@ public:
 	void Update();
 	void SelectSceneUpdate();
 	void Draw(const ViewProjection& viewProjection_);
+	void DrawSpriteBack();
+	void DrawSpriteFront();
+
+
 	void EffectGenerate(const Vector3& pos);
 	void EffectUpdate();
 	void EffectDraw();

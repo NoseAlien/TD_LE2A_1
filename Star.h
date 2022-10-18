@@ -27,6 +27,8 @@ private:
 
 	int generateType;	// ０プレイヤー生成,１大砲生成
 
+	bool isDestroy;	// 削除可能なフラグ
+
 private: // アニメーション関連
 	int animeIndex;
 	int fream;
@@ -49,10 +51,12 @@ public:
 	inline void SetisAngleShacke(const bool& isAngleShake) { this->isAngleShake = isAngleShake; }
 	inline void SetSpeed(const float& speed) { this->speed = speed; }
 	inline void SetGravity(const float& gravity) { this->gravity = gravity; }
+	inline void SetisDestroy(const bool& isDestroy) { this->isDestroy = isDestroy; }
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
 	inline float GetRadius() { return collisionRadius; }
+	inline bool GetisDestroy() { return isDestroy; }
 	//inline void SetAngleShakeValue(const Vector3& angleShakeValue) { this->angleShakeValue = angleShakeValue; }
 };
 
