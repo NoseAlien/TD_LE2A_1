@@ -21,6 +21,7 @@ SceneManager::~SceneManager()
 	Star::UnLoad();
 	Stage::UnLoad();
 	Block::UnLoad();
+	Thorn::UnLoad();
 }
 
 void SceneManager::Initialize()
@@ -28,6 +29,7 @@ void SceneManager::Initialize()
 	GameScene::Load();
 	Star::Load();
 	Block::Load();
+	Thorn::Load();
 	sceneChange->Load();
 	scene->Initialize();
 }

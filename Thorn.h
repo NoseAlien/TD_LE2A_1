@@ -1,12 +1,13 @@
 #pragma once
 #include "WorldTransform.h"
 #include "Model.h"
+#include <memory>
 
 class Thorn
 {
 private:
+	static Model* thornModel;	// モデル
 	WorldTransform* trans = nullptr;	// トランスフォーム
-	Model* thornModel = nullptr;		// モデル
 	uint32_t thornTexture = 0;			// テクスチャー
 
 	float collisionRadius;
@@ -14,6 +15,8 @@ private:
 public:
 	Thorn();
 	~Thorn();
+	static void Load();
+	static void UnLoad();
 	void Generate(const Vector3& pos, const Vector3& scale);
 	void Update();
 	void Draw(const ViewProjection& viewProjection_, const uint32_t& thornTexture);

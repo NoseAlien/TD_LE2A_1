@@ -1,4 +1,7 @@
 #include "Thorn.h"
+using namespace std;
+
+Model* Thorn::thornModel = nullptr;
 
 Thorn::Thorn()
 {
@@ -8,6 +11,15 @@ Thorn::Thorn()
 Thorn::~Thorn()
 {
 	delete trans;
+}
+
+void Thorn::Load()
+{
+	thornModel = Model::CreateFromOBJ("thorn", true);
+}
+
+void Thorn::UnLoad()
+{
 	delete thornModel;
 }
 
@@ -19,8 +31,7 @@ void Thorn::Generate(const Vector3& pos, const Vector3& scale)
 	trans->scale_ = scale;
 	trans->scale_ = { 0.5,0.5,0.5 };
 	trans->UpdateMatrix();
-	collisionRadius = trans->scale_.x;
-	thornModel = Model::Create();
+	collisionRadius = 1;
 }
 
 void Thorn::Update()
@@ -30,5 +41,5 @@ void Thorn::Update()
 
 void Thorn::Draw(const ViewProjection& viewProjection_, const uint32_t& thornTexture)
 {
-	thornModel->Draw(*trans, viewProjection_, thornTexture);
+	thornModel->Draw(*trans, viewProjection_);
 }
