@@ -104,6 +104,7 @@
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Goal.cpp" />
+    <ClCompile Include="GrainMoveEffect.cpp" />
     <ClCompile Include="GrainScatterEffect.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="HeavyAttackEffect.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Goal.h" />
+    <ClInclude Include="GrainMoveEffect.h" />
     <ClInclude Include="GrainScatterEffect.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="HeavyAttackEffect.h" />

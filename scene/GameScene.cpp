@@ -320,11 +320,16 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
 		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+		break;
 	case 10:
 		ground->Init(1000000);
 		stages[currentStage]->SetisEndurance(true);
 		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
 		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+		break;
+
+	default:
+		break;
 	}
 }
 void GameScene::SelectUpdate()

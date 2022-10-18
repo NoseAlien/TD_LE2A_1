@@ -354,6 +354,10 @@ void Stage::DrawEffectFront()
 void Stage::DrawEffectBack()
 {
 	player->DrawSpriteBack();
+	for (const auto& temp : stars)
+	{
+		temp->DrawEffectBack();
+	}
 }
 
 void Stage::CountDownUpdate()
@@ -800,6 +804,7 @@ void Stage::StarUpdate()
 			if (collision->SquareHitSquare(starCollider, blockCollider))
 			{
 				tempStar->SetSpeed(0);
+				tempStar->SetisGround(true);
 			}
 		}
 	}
@@ -807,6 +812,7 @@ void Stage::StarUpdate()
 	for (const auto& temp : stars)
 	{
 		temp->Update();
+		temp->UpdateEffect();
 	}
 
 	for (const auto& temp : stars)
@@ -837,7 +843,7 @@ void Stage::ThornUpdate()
 		SquareCollider thornCollider =
 		{
 			{ temp->GetPos().x,temp->GetPos().y },
-			{ temp->GetScale().x,temp->GetScale().y },
+			{ temp->GetRadius(),temp->GetRadius() },
 		};
 
 		if (collision->SquareHitSquare(playerCollider, thornCollider))
@@ -957,7 +963,7 @@ void Stage::CannonUpdate()
 {
 	for (const auto& temp : cannons)
 	{
-		if (temp->GetisShot() == 1)
+		if (temp->GetisShot() == true)
 		{
 			CannonGenerateStar(temp->GetPos(), temp->GetDirVec());
 			temp->SetisShot(false);
