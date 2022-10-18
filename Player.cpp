@@ -199,7 +199,7 @@ void Player::DrawSpriteFront()
 }
 void Player::DrawSpriteBack()
 {
-	//playerMoveEffect->Draw();
+	playerMoveEffect->Draw();
 	//if (isGround == false && isAttack == false)
 	//{
 	//	if (input_->PushKey(DIK_SPACE))

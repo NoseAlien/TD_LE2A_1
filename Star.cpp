@@ -4,6 +4,7 @@
 #include "SlowMotion.h"
 #include "Player.h"
 using namespace MathUtility;
+using namespace std;
 
 Model* Star::starModel = nullptr;
 
@@ -11,12 +12,14 @@ Star::Star() :
 	gravity(2), collisionRadius(1),
 	isCanHit(false), maxCanHitTimer(10), stageType(BaseStage)
 {
+	grainMoveEffect = move(make_unique<GrainMoveEffect>());
 	trans = new WorldTransform();
 	trans->Initialize();
 }
 
 Star::~Star()
 {
+	//grainMoveEffect->Clear();
 	delete trans;
 }
 
@@ -50,6 +53,7 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	this->generateType = generateType;
 
 	isDestroy = false;
+	isGround = false;
 }
 
 void Star::Update()
@@ -131,5 +135,19 @@ void Star::Draw(const ViewProjection& viewProjection_)
 		fream = 0;
 	}
 	starModel->Draw(*trans, viewProjection_, Player::playerTexAnime[animeIndex]);
+}
+
+void Star::DrawEffectBack()
+{
+	grainMoveEffect->Draw();
+}
+
+void Star::UpdateEffect()
+{
+	if (isGround == false)
+	{
+		grainMoveEffect->Generate(trans->translation_, 1);
+	}
+	grainMoveEffect->Update();
 }
 

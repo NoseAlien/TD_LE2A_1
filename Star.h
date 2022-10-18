@@ -2,9 +2,14 @@
 #include "WorldTransform.h"
 #include "Model.h"
 #include "Input.h"
+#include "GrainMoveEffect.h"
+#include <memory>
 
 class Star
 {
+private:
+	std::unique_ptr<GrainMoveEffect> grainMoveEffect;
+
 private:
 	WorldTransform* trans = nullptr;
 	static Model* starModel; //= nullptr;		// モデル
@@ -22,12 +27,10 @@ private:
 	bool isNotGravity;
 	Vector3 dirVec;	// 1 右、-1 左
 	float collisionRadius;
-
 	bool isAngleShake;
-
 	int generateType;	// ０プレイヤー生成,１大砲生成
-
 	bool isDestroy;	// 削除可能なフラグ
+	bool isGround;
 
 private: // アニメーション関連
 	int animeIndex;
@@ -43,6 +46,9 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection_);
 
+	void UpdateEffect();
+	void DrawEffectBack();
+
 	WorldTransform* GetTrans() { return trans; }
 	inline bool GetisCanHit() { return isCanHit; }
 	inline bool GetGenerateType() { return generateType; }
@@ -52,6 +58,7 @@ public:
 	inline void SetSpeed(const float& speed) { this->speed = speed; }
 	inline void SetGravity(const float& gravity) { this->gravity = gravity; }
 	inline void SetisDestroy(const bool& isDestroy) { this->isDestroy = isDestroy; }
+	inline void SetisGround(const bool& isGround) { this->isGround = isGround; }
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
