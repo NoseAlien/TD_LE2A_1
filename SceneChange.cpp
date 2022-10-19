@@ -122,13 +122,11 @@ void SceneChange::Update()
 			}
 		}
 
-
 		for (int i = 0; i < blocks.size(); i++)
 		{
 			blocks[i]->Update(frame);
 		}
 	}
-
 }
 void SceneChange::Draw()
 {
