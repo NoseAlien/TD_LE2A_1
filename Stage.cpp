@@ -726,7 +726,7 @@ void Stage::FloorUpdate()
 	}
 
 	// ‘å‚«‚­‚È‚éˆ—
-	const int starSize = 10;
+	const int starSize = 1;
 	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
 	{
 		ground->SetisAddScaleCountDown(1);

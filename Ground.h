@@ -90,7 +90,7 @@ public:
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	//inline Vector3 GetScale() { return trans->scale_; }
-	inline Vector3 GetScale() { return { 46,10,5 }; }
+	inline Vector3 GetScale() { return { 46,10 * trans->scale_.y,5 }; }
 	inline float GetRadius() { return collisionRadius; }
 	inline int GetHP() { return hp; }
 	inline int GetAddScaleCount() { return addScaleCount; }

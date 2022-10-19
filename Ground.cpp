@@ -121,8 +121,9 @@ void Ground::Update()
 
 	if (isAddScale == true)
 	{
-		const float difference = (fabs(trans->translation_.y) - 9.5) / 3;
-		addScale += 0.1;
+		//const float difference = (fabs(trans->translation_.y) - 9.5) / 3;
+		const float difference = 1.3 / 3;
+		addScale += 0.01;
 		trans->scale_.y += addScale;
 		if (trans->scale_.y - preScaleY >= difference)
 		{
@@ -166,7 +167,7 @@ void Ground::Update()
 	auto tempPos = WorldToScreen(
 		{
 			trans->translation_.x + 35,
-			trans->translation_.y + trans->scale_.y - 5,
+			trans->translation_.y + trans->scale_.y + 4,
 			trans->translation_.z,
 		}, viewProjection_);
 	faceSprite->SetPosition(tempPos);
