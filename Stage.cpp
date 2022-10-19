@@ -871,7 +871,8 @@ void Stage::BlockUpdate()
 	SquareCollider playerCollider =
 	{
 		{ player->GetPos().x, player->GetPos().y - player->GetRadius() - player->GetAttackMoveSpeed()},
-		{ player->GetScale().x, player->GetScale().y },
+		{ player->GetRadius(), player->GetRadius() - 0.25f},
+		//{ player->GetScale().x, player->GetScale().y},
 	};
 	SquareCollider floorCollider =
 	{
@@ -909,7 +910,6 @@ void Stage::BlockUpdate()
 					temp->SetisHit(1);
 					break;
 				}
-
 			}
 		}
 		if (temp->GetisHit() == 1)

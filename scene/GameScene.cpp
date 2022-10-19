@@ -352,34 +352,34 @@ void GameScene::SelectUpdate()
 
 		// テキストの座標
 		auto tempPos1 = stageSelect->GetTextPos(currentStage);
-		tempPos1.y -= speed * 2;
-		if (tempPos1.y <= -5)
+		tempPos1.y -= speed * 4;
+		if (tempPos1.y <= -12)
 		{
-			tempPos1.y = -5;
+			tempPos1.y = -12;
 		}
 		stageSelect->SetTextPos(tempPos1, currentStage);
 
 		// 板の座標
-		auto tempPos2 = stageSelect->GetSelectPos(currentStage);
+	/*	auto tempPos2 = stageSelect->GetSelectPos(currentStage);
 		tempPos2.y -= speed;
-		if (tempPos2.y <= -5)
+		if (tempPos2.y <= -12)
 		{
-			tempPos2.y = -5;
+			tempPos2.y = -12;
 		}
-		stageSelect->SetSelectPos(tempPos2, currentStage);
+		stageSelect->SetSelectPos(tempPos2, currentStage);*/
 
 		// 板のスケール
 		auto tempScale2 = stageSelect->GetSelectScale(currentStage);
-		tempScale2.y -= speed;
+		tempScale2.y -= speed / 2;
 
-		if (tempScale2.y < 0.1)
+		if (tempScale2.y < 0.0001)
 		{
-			tempScale2.y = 0.1;
+			tempScale2.y = 0.0001;
 		}
 		stageSelect->SetSelectScale(tempScale2, currentStage);
 
 		//if (player->GetPos().y <= 2)
-		if (player->GetPos().y <= -3.5 + player->GetRadius() * 2.5)
+		if (player->GetPos().y <= -4.5 + player->GetRadius())
 		{
 			player->SetPos({ player->GetPos().x, -3.5f + player->GetRadius(), player->GetPos().z });
 			player->SetisReverse(true);
@@ -391,27 +391,27 @@ void GameScene::SelectUpdate()
 
 		// テキストの座標
 		auto tempPos1 = stageSelect->GetTextPos(currentStage);
-		tempPos1.y += speed * 2;
-		if (tempPos1.y >= 5)
+		tempPos1.y += speed * 4;
+		if (tempPos1.y >= 11)
 		{
-			tempPos1.y = 5;
+			tempPos1.y = 11;
 		}
 		stageSelect->SetTextPos(tempPos1, currentStage);
 
-		auto tempPos2 = stageSelect->GetSelectPos(currentStage);
-		tempPos2.y += speed;
-		if (tempPos2.y >= 0)
-		{
-			tempPos2.y = 0;
-		}
-		stageSelect->SetSelectPos(tempPos2, currentStage);
+		/*	auto tempPos2 = stageSelect->GetSelectPos(currentStage);
+			tempPos2.y += speed;
+			if (tempPos2.y >= 0)
+			{
+				tempPos2.y = 0;
+			}
+			stageSelect->SetSelectPos(tempPos2, currentStage);*/
 
 		auto tempScale2 = stageSelect->GetSelectScale(currentStage);
-		tempScale2.y += speed;
+		tempScale2.y += speed / 2;
 
-		if (tempScale2.y > 5)
+		if (tempScale2.y > 0.5f)
 		{
-			tempScale2.y = 5;
+			tempScale2.y = 0.5f;
 		}
 		stageSelect->SetSelectScale(tempScale2, currentStage);
 		if (player->GetisGround() == true)

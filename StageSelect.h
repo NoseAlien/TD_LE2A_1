@@ -6,10 +6,12 @@
 class StageSelect
 {
 private:
-	std::vector<Model*> stageSelectModel;
+	static Model* stageSelectModel;
+	float stageSelectSize;
 	std::vector<std::unique_ptr<WorldTransform>> stageSelectTrans;
-	std::vector<Model*> stageTextModel;
+	static Model* stageTextModel;
 	std::vector<std::unique_ptr<WorldTransform>> stageTextTrans;
+
 	int stageSize;
 	int currentStage;
 	float moveSpeed;
@@ -17,6 +19,8 @@ private:
 public:
 	StageSelect(const int& stageSize);
 	~StageSelect();
+	static void Load();
+	static void UnLoad();
 	void Initialize();
 	void Update();
 	void Draw();
