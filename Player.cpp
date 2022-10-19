@@ -274,10 +274,10 @@ void Player::DieEffectGenerate()
 
 void Player::MoveUpdate()
 {
-	if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
-	if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
-	if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
-	if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
+	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
+	//if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
+	//if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
+	//if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
 	//if (trans->translation_.x >= 39.5)
 	//{
 	//	trans->translation_.x = 39.5;
@@ -295,7 +295,7 @@ void Player::MoveUpdate()
 	// ˆÚ“®ˆ—
 	if (isAlive == true)
 	{
-		//trans->translation_.x += speed * slowMotion->GetSlowExrate();
+		trans->translation_.x += speed * slowMotion->GetSlowExrate();
 
 		if (stageType != RaceStage)
 		{
@@ -579,6 +579,16 @@ void Player::AttackUpdate()
 		{
 			if (isJumpAddScaleStep == 0)
 			{
+				addScaleStep = 0;
+				isReverse = false;		// ”½“]ƒtƒ‰ƒO
+				isWeakAttack = false;	// ŽãUŒ‚
+				isHeavyAttack = false;	// ‹­UŒ‚
+				isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
+				isAttack = false;		// UŒ‚ƒtƒ‰ƒO
+
+				stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
+				trans->scale_ = { radius,radius,radius };
+
 				isJumpAddScaleStep = 1;
 			}
 		}

@@ -84,7 +84,7 @@ private:
 	const int weakAttackDamage;
 	const int heavyAttackDamage;
 
-	float addScaleValue = 0.5;
+	const float addScaleValue = 0.5;
 	int addScaleStep = 0;
 	float maxSize = 2.5;
 
