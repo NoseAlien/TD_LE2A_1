@@ -16,6 +16,7 @@ ViewProjection viewProjection_{};
 
 Audio* GameScene::audio = nullptr;
 Model* GameScene::backCubeModel = nullptr;
+uint32_t GameScene::backGroundTexture = 0;
 
 GameScene::GameScene()
 {
@@ -39,7 +40,7 @@ void GameScene::Load()
 	Particle::Load();
 
 	backCubeModel = Model::CreateFromOBJ("backCube", true);
-
+	backGroundTexture = TextureManager::Load("SpriteTexture/backGround/rock.png");
 }
 void GameScene::Initialize()
 {
@@ -51,7 +52,9 @@ void GameScene::Initialize()
 	hitstop->Init();
 	slowMotion = SlowMotion::GetInstance();
 	slowMotion->Init();
-	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
+
+	backGroundSprite.reset(Sprite::Create(backGroundTexture, { 0,0 }));
+	backGroundSprite->SetSize({ 1920,1080 });
 
 	stages.clear();
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
@@ -190,6 +193,8 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
+	backGroundSprite->Draw();
+
 	if (gameState == isGame)
 	{
 		stages[currentStage]->DrawEffectBack();
@@ -312,14 +317,14 @@ void GameScene::CurrentStageInit()
 		break;
 	case 8:
 		ground->Init(80);
-		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
-		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 	case 9:
 		ground->Init(40);
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
-		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 	case 10:
 		ground->Init(1000000);

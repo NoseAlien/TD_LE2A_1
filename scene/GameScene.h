@@ -82,6 +82,10 @@ private: // メンバ変数
 	HitStop* hitstop;
 	SlowMotion* slowMotion;
 
+	// 背景関連
+	static uint32_t backGroundTexture;
+	std::unique_ptr<Sprite> backGroundSprite;
+
 
 private:
 	// 背景関連

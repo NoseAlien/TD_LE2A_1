@@ -6,7 +6,7 @@ class Cannon
 {
 private:
 	WorldTransform* trans = nullptr;
-	Model* blockModel = nullptr;		// ƒ‚ƒfƒ‹
+	static Model* cannonModel;		// ƒ‚ƒfƒ‹
 	uint32_t blockTexture;
 
 	int shotTimer;
@@ -24,9 +24,11 @@ private:
 public:
 	Cannon();
 	~Cannon();
-	void Generate(const Vector3& pos, const Vector3& rot);
+	static void Load();
+	static void UnLoad();
+	void Generate(const Vector3& pos, const Vector3& rot, const float& dirVecAngle);
 	void Update();
-	void Draw(const ViewProjection& viewProjection_, const uint32_t& starTexture);
+	void Draw(const ViewProjection& viewProjection_);
 
 	inline void SetisShot(const bool& isShot) { this->isShot = isShot; }
 	inline bool GetisShot() { return isShot; }

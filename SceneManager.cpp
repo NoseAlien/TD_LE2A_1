@@ -22,6 +22,7 @@ SceneManager::~SceneManager()
 	Stage::UnLoad();
 	Block::UnLoad();
 	Thorn::UnLoad();
+	Cannon::UnLoad();
 }
 
 void SceneManager::Initialize()
@@ -30,6 +31,7 @@ void SceneManager::Initialize()
 	Star::Load();
 	Block::Load();
 	Thorn::Load();
+	Cannon::Load();
 	sceneChange->Load();
 	scene->Initialize();
 }

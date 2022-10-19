@@ -304,7 +304,7 @@ void Stage::Draw()
 
 	for (const auto& temp : cannons)
 	{
-		temp->Draw(viewProjection_, thornTexture);
+		temp->Draw(viewProjection_);
 	}
 
 	if (goal != nullptr)
@@ -506,7 +506,14 @@ void Stage::GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector
 void Stage::GenerateCannon(const Vector3& pos, const Vector3& rot)
 {
 	cannons.emplace_back(move(make_unique<Cannon>()));
-	cannons.back()->Generate(pos, rot);
+	if (cannons.size() == 1)
+	{
+		cannons.back()->Generate(pos, rot, 135);
+	}
+	else if (cannons.size() == 2)
+	{
+		cannons.back()->Generate(pos, rot, 45);
+	}
 }
 void Stage::GenerateGoal(const Vector3& pos)
 {
@@ -547,7 +554,7 @@ void Stage::CannonGenerateStar(const Vector3& pos, const Vector3& dieVec)
 {
 	stars.emplace_back(move(make_unique<Star>()));
 	stars.back()->Generate(pos, dieVec, 1);
-	stars.back()->SetSpeed(Random::RangeF(0.5, 2.2));
+	stars.back()->SetSpeed(Random::RangeF(0.2, 1.7));
 }
 void Stage::BlockGenerateStar(const Vector3& pos, const int& num)
 {
@@ -789,6 +796,7 @@ void Stage::StarUpdate()
 				if (tempStar->GetGenerateType() == 1)
 				{
 					tempStar->SetSpeed(0);
+					tempStar->SetisGround(true);
 				}
 			}
 		}
@@ -804,7 +812,6 @@ void Stage::StarUpdate()
 			if (collision->SquareHitSquare(starCollider, blockCollider))
 			{
 				tempStar->SetSpeed(0);
-				tempStar->SetisGround(true);
 			}
 		}
 	}
@@ -961,12 +968,26 @@ void Stage::BlockUpdate()
 // ‘å–C
 void Stage::CannonUpdate()
 {
+	int count = 0;
 	for (const auto& temp : cannons)
 	{
 		if (temp->GetisShot() == true)
 		{
-			CannonGenerateStar(temp->GetPos(), temp->GetDirVec());
+			//CannonGenerateStar(
+			//	{ temp->GetPos().x,temp->GetPos().y + 10,temp->GetPos().z }, temp->GetDirVec());
+
+			if (count == 0)
+			{
+				CannonGenerateStar(
+					{ temp->GetPos().x - 12,temp->GetPos().y + 10,temp->GetPos().z }, temp->GetDirVec());
+			}
+			else if (count == 1)
+			{
+				CannonGenerateStar(
+					{ temp->GetPos().x + 12,temp->GetPos().y + 10,temp->GetPos().z }, temp->GetDirVec());
+			}
 			temp->SetisShot(false);
+			count++;
 		}
 	}
 
