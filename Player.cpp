@@ -9,6 +9,7 @@ using namespace std;
 Audio* Player::audio = nullptr;
 uint32_t Player::playerTexAnime[9] = {};
 uint32_t Player::heartTexture = {};
+unique_ptr<Model> Player::spawnModel = nullptr;
 
 Player::Player() :
 	isAttack(false), maxSpeed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
@@ -60,7 +61,9 @@ void Player::Load()
 		heartSprites.back()->SetSize({ 64,64 });
 	}
 
-
+	//spawnModel.reset(Model::CreateFromOBJ("player_spawn", true));
+	//spawnTrans = move(make_unique<WorldTransform>());
+	//spawnTrans->Initialize();
 }
 
 static int tempTimer = 0; // ƒQ[ƒ€ŠJŽn‚Æ“¯Žž‚ÉUŒ‚‚µ‚È‚¢‚½‚ß
@@ -77,6 +80,14 @@ void Player::Init()
 	trans->rotation_ = { DegreeToRad(180),0,0 };
 	trans->UpdateMatrix();
 	radius = 2;
+	//spawnTrans->translation_ =
+	//{
+	//	trans->translation_.x,
+	//	trans->translation_.y + 10,
+	//	trans->translation_.z,
+	//};
+	//spawnTrans->UpdateMatrix();
+
 	slowMotion = SlowMotion::GetInstance();
 
 	// UŒ‚ŠÖ˜A
@@ -158,11 +169,25 @@ void Player::Update()
 
 
 	trans->UpdateMatrix();
+	//spawnTrans->translation_ =
+	//{
+	//	trans->translation_.x,
+	//	trans->translation_.y + 10,
+	//	trans->translation_.z,
+	//};
+	//spawnTrans->UpdateMatrix();
 }
 void Player::SelectSceneUpdate()
 {
 	AttackUpdate();
 	trans->UpdateMatrix();
+	//spawnTrans->translation_ =
+	//{
+	//	trans->translation_.x,
+	//	trans->translation_.y + 10,
+	//	trans->translation_.z,
+	//};
+	//spawnTrans->UpdateMatrix();
 }
 void Player::Draw(const ViewProjection& viewProjection_)
 {
@@ -188,6 +213,8 @@ void Player::Draw(const ViewProjection& viewProjection_)
 			playerModel->Draw(*trans, viewProjection_, playerTexAnime[animeIndex]);
 		}
 	}
+
+	//spawnModel->Draw(*spawnTrans, viewProjection_);
 }
 void Player::DrawSpriteFront()
 {
@@ -247,10 +274,10 @@ void Player::DieEffectGenerate()
 
 void Player::MoveUpdate()
 {
-	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
-	//if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
-	//if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
-	//if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
+	if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
+	if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
+	if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
+	if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
 	//if (trans->translation_.x >= 39.5)
 	//{
 	//	trans->translation_.x = 39.5;
@@ -268,7 +295,7 @@ void Player::MoveUpdate()
 	// ˆÚ“®ˆ—
 	if (isAlive == true)
 	{
-		trans->translation_.x += speed * slowMotion->GetSlowExrate();
+		//trans->translation_.x += speed * slowMotion->GetSlowExrate();
 
 		if (stageType != RaceStage)
 		{

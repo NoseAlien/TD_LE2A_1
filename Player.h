@@ -90,9 +90,10 @@ private:
 
 	int isJumpAddScaleStep = 0;
 
-public:
-	// パターン２のやつ作るために使うやつ
-	bool place = false;
+private:
+	// 自機のスポーンモデル関連
+	static std::unique_ptr<Model> spawnModel;
+	std::unique_ptr<WorldTransform> spawnTrans = nullptr;	// トランスフォーム
 
 private:
 	void MoveUpdate();
