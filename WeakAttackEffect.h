@@ -13,5 +13,6 @@ public:
 	void Generate(const Vector3& pos);
 	void Update();
 	void Draw();
+	void Clear();
 };
 

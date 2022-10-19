@@ -75,6 +75,7 @@ private:
 	int damageTimer;
 	int maxDamageTimer;
 	bool isGround;	// 地面にいるかどうかのフラグ
+	bool isJump;	// 地面から天井に戻るフラグ
 
 private:
 	// 攻撃関連
@@ -86,6 +87,8 @@ private:
 	float addScaleValue = 0.5;
 	int addScaleStep = 0;
 	float maxSize = 2.5;
+
+	int isJumpAddScaleStep = 0;
 
 public:
 	// パターン２のやつ作るために使うやつ
@@ -138,6 +141,8 @@ public:
 	inline int GetLife() { return life; }
 	inline bool GetisAlive() { return isAlive; }
 	inline bool GetisGround() { return isGround; }
+	inline bool GetisJump() { return isJump; }
+	inline int GetisJumpAddScaleStep() { return isJumpAddScaleStep; }
 
 	inline void HaveStarNumIncriment() { haveStarNum++; }
 

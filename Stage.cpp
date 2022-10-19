@@ -570,7 +570,7 @@ void Stage::PlayerUpdate()
 		SquareCollider playerCollider =
 		{
 			{ player->GetPos().x,player->GetPos().y },
-			{ 15,4 },
+			{ 7.5,4 },
 		};
 
 		// ¯‚ðŠª‚«ž‚Þˆ—
@@ -706,7 +706,7 @@ void Stage::FloorUpdate()
 		ground->SetisHit(0);
 		player->SetHaveStarNum(0);
 	}
-	if (player->GetisGround() == true)
+	if (player->GetisGround() == true && player->GetisJump() == false && player->GetisJumpAddScaleStep() == 0)
 	{
 		player->SetPos(
 			{

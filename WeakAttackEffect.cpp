@@ -77,3 +77,8 @@ void WeakAttackEffect::Draw()
 		particles[i]->DrawSprite();
 	}
 }
+
+void WeakAttackEffect::Clear()
+{
+	particles.clear();
+}

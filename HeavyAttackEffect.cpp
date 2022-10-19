@@ -87,3 +87,8 @@ void HeavyAttackEffect::Draw()
 		particles[i]->DrawSprite();
 	}
 }
+
+void HeavyAttackEffect::Clear()
+{
+	particles.clear();
+}

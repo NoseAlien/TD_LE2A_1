@@ -103,10 +103,12 @@ void Player::Init()
 	life = 3;
 	isAlive = true;
 
-
 	isGround = false;
+	isJump = false;
 
 	playerMoveEffect->Clear();
+	weakAttackEffect->Clear();
+	heavyAttackEffect->Clear();
 }
 void Player::Update()
 {
@@ -329,11 +331,11 @@ void Player::AttackUpdate()
 					trans->scale_ = { 3,3,3 };
 				}
 			}
-			else
-			{
-				trans->translation_.y = 20;
-				isGround = false;
-			}
+			//else
+			//{
+			//	trans->translation_.y = 20;
+			//	isGround = false;
+			//}
 
 			audio->PlayWave(jumpSE);
 		}
@@ -427,23 +429,16 @@ void Player::AttackUpdate()
 					trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
 					if (trans->scale_.y <= 0.5)
 					{
-						//trans->translation_.y = 20;
 						addScaleStep = 2;
 					}
 				}
 				if (addScaleStep == 2)
 				{
-					//trans->translation_.y += 1 * slowMotion->GetSlowExrate();
-					//if (trans->translation_.y >= ground->GetPos().y + ground->GetScale().y + radius * 2)
-					//{
-					//	trans->translation_.y = ground->GetPos().y + ground->GetScale().y + radius * 2;
-					//}
 					trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
 					trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
 					trans->scale_.z -= addScaleValue / 2 * slowMotion->GetSlowExrate();
 					if (trans->scale_.y >= radius)
 					{
-						//trans->translation_.y = 20;
 						addScaleStep = 0;
 						isReverse = false;		// 反転フラグ
 						isWeakAttack = false;	// 弱攻撃
@@ -453,8 +448,6 @@ void Player::AttackUpdate()
 
 						stopTimer = 0;			// 止まるタイマー
 						trans->scale_ = { radius,radius,radius };
-						//trans->translation_.y = ground->GetPos().y + ground->GetScale().y + radius * 2;
-
 					}
 				}
 			}
@@ -535,20 +528,79 @@ void Player::AttackUpdate()
 		//		}
 		//	}
 
-		// まわりのオブジェクトを壊す処理
-		if (stopTimer >= 2 && isWeakAttack == true)
+		//// まわりのオブジェクトを壊す処理
+		//if (stopTimer >= 2 && isWeakAttack == true)
+		//{
+		//	if (input_->TriggerKey(DIK_SPACE))
+		//	{
+		//		isEngulfAttack = true;
+		//	}
+		//}
+		//if (stopTimer >= 4 && isHeavyAttack == true)
+		//{
+		//	if (input_->TriggerKey(DIK_SPACE))
+		//	{
+		//		isEngulfAttack = true;
+		//	}
+		//}
+	}
+
+	if (isGround == true)
+	{
+		if (input_->TriggerKey(DIK_SPACE))
 		{
-			if (input_->TriggerKey(DIK_SPACE))
+			if (isJumpAddScaleStep == 0)
 			{
-				isEngulfAttack = true;
+				isJumpAddScaleStep = 1;
 			}
 		}
-		if (stopTimer >= 4 && isHeavyAttack == true)
+	}
+
+	const float offset = 0.25f;
+	if (isJumpAddScaleStep == 1)
+	{
+		trans->translation_.y -= offset * slowMotion->GetSlowExrate();
+
+		trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+		trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+		trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
+		if (trans->scale_.y <= 0.5)
 		{
-			if (input_->TriggerKey(DIK_SPACE))
-			{
-				isEngulfAttack = true;
-			}
+			isJumpAddScaleStep = 2;
+		}
+
+	}
+	else if (isJumpAddScaleStep == 2)
+	{
+		isEngulfAttack = true;
+
+		trans->translation_.y += offset * slowMotion->GetSlowExrate();
+
+		trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
+		trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
+		trans->scale_.z -= addScaleValue / 2 * slowMotion->GetSlowExrate();
+
+		if (trans->scale_.y >= radius)
+		{
+			trans->scale_ = { radius,radius,radius };
+			isJumpAddScaleStep = 2;
+			isJump = true;
+			isEngulfAttack = false;	// 巻き込み攻撃
+
+		}
+	}
+
+	if (isJump == true)
+	{
+		trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
+
+
+		if (trans->translation_.y >= 20)
+		{
+			trans->translation_.y = 20;
+			isGround = false;
+			isJump = false;
+			isJumpAddScaleStep = 0;
 		}
 	}
 
