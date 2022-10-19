@@ -85,7 +85,8 @@ private: // メンバ変数
 	// 背景関連
 	static uint32_t backGroundTexture;
 	std::unique_ptr<Sprite> backGroundSprite;
-
+	static uint32_t selectFrameTexture;
+	std::unique_ptr<Sprite> selectFrameSprite;
 
 private:
 	// 背景関連

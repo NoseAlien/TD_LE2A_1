@@ -116,7 +116,10 @@
     <ClCompile Include="PlayerDieEffect.cpp" />
     <ClCompile Include="PlayerMoveEffect.cpp" />
     <ClCompile Include="Random.cpp" />
-    <ClCompile Include="SceneChange.cpp" />
+    <ClCompile Include="SceneChange.cpp">
+      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</WholeProgramOptimization>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MinSpace</Optimization>
+    </ClCompile>
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="SlowMotion.cpp" />

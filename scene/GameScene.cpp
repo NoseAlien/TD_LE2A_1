@@ -17,6 +17,7 @@ ViewProjection viewProjection_{};
 Audio* GameScene::audio = nullptr;
 Model* GameScene::backCubeModel = nullptr;
 uint32_t GameScene::backGroundTexture = 0;
+uint32_t GameScene::selectFrameTexture = 0;
 
 GameScene::GameScene()
 {
@@ -39,8 +40,8 @@ void GameScene::Load()
 	ground->Load();
 	Particle::Load();
 
-	backCubeModel = Model::CreateFromOBJ("backCube", true);
 	backGroundTexture = TextureManager::Load("SpriteTexture/backGround/rock.png");
+	selectFrameTexture = TextureManager::Load("SpriteTexture/backGround/select_screen.png");
 }
 void GameScene::Initialize()
 {
@@ -55,6 +56,7 @@ void GameScene::Initialize()
 
 	backGroundSprite.reset(Sprite::Create(backGroundTexture, { 0,0 }));
 	backGroundSprite->SetSize({ 1920,1080 });
+	selectFrameSprite.reset(Sprite::Create(selectFrameTexture, { 0,0 }));
 
 	stages.clear();
 	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
@@ -189,78 +191,74 @@ void GameScene::Draw()
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
-#pragma region 背景スプライト描画
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
-	backGroundSprite->Draw();
+	backGroundSprite->Draw();	// 背景の描画
 
 	if (gameState == isGame)
 	{
-		stages[currentStage]->DrawEffectBack();
+		stages[currentStage]->DrawEffectBack();	// モデルの後ろに表示するエフェクトの描画
 	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
 	dxCommon_->ClearDepthBuffer();
-#pragma endregion
 
-#pragma region 3Dオブジェクト描画
-	// 3Dオブジェクト描画前処理
+	// ------------------------------------------------------------------ //
+
+	// 3Dオブジェクト描画
 	Model::PreDraw(commandList);
-
-	/// <summary>
-	/// ここに3Dオブジェクトの描画処理を追加できる
-	/// </summary>
-
-	//BackGroundDraw();
-
 	if (gameState == isGame)
 	{
-		stages[currentStage]->Draw();
+		stages[currentStage]->Draw();	// 現在のステージのモデルを描画
 	}
 	else if (gameState == isSelect)
 	{
-		player->Draw(viewProjection_);
-		stageSelect->Draw();
+		stageSelect->Draw();	// セレクトボックスの描画
 	}
-
-	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
-#pragma endregion
 
-#pragma region 前景スプライト描画
-	// 前景スプライト描画前処理
+	// ------------------------------------------------------------------ //
+
+	// スプライトの描画
 	Sprite::PreDraw(commandList);
-
-	/// <summary>
-	/// ここに前景スプライトの描画処理を追加できる
-	/// </summary>
-
 	if (gameState == isGame)
 	{
-		stages[currentStage]->DrawSprite();
+		stages[currentStage]->DrawSprite();	// ステージ内のスプライトを描画(UI、クリア文字)
+	}
+	else if (gameState == isSelect)
+	{
+		selectFrameSprite->Draw(); // セレクト画面のフレーム
 	}
 	sceneChange->Draw();
 
-
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
-
-	// スプライト描画後処理
 	Sprite::PostDraw();
 
+	// ------------------------------------------------------------------ //
+
+	// ゲーム時手前に表示するエフェクトの描画
 	Sprite::PreDraw(commandList, Sprite::BlendMode::kNormal);
 	if (gameState == isGame)
 	{
-		stages[currentStage]->DrawEffectFront();
+		stages[currentStage]->DrawEffectFront();	// エフェクト
 	}
-	//temp->Draw();
-	//temp2->Draw();
 	Sprite::PostDraw();
+	// 深度バッファクリア
+	dxCommon_->ClearDepthBuffer();
 
-#pragma endregion
+	// ------------------------------------------------------------------ //
+
+	// フレームより前のモデルを描画
+	Model::PreDraw(commandList);
+	if (gameState == isSelect)
+	{
+		player->Draw(viewProjection_);	// 自機
+	}
+	Model::PostDraw();
 }
 
 IScene* GameScene::GetNextScene()
