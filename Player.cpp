@@ -61,9 +61,9 @@ void Player::Load()
 		heartSprites.back()->SetSize({ 64,64 });
 	}
 
-	//spawnModel.reset(Model::CreateFromOBJ("player_spawn", true));
-	//spawnTrans = move(make_unique<WorldTransform>());
-	//spawnTrans->Initialize();
+	spawnModel.reset(Model::CreateFromOBJ("player_spawn", true));
+	spawnTrans = move(make_unique<WorldTransform>());
+	spawnTrans->Initialize();
 }
 
 static int tempTimer = 0; // ƒQ[ƒ€ŠJŽn‚Æ“¯Žž‚ÉUŒ‚‚µ‚È‚¢‚½‚ß
@@ -80,13 +80,13 @@ void Player::Init()
 	trans->rotation_ = { DegreeToRad(180),0,0 };
 	trans->UpdateMatrix();
 	radius = 2;
-	//spawnTrans->translation_ =
-	//{
-	//	trans->translation_.x,
-	//	trans->translation_.y + 10,
-	//	trans->translation_.z,
-	//};
-	//spawnTrans->UpdateMatrix();
+	spawnTrans->translation_ =
+	{
+		trans->translation_.x,
+		23,
+		trans->translation_.z,
+	};
+	spawnTrans->UpdateMatrix();
 
 	slowMotion = SlowMotion::GetInstance();
 
@@ -96,10 +96,6 @@ void Player::Init()
 	isWeakAttack = false;
 	isHeavyAttack = false;
 	isEngulfAttack = false;
-	pushKeySprite.reset(Sprite::Create(Particle::texture, { 0,0 }));
-	pushKeySprite->SetColor({ 1,1,0,1 });
-	pushKeySprite->SetAnchorPoint({ 0.5,0 });
-	pushKeySprite->SetSize({ 100,100 });
 
 	//speed = 0;
 
@@ -144,38 +140,14 @@ void Player::Update()
 		playerMoveEffect->Update();
 	}
 
-	pushKeySprite->SetPosition(WorldToScreen(
-		{
-			trans->translation_.x,
-			trans->translation_.y ,
-			trans->translation_.z
-		}, viewProjection_));
-
-
-	//if (input_->PushKey(DIK_SPACE))
-	//{
-	//	if (isGround == false && isAttack == false)
-	//	{
-	//		float tempSize =
-	//			200 * ((float)maxPushKeyFream - (float)pushKeyFream) / (float)maxPushKeyFream +
-	//			139 * ((float)pushKeyFream) / (float)maxPushKeyFream;
-	//		pushKeySprite->SetSize({ tempSize,	tempSize });
-	//	}
-	//}
-	//else
-	//{
-	//	pushKeySprite->SetSize({ 139,139 });
-	//}
-
-
 	trans->UpdateMatrix();
-	//spawnTrans->translation_ =
-	//{
-	//	trans->translation_.x,
-	//	trans->translation_.y + 10,
-	//	trans->translation_.z,
-	//};
-	//spawnTrans->UpdateMatrix();
+	spawnTrans->translation_ =
+	{
+		trans->translation_.x,
+		23,
+		trans->translation_.z,
+	};
+	spawnTrans->UpdateMatrix();
 }
 void Player::SelectSceneUpdate()
 {
@@ -214,7 +186,7 @@ void Player::Draw(const ViewProjection& viewProjection_)
 		}
 	}
 
-	//spawnModel->Draw(*spawnTrans, viewProjection_);
+	spawnModel->Draw(*spawnTrans, viewProjection_);
 }
 void Player::DrawSpriteFront()
 {

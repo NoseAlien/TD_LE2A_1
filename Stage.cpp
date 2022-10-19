@@ -726,7 +726,7 @@ void Stage::FloorUpdate()
 	}
 
 	// ‘å‚«‚­‚È‚éˆ—
-	const int starSize = 1;
+	const int starSize = 5;
 	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
 	{
 		ground->SetisAddScaleCountDown(1);
@@ -756,7 +756,7 @@ void Stage::FloorUpdate()
 	}
 
 	// ”ªŒÂW‚Ü‚Á‚½‚©
-	if (stars.size() >= 8)
+	if (stars.size() >= starSize - 2)
 	{
 		ground->SetisDanger(true);
 	}

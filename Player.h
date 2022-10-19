@@ -79,7 +79,6 @@ private:
 
 private:
 	// UŒ‚ŠÖ˜A
-	std::unique_ptr<Sprite> pushKeySprite;
 	const int starAttackDamage;
 	const int weakAttackDamage;
 	const int heavyAttackDamage;
