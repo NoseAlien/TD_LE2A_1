@@ -327,6 +327,7 @@ void Player::AttackUpdate()
 					speed = 0;
 					isHeavyAttack = true;
 					maxSize = 2;
+					weakAttackEffect->Generate(trans->translation_ - Vector3{ 0,2 - radius,0 });
 					viewProjection_.SetShakeValue(0.5, 10);
 					trans->scale_ = { 3,3,3 };
 				}
