@@ -318,6 +318,8 @@ void Stage::Draw()
 }
 void Stage::DrawSprite()
 {
+	ground->DrawSprite();
+
 	// 耐久戦タイマー
 	if (isEndurance == true)
 	{

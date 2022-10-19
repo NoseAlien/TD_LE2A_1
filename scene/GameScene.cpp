@@ -185,6 +185,9 @@ void GameScene::Update()
 
 	debugText_->SetPos(20, 60);
 	debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
+
+	debugText_->SetPos(20, 120);
+	debugText_->Printf("mousePos = %f,%f", input_->GetMousePosition().x, input_->GetMousePosition().y);
 }
 void GameScene::Draw()
 {

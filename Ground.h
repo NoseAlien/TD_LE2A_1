@@ -38,33 +38,59 @@ private:
 	int isHit;
 
 private:
+	// 表情関連
+	std::unique_ptr<Sprite> faceSprite;
+
+	// アイドル状態
+	static uint32_t idleTexture;
+
+	// まばたき関連
+	static std::vector<uint32_t> blinkTexture;
+	int timer;
+	int maxTimer;	// 瞬きをする間隔
+	bool isBlink;
+	int blinkAnimeTimer;
+	int blinkAnimeMaxTimer;
+	int blinkAnimeIndex;
+
+	// 驚き関連
+	static std::vector<uint32_t> surprisedTexture;
+	bool isSurprised;
+	int surprisedAnimeTimer;
+	int surprisedAnimeMaxTimer;
+	int surprisedAnimeIndex;
+
+private:
 	// エフェクト関連
 	std::unique_ptr<BreakGroundEffect> breakGroundEffect;
 	bool isGeneEffect;
-
 
 public:
 	void Load();
 	void Init(const int& maxhp);
 	void Update();
 	void Draw(const ViewProjection& viewProjection_);
+	void DrawSprite();
 	void EffectUpdate();
 	void EffectDraw();
 
 	inline void Damage(const int subhp)
 	{
 		hp -= subhp;
+		isSurprised = true;
 		audio->PlayWave(damageSE);
 	}
 
 	inline void LargeDamage(const int subhp)
 	{
 		hp -= subhp;
+		isSurprised = true;
 		audio->PlayWave(largeDamageSE);
 	}
 
 	inline Vector3 GetPos() { return trans->translation_; }
-	inline Vector3 GetScale() { return trans->scale_; }
+	//inline Vector3 GetScale() { return trans->scale_; }
+	inline Vector3 GetScale() { return { 46,10,5 }; }
 	inline float GetRadius() { return collisionRadius; }
 	inline int GetHP() { return hp; }
 	inline int GetAddScaleCount() { return addScaleCount; }
