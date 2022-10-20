@@ -289,13 +289,14 @@ void GameScene::CurrentStageInit()
 		break;
 	case 2:
 		ground->Init(35);
-		stages[currentStage]->GenerateThorn({ 20,20,0 });
-		stages[currentStage]->GenerateThorn({ -20,20,0 });
+		//stages[currentStage]->GenerateThorn({ 20,20,0 });
+		//stages[currentStage]->GenerateThorn({ -20,20,0 });
+		stages[currentStage]->GenerateThorn({ -10,21,0 });
 		break;
 	case 3:
 		ground->Init(80);
-		stages[currentStage]->GenerateThorn({ 20,20,0 });
-		stages[currentStage]->GenerateThorn({ -20,20,0 });
+		stages[currentStage]->GenerateThorn({ 25,21,0 });
+		stages[currentStage]->GenerateThorn({ -25,21,0 });
 		break;
 	case 4:
 		ground->Init(50);
@@ -330,8 +331,8 @@ void GameScene::CurrentStageInit()
 	case 10:
 		ground->Init(1000000);
 		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->GenerateCannon({ 40,0,0 }, { 0,0,DegreeToRad(135) });
-		stages[currentStage]->GenerateCannon({ -40,0,0 }, { 0,0,DegreeToRad(45) });
+		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 
 	default:

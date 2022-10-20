@@ -15,7 +15,8 @@ Player::Player() :
 	isAttack(false), maxSpeed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
 	isWeakAttack(false), isHeavyAttack(false),
 	collisionRadius(1), maxDamageTimer(180),
-	starAttackDamage(5), weakAttackDamage(5), heavyAttackDamage(10),
+	//starAttackDamage(5), weakAttackDamage(5), heavyAttackDamage(10),
+	starAttackDamage(5), weakAttackDamage(1), heavyAttackDamage(2),
 	stageType(BaseStage), radius(2), bigRadius(3)
 {
 	weakAttackEffect = move(make_unique<WeakAttackEffect>());

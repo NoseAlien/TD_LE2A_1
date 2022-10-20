@@ -59,6 +59,7 @@ private:
 	int surprisedAnimeTimer;
 	int surprisedAnimeMaxTimer;
 	int surprisedAnimeIndex;
+	int surprisedCount;	// 一回につきアニメションを回す回数
 
 private:
 	// エフェクト関連

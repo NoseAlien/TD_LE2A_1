@@ -95,6 +95,7 @@ void Ground::Init(const int& maxhp)
 	surprisedAnimeTimer = 0;
 	surprisedAnimeMaxTimer = 3;
 	surprisedAnimeIndex = 0;
+	surprisedCount = 0;
 }
 
 void Ground::Update()
@@ -144,18 +145,12 @@ void Ground::Update()
 	if (hp <= 0)
 	{
 		hp = 0;
-		breakGroundEffect->Generate(trans->translation_, trans->scale_);
+		breakGroundEffect->Generate(trans->translation_, { 46,10,5 });
 		audio->PlayWave(defeatSE);
 		isAlive = false;
 	}
 
-	//static int timer = 0;
-	//static int maxTimer = 180;
-	//static bool isBlink = false;
-	//static int blinkAnimeTimer = 0;
-	//static int blinkAnimeMaxTimer = 3;
-	//static int blinkAnimeIndex = 0;
-
+	// まばたきする間隔を決めるタイマー
 	timer++;
 	if (timer >= maxTimer)
 	{
@@ -163,11 +158,13 @@ void Ground::Update()
 		timer = maxTimer;
 	}
 
+	float tempY = 5 - trans->scale_.y;
+
 	// スプライトの座標を求める
 	auto tempPos = WorldToScreen(
 		{
 			trans->translation_.x + 35,
-			trans->translation_.y + trans->scale_.y + 4,
+			trans->translation_.y + trans->scale_.y + tempY,
 			trans->translation_.z,
 		}, viewProjection_);
 	faceSprite->SetPosition(tempPos);
@@ -204,9 +201,14 @@ void Ground::Update()
 			surprisedAnimeIndex++;
 			if (surprisedAnimeIndex > 3)
 			{
+				surprisedCount++;
 				surprisedAnimeIndex = 0;
-				isSurprised = false;
-				faceSprite->SetTextureHandle(idleTexture);
+				if (surprisedCount == 2)
+				{
+					isSurprised = false;
+					faceSprite->SetTextureHandle(idleTexture);
+					surprisedCount = 0;
+				}
 			}
 			surprisedAnimeTimer = 0;
 		}
