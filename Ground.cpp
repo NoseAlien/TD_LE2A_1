@@ -8,6 +8,7 @@ Model* Ground::enemyModel = nullptr;
 uint32_t Ground::idleTexture = 0;
 vector<uint32_t> Ground::blinkTexture = {};
 vector<uint32_t> Ground::surprisedTexture = {};
+vector<uint32_t> Ground::groundCrackTexture = {};
 
 Ground::Ground() :
 	collisionRadius(10)
@@ -36,18 +37,28 @@ void Ground::Load()
 	faceSprite.reset(Sprite::Create(idleTexture, { 0,0 }));
 	faceSprite->SetAnchorPoint({ 0.5f,0.5f });
 
+	// まばたき
 	for (int i = 1; i <= 4; i++)
 	{
 		blinkTexture.push_back(
 			TextureManager::Load(
-				"SpriteTexture/ground_face/ground_face_blink/ground_face_blink" + to_string(i) + ".png"));	// まばたき
+				"SpriteTexture/ground_face/ground_face_blink/ground_face_blink" + to_string(i) + ".png"));
 	}
 
+	// 驚き
 	for (int i = 1; i <= 4; i++)
 	{
 		surprisedTexture.push_back(
 			TextureManager::Load(
-				"SpriteTexture/ground_face/ground_face_surprised/ground_face_surprised" + to_string(i) + ".png"));	// まばたき
+				"SpriteTexture/ground_face/ground_face_surprised/ground_face_surprised" + to_string(i) + ".png"));
+	}
+
+	// ひび表現
+	for (int i = 0; i < 3; i++)
+	{
+		groundCrackTexture.push_back(
+			TextureManager::Load(
+				"SpriteTexture/GroundCrack/ground_Hp_" + to_string(i) + ".png"));
 	}
 }
 
@@ -56,7 +67,7 @@ void Ground::Init(const int& maxhp)
 	trans->translation_ = { 0,-22.5,0 };
 	//trans->scale_ = { 46,10,5 };
 	trans->scale_ = { 1,1,1 };
-	trans->rotation_ = { 0,DegreeToRad(90),0 };
+	trans->rotation_ = { 0,DegreeToRad(-90),0 };
 	trans->UpdateMatrix();
 
 	isAlive = true;
@@ -95,6 +106,7 @@ void Ground::Init(const int& maxhp)
 	surprisedAnimeTimer = 0;
 	surprisedAnimeMaxTimer = 3;
 	surprisedAnimeIndex = 0;
+	surprisedCount = 0;
 }
 
 void Ground::Update()
@@ -144,18 +156,12 @@ void Ground::Update()
 	if (hp <= 0)
 	{
 		hp = 0;
-		breakGroundEffect->Generate(trans->translation_, trans->scale_);
+		breakGroundEffect->Generate(trans->translation_, { 46,10,5 });
 		audio->PlayWave(defeatSE);
 		isAlive = false;
 	}
 
-	//static int timer = 0;
-	//static int maxTimer = 180;
-	//static bool isBlink = false;
-	//static int blinkAnimeTimer = 0;
-	//static int blinkAnimeMaxTimer = 3;
-	//static int blinkAnimeIndex = 0;
-
+	// まばたきする間隔を決めるタイマー
 	timer++;
 	if (timer >= maxTimer)
 	{
@@ -163,11 +169,13 @@ void Ground::Update()
 		timer = maxTimer;
 	}
 
+	// float tempY = 5 - trans->scale_.y;
+
 	// スプライトの座標を求める
 	auto tempPos = WorldToScreen(
 		{
 			trans->translation_.x + 35,
-			trans->translation_.y + trans->scale_.y + 4,
+			trans->translation_.y + 5 * trans->scale_.y,
 			trans->translation_.z,
 		}, viewProjection_);
 	faceSprite->SetPosition(tempPos);
@@ -204,9 +212,14 @@ void Ground::Update()
 			surprisedAnimeIndex++;
 			if (surprisedAnimeIndex > 3)
 			{
+				surprisedCount++;
 				surprisedAnimeIndex = 0;
-				isSurprised = false;
-				faceSprite->SetTextureHandle(idleTexture);
+				if (surprisedCount == 2)
+				{
+					isSurprised = false;
+					faceSprite->SetTextureHandle(idleTexture);
+					surprisedCount = 0;
+				}
 			}
 			surprisedAnimeTimer = 0;
 		}
@@ -225,8 +238,23 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 	}
 	else
 	{
-		//enemyModel->Draw(*trans, viewProjection_, enemyTexture);
-		enemyModel->Draw(*trans, viewProjection_);
+		if (hp <= maxhp * 0.25)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[2]);
+		}
+		else if (hp <= maxhp * 0.5)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[1]);
+		}
+		else if (hp <= maxhp * 0.75)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[0]);
+		}
+		else if (hp <= maxhp)
+		{
+			enemyModel->Draw(*trans, viewProjection_);
+		}
+
 	}
 }
 
@@ -242,6 +270,8 @@ void Ground::EffectDraw()
 
 void Ground::DrawSprite()
 {
+	if (isAlive == false) return;
+	
 	faceSprite->Draw();
 }
 

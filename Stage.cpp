@@ -101,7 +101,7 @@ void Stage::Load()
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText2.png"));
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText3.png"));
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText4.png"));
-	thornTexture = TextureManager::Load("thorn.png");
+	//thornTexture = TextureManager::Load("thorn.png");
 	string filepath;
 	for (int i = 0; i < 10; i++)
 	{
@@ -129,7 +129,7 @@ void Stage::Init()
 	lineTrans->UpdateMatrix();
 	lineTrans2 = move(make_unique<WorldTransform>());
 	lineTrans2->Initialize();
-	lineTrans2->translation_ = { 92.4,0,5 };
+	lineTrans2->translation_ = { 92,0,5 };
 	lineTrans2->scale_ = { 1,1,1 };
 	lineTrans2->UpdateMatrix();
 
@@ -296,7 +296,7 @@ void Stage::Draw()
 
 	for (const auto& temp : thorns)
 	{
-		temp->Draw(viewProjection_, thornTexture);
+		temp->Draw(viewProjection_);
 	}
 
 	for (const auto& temp : blocks)
@@ -311,7 +311,7 @@ void Stage::Draw()
 
 	if (goal != nullptr)
 	{
-		goal->Draw(viewProjection_, thornTexture);
+		goal->Draw(viewProjection_);
 	}
 
 
@@ -729,7 +729,7 @@ void Stage::FloorUpdate()
 	}
 
 	// ‘å‚«‚­‚È‚éˆ—
-	const int starSize = 10;
+	const int starSize = 5;
 	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
 	{
 		ground->SetisAddScaleCountDown(1);
@@ -798,7 +798,7 @@ void Stage::StarUpdate()
 				tempStar->SetPos(
 					{
 						tempStar->GetPos().x,
-						ground->GetPos().y + ground->GetScale().y + tempStar->GetScale().y,
+						ground->GetPos().y + ground->GetScale().y + 1.5f,
 						tempStar->GetPos().z,
 					});
 				tempStar->SetGravity(0);
@@ -1017,9 +1017,9 @@ void Stage::RaceUpdate()
 			tempGroundPos.z,
 		});
 
-	if (player->GetPos().x >= 92.4)
+	if (player->GetPos().x >= 92)
 	{
-		lineTrans->translation_.x = 184.8;
+		lineTrans->translation_.x = 184;
 		lineTrans->UpdateMatrix();
 	}
 

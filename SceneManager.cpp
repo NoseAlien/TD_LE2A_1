@@ -35,6 +35,7 @@ void SceneManager::Initialize()
 	Block::Load();
 	Thorn::Load();
 	Cannon::Load();
+	Goal::Load();
 	StageSelect::Load();
 
 	sceneChange->Load();

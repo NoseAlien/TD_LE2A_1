@@ -59,6 +59,10 @@ private:
 	int surprisedAnimeTimer;
 	int surprisedAnimeMaxTimer;
 	int surprisedAnimeIndex;
+	int surprisedCount;	// 一回につきアニメションを回す回数
+
+	// ひび表現関連
+	static std::vector<uint32_t> groundCrackTexture;
 
 private:
 	// エフェクト関連

@@ -19,7 +19,7 @@ public:
 	static void UnLoad();
 	void Generate(const Vector3& pos, const Vector3& scale);
 	void Update();
-	void Draw(const ViewProjection& viewProjection_, const uint32_t& thornTexture);
+	void Draw(const ViewProjection& viewProjection_);
 
 	Vector3 GetPos() { return trans->translation_; }
 	Vector3 GetScale() { return trans->scale_; }

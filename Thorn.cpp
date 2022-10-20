@@ -39,7 +39,7 @@ void Thorn::Update()
 	trans->UpdateMatrix();
 }
 
-void Thorn::Draw(const ViewProjection& viewProjection_, const uint32_t& thornTexture)
+void Thorn::Draw(const ViewProjection& viewProjection_)
 {
 	thornModel->Draw(*trans, viewProjection_);
 }
