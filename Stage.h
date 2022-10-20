@@ -123,6 +123,7 @@ private:
 	void CannonGenerateStar(const Vector3& pos, const Vector3& dieVec);
 	void BlockGenerateStar(const Vector3& pos, const int& num);
 
+	void ShowStageNumberUpdate();
 	void CountDownUpdate();
 	void ClearTimeUpdate();
 	void PlayerUpdate();

@@ -131,6 +131,7 @@ void Stage::UnLoad()
 {
 	delete lineModel;
 }
+
 void Stage::Init()
 {
 	// ライン関連
@@ -218,35 +219,10 @@ void Stage::Update()
 	//static float rotAngel = 0;
 	//static float alpha = 1;
 
-	if (isShowStageNumber == true)
-	{
-		sizeExrate += 0.04f;
-		if (sizeExrate >= 2)
-		{
-			sizeExrate = 2;
-		}
-		stageNumberSprite->SetSize({ 600 * sizeExrate,140 * sizeExrate });
+	// ステージ表示
+	ShowStageNumberUpdate();
 
-		rotAngel += 7.2f;
-		if (rotAngel >= 360)
-		{
-			rotAngel = 360;
-		}
-		stageNumberSprite->SetRotation(DegreeToRad(rotAngel));
-
-		if (sizeExrate == 2 && rotAngel == 360)
-		{
-			alpha -= 0.025;
-			if (alpha <= 0)
-			{
-				alpha = 0;
-				isShowStageNumber = false;
-				isStartTextEnd = false;
-			}
-			stageNumberSprite->SetColor({ 1,1,1,alpha });
-		}
-	}
-
+	// カウントダウン処理
 	CountDownUpdate();
 
 	if (stagePcrogress == Play || stagePcrogress == Staging)
@@ -427,6 +403,37 @@ void Stage::DrawEffectBack()
 	}
 }
 
+void Stage::ShowStageNumberUpdate()
+{
+	if (isShowStageNumber == true)
+	{
+		sizeExrate += 0.04f;
+		if (sizeExrate >= 2)
+		{
+			sizeExrate = 2;
+		}
+		stageNumberSprite->SetSize({ 600 * sizeExrate,140 * sizeExrate });
+
+		rotAngel += 7.2f;
+		if (rotAngel >= 360)
+		{
+			rotAngel = 360;
+		}
+		stageNumberSprite->SetRotation(DegreeToRad(rotAngel));
+
+		if (sizeExrate == 2 && rotAngel == 360)
+		{
+			alpha -= 0.025;
+			if (alpha <= 0)
+			{
+				alpha = 0;
+				isShowStageNumber = false;
+				isStartTextEnd = false;
+			}
+			stageNumberSprite->SetColor({ 1,1,1,alpha });
+		}
+	}
+}
 void Stage::CountDownUpdate()
 {
 	if (isStartTextEnd == true) return;
@@ -684,6 +691,7 @@ void Stage::PlayerUpdate()
 				temp->SetisDestroy(true);
 			}
 		}
+		// ブロックを巻き込む処理
 		for (const auto& temp : blocks)
 		{
 			SquareCollider blockCollider =
@@ -875,7 +883,7 @@ void Stage::StarUpdate()
 		SquareCollider starCollider =
 		{
 			{ tempStar->GetPos().x,tempStar->GetPos().y },
-			{ tempStar->GetScale().x,tempStar->GetScale().y },
+			{ tempStar->GetScale().x,1.5 },
 		};
 		if (ground->GetHP() > 0)
 		{

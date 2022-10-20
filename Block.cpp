@@ -3,7 +3,7 @@
 Model* Block::blockModel = nullptr;
 
 Block::Block() :
-	maxhp(10)
+	maxhp(2)
 {
 	trans = new WorldTransform();
 	trans->Initialize();
