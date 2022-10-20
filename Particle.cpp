@@ -90,6 +90,18 @@ void Particle::UpdateSprite()
 		sprite->SetColor(color);
 		sprite->SetRotation(sprite->GetRotation() + DegreeToRad(rotAngle));
 		break;
+	case 3:
+		sprite->SetPosition(tempPos);
+		sprite->SetSize(size);
+		sprite->SetColor(color);
+		sprite->SetRotation(sprite->GetRotation() + DegreeToRad(rotAngle));
+		break;
+	case 4:
+		sprite->SetPosition(tempPos);
+		sprite->SetSize(size);
+		sprite->SetColor(color);
+		sprite->SetRotation(sprite->GetRotation() + DegreeToRad(rotAngle));
+		break;
 	default:
 		break;
 	}
@@ -116,6 +128,12 @@ void Particle::DrawSprite()
 		sprite->Draw();
 		break;
 	case 2:
+		sprite->Draw();
+		break;
+	case 3:
+		sprite->Draw();
+		break;
+	case 4:
 		sprite->Draw();
 		break;
 
