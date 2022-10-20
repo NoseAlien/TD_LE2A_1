@@ -20,7 +20,6 @@ Particle::Particle() :
 
 	//outLineSprite.reset(Sprite::Create(texture, { 0,0 }));
 	//outLineSprite->SetAnchorPoint({ 0.5,0.5 });
-
 }
 
 Particle::Particle(const int& spriteType) :
