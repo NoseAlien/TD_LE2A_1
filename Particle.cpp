@@ -118,6 +118,7 @@ void Particle::DrawSprite()
 	case 2:
 		sprite->Draw();
 		break;
+
 	default:
 		break;
 	}
