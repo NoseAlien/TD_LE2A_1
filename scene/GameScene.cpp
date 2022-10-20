@@ -59,17 +59,17 @@ void GameScene::Initialize()
 	selectFrameSprite.reset(Sprite::Create(selectFrameTexture, { 0,0 }));
 
 	stages.clear();
-	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
-	stages.emplace_back(move(make_unique<Stage>(RaceStage)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage)));
-	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
-	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
-	stages.emplace_back(move(make_unique<Stage>(CannonStage)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 2)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 3)));
+	stages.emplace_back(move(make_unique<Stage>(RaceStage, 4)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 5)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 6)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 7)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage, 8)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage, 9)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage, 10)));
 
 	stageSelect = move(make_unique<StageSelect>(stages.size()));
 
@@ -127,6 +127,7 @@ void GameScene::Update()
 			gameState = isSelect;
 			player->Init();
 
+			stageSelect->SetCurrentStage(currentStage);
 			stageSelect->ResetObjPos();
 			viewProjection_.eye = { 0,0,-50 };
 			viewProjection_.target = { 0,0,0 };
@@ -310,14 +311,19 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateThorn({ -25,21.5,0 }, false);
 		break;
 	case 3:
-		ground->Init(50);
-		stages[currentStage]->GenerateThorn({ 25,21.5,0 }, false);
-		stages[currentStage]->GenerateThorn({ -25,21.5,0 }, false);
-		stages[currentStage]->GenerateThorn({ 0,-10,0 }, true);
+		ground->Init(35);
+		stages[currentStage]->GenerateThorn({ -20,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 20,-10,0 }, true);
+		//stages[currentStage]->GenerateThorn({ 0,-10,0 }, true);
 		break;
 	case 4:
 		ground->Init(50);
 		stages[currentStage]->GenerateGoal({ 100,20,0 });
+
+		for (int i = 0; i < 9; i++)
+		{
+			stages[currentStage]->GenerateStar({ (float)(10 + i * 10),0,0 });
+		}
 		break;
 	case 5:
 		ground->Init(55);

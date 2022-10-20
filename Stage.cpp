@@ -18,13 +18,15 @@ uint32_t Stage::dotStrTexture = 0;
 uint32_t Stage::clearStrTexture = 0;
 Model* Stage::lineModel = nullptr;
 uint32_t Stage::lineModelTexture;
+vector<uint32_t> Stage::stageNumberTextures = {};
+
 const float lerp(const float& start, const float& end, const double progress)
 {
 	double clampedProgress = min(max(progress, 0), 1);
 	return start * (1.0f - clampedProgress) + end * clampedProgress;
 }
 
-Stage::Stage(const int& stageType) :
+Stage::Stage(const int& stageType, const int& stageNumber) :
 	stageType(stageType), playerIsHitGoal(false), stagePcrogress(Start), clearTimeDights(6)
 {
 	goal = nullptr;
@@ -71,6 +73,17 @@ Stage::Stage(const int& stageType) :
 
 	grainScatterEffect = move(make_unique<GrainScatterEffect>());
 	repairEffect = move(make_unique<RepairEffect>());
+
+	for (int i = 1; i <= 10; i++)
+	{
+		stageNumberTextures.push_back(
+			TextureManager::Load(
+				"SpriteTexture/select_nuber/stage_number_" + to_string(i) + ".png"));
+	}
+
+	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber - 1], { 960,540 }));
+	stageNumberSprite->SetAnchorPoint({ 0.5f,0.5f });
+	stageNumberSprite->SetSize({ 0,0 });
 }
 Stage::~Stage()
 {
@@ -155,7 +168,8 @@ void Stage::Init()
 	startTextExrate = 0;
 	startTextAngle = -180;
 	startTextAlpha = 1;
-	isStartTextEnd = false;
+	//isStartTextEnd = false;
+	isStartTextEnd = true;
 	stagePcrogress = Start;
 
 	// クリア関連
@@ -185,12 +199,51 @@ void Stage::Init()
 	enduranceLineTrans->translation_ = { 0,-3.85,5 };
 	enduranceLineTrans->scale_ = { 1,1,1 };
 	enduranceLineTrans->UpdateMatrix();
+
+	// ステージ表示関連
+	isShowStageNumber = true;
+	sizeExrate = 0;
+	rotAngel = 0;
+	alpha = 1;
 }
 
 void Stage::Update()
 {
 	//if (gameClear == true || gameOver == true) return;
 	//if (stagePcrogress == End) return;
+
+	//static float sizeExrate = 0;
+	//static float rotAngel = 0;
+	//static float alpha = 1;
+
+	if (isShowStageNumber == true)
+	{
+		sizeExrate += 0.04f;
+		if (sizeExrate >= 2)
+		{
+			sizeExrate = 2;
+		}
+		stageNumberSprite->SetSize({ 600 * sizeExrate,140 * sizeExrate });
+
+		rotAngel += 7.2f;
+		if (rotAngel >= 360)
+		{
+			rotAngel = 360;
+		}
+		stageNumberSprite->SetRotation(DegreeToRad(rotAngel));
+
+		if (sizeExrate == 2 && rotAngel == 360)
+		{
+			alpha -= 0.025;
+			if (alpha <= 0)
+			{
+				alpha = 0;
+				isShowStageNumber = false;
+				isStartTextEnd = false;
+			}
+			stageNumberSprite->SetColor({ 1,1,1,alpha });
+		}
+	}
 
 	CountDownUpdate();
 
@@ -329,10 +382,10 @@ void Stage::DrawSprite()
 		}
 	}
 
-	// カウントダウン
-	if (startTextIndex < 4)
+	// ステージ表示
+	if (isShowStageNumber == true)
 	{
-		startTextSprites[startTextIndex]->Draw();
+		stageNumberSprite->Draw();
 	}
 
 	// クリア描画
@@ -350,6 +403,15 @@ void Stage::DrawSprite()
 }
 void Stage::DrawEffectFront()
 {
+	// カウントダウン
+	if (isShowStageNumber == false)
+	{
+		if (startTextIndex < 4)
+		{
+			startTextSprites[startTextIndex]->Draw();
+		}
+	}
+
 	grainScatterEffect->Draw();
 	repairEffect->Draw();
 	player->DrawSpriteFront();
@@ -496,6 +558,18 @@ void Stage::GameOverCameraUpdate()
 	}
 }
 
+void Stage::GenerateStar(const Vector3& pos)
+{
+	stars.emplace_back(move(make_unique<Star>()));
+	stars.back()->Generate(
+		{
+			pos.x,
+			ground->GetPos().y + ground->GetScale().y + 1.5f,
+			pos.z
+		},
+		{ 1,0,0 }, 0);
+	stars.back()->SetisCanHit(true);
+}
 void Stage::GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale)
 {
 	if (isReverseVertical == false)
@@ -639,6 +713,7 @@ void Stage::PlayerUpdate()
 			{
 				player->HaveStarNumIncriment();
 				grainScatterEffect->Generate(temp->GetPos());
+				ground->Damage(player->GetHaveStarNum() * 5);
 				temp->SetisDestroy(true);
 			}
 		}
@@ -735,47 +810,50 @@ void Stage::FloorUpdate()
 	}
 
 	// 大きくなる処理
-	const int starSize = 5;
-	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
+	if (stageType != RaceStage)
 	{
-		ground->SetisAddScaleCountDown(1);
-	}
-	if (ground->GetisAddScaleCountDown() == 1)
-	{
-		for (const auto& temp : stars)
+		const int starSize = 5;
+		if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
 		{
-			temp->SetisAngleShacke(true);
+			ground->SetisAddScaleCountDown(1);
 		}
-	}
-	if (stars.size() < starSize)
-	{
-		ground->SetisAddScaleCountDown(0);
-		ground->SetisSuctionStar(false);
-		for (const auto& temp : stars)
+		if (ground->GetisAddScaleCountDown() == 1)
 		{
-			temp->SetisAngleShacke(false);
+			for (const auto& temp : stars)
+			{
+				temp->SetisAngleShacke(true);
+			}
 		}
-	}
+		if (stars.size() < starSize)
+		{
+			ground->SetisAddScaleCountDown(0);
+			ground->SetisSuctionStar(false);
+			for (const auto& temp : stars)
+			{
+				temp->SetisAngleShacke(false);
+			}
+		}
 
-	// 星を吸収する処理
-	if (ground->GetisSuctionStar() == true)
-	{
-		for (const auto& temp : stars)
+		// 星を吸収する処理
+		if (ground->GetisSuctionStar() == true)
 		{
-			repairEffect->Generate(temp->GetPos());
+			for (const auto& temp : stars)
+			{
+				repairEffect->Generate(temp->GetPos());
+			}
+			stars.clear();
+			ground->SetisSuctionStar(false);
 		}
-		stars.clear();
-		ground->SetisSuctionStar(false);
-	}
 
-	// 八個集まったか
-	if (stars.size() >= starSize - 2)
-	{
-		ground->SetisDanger(true);
-	}
-	else
-	{
-		ground->SetisDanger(false);
+		// 八個集まったか
+		if (stars.size() >= starSize - 2)
+		{
+			ground->SetisDanger(true);
+		}
+		else
+		{
+			ground->SetisDanger(false);
+		}
 	}
 
 	ground->Update();
@@ -848,6 +926,11 @@ void Stage::StarUpdate()
 				break;
 			}
 		}
+		if (temp->GetisDestroy() == true)
+		{
+			stars.remove(temp);
+			break;
+		}
 	}
 }
 
@@ -857,7 +940,7 @@ void Stage::ThornUpdate()
 	SquareCollider playerCollider =
 	{
 		{ player->GetPos().x,player->GetPos().y },
-		{ player->GetScale().x,player->GetScale().y },
+		{ player->GetRadius(),player->GetRadius() },
 	};
 
 	SquareCollider floorCollider =

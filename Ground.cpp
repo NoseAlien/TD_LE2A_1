@@ -27,7 +27,7 @@ void Ground::Load()
 	largeDamageSE = audio->LoadWave("se/floor_damage_L.wav");
 	defeatSE = audio->LoadWave("se/floor_break.wav");
 	//enemyTexture = TextureManager::Load("groundColor1x1.png");
-	enemyDangerTexture = TextureManager::Load("red1x1.png");
+	enemyDangerTexture = TextureManager::Load("SpriteTexture/GroundCrack/groundDengerColor1x1.png");
 	//enemyModel = Model::Create();
 	enemyModel = Model::CreateFromOBJ("ground", true);
 	trans = new WorldTransform();
@@ -54,7 +54,7 @@ void Ground::Load()
 	}
 
 	// ‚Ð‚Ñ•\Œ»
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		groundCrackTexture.push_back(
 			TextureManager::Load(
@@ -234,7 +234,22 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 
 	if (isDanger == true)
 	{
-		enemyModel->Draw(*trans, viewProjection_, enemyDangerTexture);
+		if (hp <= maxhp * 0.25)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[5]);
+		}
+		else if (hp <= maxhp * 0.5)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[4]);
+		}
+		else if (hp <= maxhp * 0.75)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[3]);
+		}
+		else if (hp <= maxhp)
+		{
+			enemyModel->Draw(*trans, viewProjection_, enemyDangerTexture);
+		}
 	}
 	else
 	{
@@ -271,7 +286,7 @@ void Ground::EffectDraw()
 void Ground::DrawSprite()
 {
 	if (isAlive == false) return;
-	
+
 	faceSprite->Draw();
 }
 

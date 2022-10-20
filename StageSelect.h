@@ -32,6 +32,7 @@ public:
 	inline Vector3 GetTextPos(const int& number) { return stageTextTrans[number]->translation_; }
 	inline Vector3 GetTextScale(const int& number) { return stageTextTrans[number]->scale_; }
 
+	inline void SetCurrentStage(const int& currentStage) { this->currentStage = currentStage; }
 	inline void SetSelectPos(const Vector3& pos, const int& number) { stageSelectTrans[number]->translation_ = pos; }
 	inline void SetSelectScale(const Vector3& scale, const int& number) { stageSelectTrans[number]->scale_ = scale; }
 	inline void SetTextPos(const Vector3& pos, const int& number) { stageTextTrans[number]->translation_ = pos; }

@@ -59,6 +59,7 @@ public:
 	inline void SetGravity(const float& gravity) { this->gravity = gravity; }
 	inline void SetisDestroy(const bool& isDestroy) { this->isDestroy = isDestroy; }
 	inline void SetisGround(const bool& isGround) { this->isGround = isGround; }
+	inline void SetisCanHit(const bool& isCanHit) { this->isCanHit = isCanHit; }
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
