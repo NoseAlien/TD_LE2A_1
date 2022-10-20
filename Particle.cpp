@@ -6,6 +6,8 @@ using namespace std;
 Model* Particle::breakGroundModel = {};
 uint32_t Particle::texture = {};
 uint32_t Particle::starTexture = {};
+uint32_t Particle::healTexture = {};
+uint32_t Particle::repairTexture = {};
 
 Particle::Particle() :
 	activeTimer(0), maxActiveTimer(120),
@@ -41,6 +43,14 @@ Particle::Particle(const int& spriteType) :
 		break;
 	case 2:
 		sprite.reset(Sprite::Create(starTexture, { 0,0 }));
+		sprite->SetAnchorPoint({ 0.5,0.5 });
+		break;
+	case 3:
+		sprite.reset(Sprite::Create(healTexture, { 0,0 }));
+		sprite->SetAnchorPoint({ 0.5,0.5 });
+		break;
+	case 4:
+		sprite.reset(Sprite::Create(repairTexture, { 0,0 }));
 		sprite->SetAnchorPoint({ 0.5,0.5 });
 		break;
 	default:
@@ -122,6 +132,8 @@ void Particle::Load()
 	//texture = TextureManager::Load("SpriteTexture/particle2.png");
 	texture = TextureManager::Load("SpriteTexture/Particle/particle3.png");
 	starTexture = TextureManager::Load("SpriteTexture/Particle/starParticle.png");
+	healTexture = TextureManager::Load("SpriteTexture/Particle/heal.png");
+	repairTexture = TextureManager::Load("SpriteTexture/Particle/repair.png");
 }
 
 void Particle::UnLoad()

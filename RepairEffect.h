@@ -1,17 +1,19 @@
 #pragma once
 #include "Particle.h"
 #include <vector>
-class WeakAttackEffect
+class RepairEffect
 {
 private:
 	std::vector<std::unique_ptr<Particle>> particles;
+	std::unique_ptr<Particle> effect;
 	int maxParticle;
 
 public:
-	WeakAttackEffect();
-	~WeakAttackEffect();
+	RepairEffect();
+	~RepairEffect();
 	void Generate(const Vector3& pos);
 	void Update();
 	void Draw();
 	void Clear();
 };
+

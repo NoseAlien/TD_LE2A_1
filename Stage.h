@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "Vector2.h"
 #include "GrainScatterEffect.h"
+#include "RepairEffect.h"
 #include <vector>
 #include <memory>
 
@@ -90,6 +91,7 @@ private:
 private:
 	//エフェクト
 	std::unique_ptr<GrainScatterEffect> grainScatterEffect;
+	std::unique_ptr<RepairEffect> repairEffect;
 
 private:
 	std::list<std::unique_ptr<Star>> stars;

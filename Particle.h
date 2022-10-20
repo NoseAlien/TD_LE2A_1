@@ -31,6 +31,8 @@ public:
 	static Model* breakGroundModel;
 	static uint32_t texture;
 	static uint32_t starTexture;
+	static uint32_t healTexture;
+	static uint32_t repairTexture;
 
 public:
 	Particle();
