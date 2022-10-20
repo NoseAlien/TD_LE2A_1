@@ -135,17 +135,33 @@ void GameScene::Update()
 			SlowMotion::GetInstance()->Init();
 		}
 
+		// シーンチェンジの時
 		if (sceneChange->GetisChange() == true)
 		{
-			gameState = isSelect;
+			//gameState = isSelect;
 
 			player->Init();
-			stageSelect->ResetObjPos();
+			//stageSelect->ResetObjPos();
 			viewProjection_.eye = { 0,0,-50 };
 			viewProjection_.target = { 0,0,0 };
 			viewProjection_.UpdateMatrix();
 			isSelectEnd = false;
 			sceneChange->SetisChange(false);
+
+			if (stages[currentStage]->GetGameClear() == true)
+			{
+				currentStage += 1;
+				if (currentStage >= stages.size())
+				{
+					currentStage = stages.size() - 1;
+					gameState = isSelect;
+				}
+				CurrentStageInit();
+			}
+			if (stages[currentStage]->GetGameOver() == true)
+			{
+				gameState = isSelect;
+			}
 		}
 	}
 	else if (gameState == isSelect)
@@ -164,6 +180,7 @@ void GameScene::Update()
 		stageSelect->Update();
 		SelectUpdate();
 
+		// シーンチェンジの時
 		if (sceneChange->GetisChange() == true)
 		{
 			gameState = isGame;
@@ -289,14 +306,14 @@ void GameScene::CurrentStageInit()
 		break;
 	case 2:
 		ground->Init(35);
-		//stages[currentStage]->GenerateThorn({ 20,20,0 });
-		//stages[currentStage]->GenerateThorn({ -20,20,0 });
-		stages[currentStage]->GenerateThorn({ -10,21,0 });
+		stages[currentStage]->GenerateThorn({ 25,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ -25,21.5,0 }, false);
 		break;
 	case 3:
-		ground->Init(80);
-		stages[currentStage]->GenerateThorn({ 25,21,0 });
-		stages[currentStage]->GenerateThorn({ -25,21,0 });
+		ground->Init(50);
+		stages[currentStage]->GenerateThorn({ 25,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ -25,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 0,-10,0 }, true);
 		break;
 	case 4:
 		ground->Init(50);

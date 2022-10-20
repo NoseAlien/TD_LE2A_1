@@ -312,8 +312,6 @@ void Stage::Draw()
 		goal->Draw(viewProjection_);
 	}
 
-
-	player->EffectDraw();
 	ground->EffectDraw();
 }
 void Stage::DrawSprite()
@@ -495,10 +493,18 @@ void Stage::GameOverCameraUpdate()
 	}
 }
 
-void Stage::GenerateThorn(const Vector3& pos, const Vector3& scale)
+void Stage::GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale)
 {
-	thorns.emplace_back(move(make_unique<Thorn>()));
-	thorns.back()->Generate(pos, scale);
+	if (isReverseVertical == false)
+	{
+		thorns.emplace_back(move(make_unique<Thorn>()));
+		thorns.back()->Generate(pos, scale);
+	}
+	else
+	{
+		thorns.emplace_back(move(make_unique<Thorn>()));
+		thorns.back()->Generate(pos, scale, { 0,0,DegreeToRad(180) });
+	}
 }
 void Stage::GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale)
 {
@@ -847,6 +853,12 @@ void Stage::ThornUpdate()
 		{ player->GetScale().x,player->GetScale().y },
 	};
 
+	SquareCollider floorCollider =
+	{
+		{ ground->GetPos().x,ground->GetPos().y },
+		{ ground->GetScale().x,ground->GetScale().y },
+	};
+
 	for (const auto& temp : thorns)
 	{
 		SquareCollider thornCollider =
@@ -854,6 +866,19 @@ void Stage::ThornUpdate()
 			{ temp->GetPos().x,temp->GetPos().y },
 			{ temp->GetRadius(),temp->GetRadius() },
 		};
+		if (ground->GetHP() > 0)
+		{
+			if (collision->SquareHitSquare(thornCollider, floorCollider))
+			{
+				temp->SetPos(
+					{
+						temp->GetPos().x,
+						ground->GetPos().y + ground->GetScale().y + 1.5f,
+						temp->GetPos().z,
+					});
+			}
+		}
+
 
 		if (collision->SquareHitSquare(playerCollider, thornCollider))
 		{

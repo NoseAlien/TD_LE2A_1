@@ -23,13 +23,13 @@ void Thorn::UnLoad()
 	delete thornModel;
 }
 
-void Thorn::Generate(const Vector3& pos, const Vector3& scale)
+void Thorn::Generate(const Vector3& pos, const Vector3& scale, const Vector3& rot)
 {
 	trans = new WorldTransform();
 	trans->Initialize();
 	trans->translation_ = pos;
 	trans->scale_ = scale;
-	trans->scale_ = { 0.5,0.5,0.5 };
+	trans->rotation_ = rot;
 	trans->UpdateMatrix();
 	collisionRadius = 1;
 }

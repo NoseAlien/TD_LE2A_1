@@ -58,32 +58,6 @@ void GrainScatterEffect::Update()
 			break;
 		}
 	}
-
-
-
-	//for (int i = 0; i < particles.size(); i++)
-	//{
-	//	auto tempScale = particles[i]->GetScale();
-	//	tempScale -= 0.025 * slowMotion->GetSlowExrate();
-	//	if (tempScale.x <= 0) tempScale = { 0,0,0 };
-	//	particles[i]->SetScale(tempScale);
-	//	particles[i]->SetSpriteSize({ 100 * tempScale.x,100 * tempScale.y });
-	//	particles[i]->SetOutLineSpriteSize({ 110 * tempScale.x,110 * tempScale.y });
-	//}
-
-	//for (int i = 0; i < particles.size(); i++)
-	//{
-	//	particles[i]->UpdateSprite();
-	//}
-
-	//for (int i = 0; i < particles.size(); i++)
-	//{
-	//	if (particles[i]->GetScale().x <= 0)
-	//	{
-	//		particles.erase(particles.begin() + i);
-	//		break;
-	//	}
-	//}
 }
 
 void GrainScatterEffect::Draw()

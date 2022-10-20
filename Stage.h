@@ -137,13 +137,15 @@ public:
 	void DrawEffectFront();
 	void DrawEffectBack();
 
-	void GenerateThorn(const Vector3& pos, const Vector3& scale = { 1,1,1 });
+	void GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale = { 0.5,0.5,0.5 });
 	void GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale = { 2,2,2 });
 	void GenerateCannon(const Vector3& pos, const Vector3& rot);
 	void GenerateGoal(const Vector3& pos);
 
 	inline int GetStageType() { return stageType; }
 	inline int GetStageProgress() { return stagePcrogress; }
+	inline int GetGameClear() { return gameClear; }
+	inline int GetGameOver() { return gameOver; }
 
 	inline void SetisEndurance(const bool& isEndurance) { this->isEndurance = isEndurance; }
 };

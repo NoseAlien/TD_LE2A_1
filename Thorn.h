@@ -17,12 +17,14 @@ public:
 	~Thorn();
 	static void Load();
 	static void UnLoad();
-	void Generate(const Vector3& pos, const Vector3& scale);
+	void Generate(const Vector3& pos, const Vector3& scale, const Vector3& rot = { 0,0,0 });
 	void Update();
 	void Draw(const ViewProjection& viewProjection_);
 
-	Vector3 GetPos() { return trans->translation_; }
-	Vector3 GetScale() { return trans->scale_; }
-	float GetRadius() { return collisionRadius; }
+	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
+
+	inline Vector3 GetPos() { return trans->translation_; }
+	inline Vector3 GetScale() { return trans->scale_; }
+	inline float GetRadius() { return collisionRadius; }
 };
 

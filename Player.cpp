@@ -193,6 +193,7 @@ void Player::DrawSpriteFront()
 {
 	weakAttackEffect->Draw();
 	heavyAttackEffect->Draw();
+	playerDieEffect->Draw();
 
 	for (int i = 0; i < life; i++)
 	{
@@ -231,10 +232,7 @@ void Player::EffectUpdate()
 	heavyAttackEffect->Update();
 	playerDieEffect->Update();
 }
-void Player::EffectDraw()
-{
-	playerDieEffect->Draw();
-}
+
 void Player::DieEffectGenerate()
 {
 	playerDieEffect->Generate(
@@ -262,7 +260,7 @@ void Player::MoveUpdate()
 
 	if (!isAttack)
 	{
-		speed += 0.003;
+		speed += 0.02;
 	}
 	speed = min(speed, maxSpeed);
 	// ˆÚ“®ˆ—

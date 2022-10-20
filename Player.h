@@ -112,7 +112,6 @@ public:
 
 	void EffectGenerate(const Vector3& pos);
 	void EffectUpdate();
-	void EffectDraw();
 	void DieEffectGenerate();
 	inline bool GetDieEffectisEnd() { return playerDieEffect->GetisEnd(); }
 	inline void SetDieEffectisEnd(const bool& isEnd) { playerDieEffect->SetisEnd(isEnd); }
