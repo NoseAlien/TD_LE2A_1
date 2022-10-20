@@ -29,7 +29,7 @@ void PlayerDieEffect::Generate(const Vector3& pos)
 	{
 		float radian = startRad + DegreeToRad(360 / maxParticle * i);
 
-		float particleScale = Random::RangeF(0.6, 0.2);
+		float particleScale = Random::RangeF(3, 2);
 
 		particles.emplace_back(move(make_unique<Particle>(1)));
 		particles.back()->SetPos(pos);
@@ -47,7 +47,7 @@ void PlayerDieEffect::Update()
 	for (int i = 0; i < particles.size(); i++)
 	{
 		auto tempScale = particles[i]->GetScale();
-		tempScale -= 0.015;
+		tempScale -= 0.04;
 		if (tempScale.x <= 0) tempScale = { 0,0,0 };
 		particles[i]->SetScale(tempScale);
 

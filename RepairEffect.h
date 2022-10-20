@@ -5,7 +5,7 @@ class RepairEffect
 {
 private:
 	std::vector<std::unique_ptr<Particle>> particles;
-	std::unique_ptr<Particle> effect;
+	std::vector<std::unique_ptr<Particle>> effect;
 	int maxParticle;
 
 public:
