@@ -36,6 +36,7 @@ void Ground::Load()
 	idleTexture = TextureManager::Load("SpriteTexture/ground_face/ground_face_rest.png");	// 待機状態
 	faceSprite.reset(Sprite::Create(idleTexture, { 0,0 }));
 	faceSprite->SetAnchorPoint({ 0.5f,0.5f });
+	faceSprite->SetSize({ 128,128 });
 
 	// まばたき
 	for (int i = 1; i <= 4; i++)
@@ -87,8 +88,8 @@ void Ground::Init(const int& maxhp)
 
 	auto tempPos = WorldToScreen(
 		{
-			trans->translation_.x + 35,
-			trans->translation_.y + 5,
+			trans->translation_.x + 32,
+			trans->translation_.y + 6 * trans->scale_.y,
 			trans->translation_.z,
 		}, viewProjection_);
 	faceSprite->SetPosition(tempPos);
@@ -174,8 +175,8 @@ void Ground::Update()
 	// スプライトの座標を求める
 	auto tempPos = WorldToScreen(
 		{
-			trans->translation_.x + 35,
-			trans->translation_.y + 5 * trans->scale_.y,
+			trans->translation_.x + 32,
+			trans->translation_.y + 6 * trans->scale_.y,
 			trans->translation_.z,
 		}, viewProjection_);
 	faceSprite->SetPosition(tempPos);

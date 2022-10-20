@@ -83,7 +83,6 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 
 	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber - 1], { 960,540 }));
 	stageNumberSprite->SetAnchorPoint({ 0.5f,0.5f });
-	stageNumberSprite->SetSize({ 0,0 });
 }
 Stage::~Stage()
 {
@@ -205,6 +204,9 @@ void Stage::Init()
 	sizeExrate = 0;
 	rotAngel = 0;
 	alpha = 1;
+	stageNumberSprite->SetSize({ 0,0 });
+	stageNumberSprite->SetRotation(0);
+	stageNumberSprite->SetColor({ 1,1,1,1 });
 }
 
 void Stage::Update()
