@@ -950,7 +950,7 @@ void Stage::ThornUpdate()
 	SquareCollider playerCollider =
 	{
 		{ player->GetPos().x,player->GetPos().y },
-		{ player->GetRadius(),player->GetRadius() },
+		{ player->GetScale().x,player->GetScale().y },
 	};
 
 	SquareCollider floorCollider =
@@ -978,7 +978,6 @@ void Stage::ThornUpdate()
 					});
 			}
 		}
-
 
 		if (collision->SquareHitSquare(playerCollider, thornCollider))
 		{

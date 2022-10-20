@@ -151,7 +151,7 @@ public:
 	void DrawEffectBack();
 
 	void GenerateStar(const Vector3& pos);
-	void GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale = { 0.5,0.5,0.5 });
+	void GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale = { 0.25,0.5,0.25 });
 	void GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale = { 2,2,2 });
 	void GenerateCannon(const Vector3& pos, const Vector3& rot);
 	void GenerateGoal(const Vector3& pos);
