@@ -70,6 +70,7 @@ Stage::Stage(const int& stageType) :
 	}
 
 	grainScatterEffect = move(make_unique<GrainScatterEffect>());
+	repairEffect = move(make_unique<RepairEffect>());
 }
 Stage::~Stage()
 {
@@ -273,6 +274,7 @@ void Stage::Update()
 	player->EffectUpdate();
 	ground->EffectUpdate();
 	grainScatterEffect->Update();
+	repairEffect->Update();
 }
 void Stage::Draw()
 {
@@ -349,6 +351,7 @@ void Stage::DrawSprite()
 void Stage::DrawEffectFront()
 {
 	grainScatterEffect->Draw();
+	repairEffect->Draw();
 	player->DrawSpriteFront();
 }
 void Stage::DrawEffectBack()
@@ -757,6 +760,10 @@ void Stage::FloorUpdate()
 	// ¯‚ð‹zŽû‚·‚éˆ—
 	if (ground->GetisSuctionStar() == true)
 	{
+		for (const auto& temp : stars)
+		{
+			repairEffect->Generate(temp->GetPos());
+		}
 		stars.clear();
 		ground->SetisSuctionStar(false);
 	}
