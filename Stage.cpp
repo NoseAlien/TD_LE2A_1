@@ -18,13 +18,15 @@ uint32_t Stage::dotStrTexture = 0;
 uint32_t Stage::clearStrTexture = 0;
 Model* Stage::lineModel = nullptr;
 uint32_t Stage::lineModelTexture;
+vector<uint32_t> Stage::stageNumberTextures = {};
+
 const float lerp(const float& start, const float& end, const double progress)
 {
 	double clampedProgress = min(max(progress, 0), 1);
 	return start * (1.0f - clampedProgress) + end * clampedProgress;
 }
 
-Stage::Stage(const int& stageType) :
+Stage::Stage(const int& stageType, const int& stageNumber) :
 	stageType(stageType), playerIsHitGoal(false), stagePcrogress(Start), clearTimeDights(6)
 {
 	goal = nullptr;
@@ -71,6 +73,18 @@ Stage::Stage(const int& stageType) :
 
 	grainScatterEffect = move(make_unique<GrainScatterEffect>());
 	repairEffect = move(make_unique<RepairEffect>());
+
+	for (int i = 1; i <= 10; i++)
+	{
+		stageNumberTextures.push_back(
+			TextureManager::Load(
+				"SpriteTexture/select_nuber/stage_number_" + to_string(i) + ".png"));
+	}
+
+	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber - 1], { 960,540 }));
+	stageNumberSprite->SetAnchorPoint({ 0.5f,0.5f });
+
+	windPressureEffect = WindPressureEffect::GetInstance();
 }
 Stage::~Stage()
 {
@@ -91,6 +105,7 @@ Stage::~Stage()
 	{
 		delete enduranceTimeSprites[i];
 	}
+
 }
 
 Vector2 clearStrSize(0, 0);
@@ -119,8 +134,12 @@ void Stage::UnLoad()
 {
 	delete lineModel;
 }
+
 void Stage::Init()
 {
+	windPressureEffect->Clear();
+
+
 	// ライン関連
 	lineTrans = move(make_unique<WorldTransform>());
 	lineTrans->Initialize();
@@ -155,7 +174,8 @@ void Stage::Init()
 	startTextExrate = 0;
 	startTextAngle = -180;
 	startTextAlpha = 1;
-	isStartTextEnd = false;
+	//isStartTextEnd = false;
+	isStartTextEnd = true;
 	stagePcrogress = Start;
 
 	// クリア関連
@@ -179,12 +199,25 @@ void Stage::Init()
 	enduranceNowTime = 0;
 	enduranceStartTime = 0;
 	enduranceEndTime = 0;
+	enduranceTimeDightsNumber.resize(2);
+	enduranceTimeDightsNumber[0] = 3;
+	enduranceTimeDightsNumber[0] = 0;
 
 	enduranceLineTrans = move(make_unique<WorldTransform>());
 	enduranceLineTrans->Initialize();
 	enduranceLineTrans->translation_ = { 0,-3.85,5 };
 	enduranceLineTrans->scale_ = { 1,1,1 };
 	enduranceLineTrans->UpdateMatrix();
+
+	// ステージ表示関連
+	isShowStageNumber = true;
+	sizeExrate = 0;
+	rotAngel = 0;
+	alpha = 1;
+	stageNumberSprite->SetSize({ 0,0 });
+	stageNumberSprite->SetRotation(0);
+	stageNumberSprite->SetColor({ 1,1,1,1 });
+
 }
 
 void Stage::Update()
@@ -192,11 +225,20 @@ void Stage::Update()
 	//if (gameClear == true || gameOver == true) return;
 	//if (stagePcrogress == End) return;
 
+	//static float sizeExrate = 0;
+	//static float rotAngel = 0;
+	//static float alpha = 1;
+
+	// ステージ表示
+	ShowStageNumberUpdate();
+
+	// カウントダウン処理
 	CountDownUpdate();
 
 	if (stagePcrogress == Play || stagePcrogress == Staging)
 	{
 		StarUpdate();
+		//WaveUpdate();
 		BlockUpdate();
 		FloorUpdate();
 		ThornUpdate();
@@ -273,6 +315,7 @@ void Stage::Update()
 	viewProjection_.UpdateMatrix();
 	player->EffectUpdate();
 	ground->EffectUpdate();
+	windPressureEffect->Update();
 	grainScatterEffect->Update();
 	repairEffect->Update();
 }
@@ -329,10 +372,10 @@ void Stage::DrawSprite()
 		}
 	}
 
-	// カウントダウン
-	if (startTextIndex < 4)
+	// ステージ表示
+	if (isShowStageNumber == true)
 	{
-		startTextSprites[startTextIndex]->Draw();
+		stageNumberSprite->Draw();
 	}
 
 	// クリア描画
@@ -350,8 +393,18 @@ void Stage::DrawSprite()
 }
 void Stage::DrawEffectFront()
 {
+	// カウントダウン
+	if (isShowStageNumber == false)
+	{
+		if (startTextIndex < 4)
+		{
+			startTextSprites[startTextIndex]->Draw();
+		}
+	}
+
 	grainScatterEffect->Draw();
 	repairEffect->Draw();
+	windPressureEffect->Draw();
 	player->DrawSpriteFront();
 }
 void Stage::DrawEffectBack()
@@ -363,6 +416,37 @@ void Stage::DrawEffectBack()
 	}
 }
 
+void Stage::ShowStageNumberUpdate()
+{
+	if (isShowStageNumber == true)
+	{
+		sizeExrate += 0.04f;
+		if (sizeExrate >= 2)
+		{
+			sizeExrate = 2;
+		}
+		stageNumberSprite->SetSize({ 600 * sizeExrate,140 * sizeExrate });
+
+		rotAngel += 7.2f;
+		if (rotAngel >= 360)
+		{
+			rotAngel = 360;
+		}
+		stageNumberSprite->SetRotation(DegreeToRad(rotAngel));
+
+		if (sizeExrate == 2 && rotAngel == 360)
+		{
+			alpha -= 0.025;
+			if (alpha <= 0)
+			{
+				alpha = 0;
+				isShowStageNumber = false;
+				isStartTextEnd = false;
+			}
+			stageNumberSprite->SetColor({ 1,1,1,alpha });
+		}
+	}
+}
 void Stage::CountDownUpdate()
 {
 	if (isStartTextEnd == true) return;
@@ -443,10 +527,11 @@ void Stage::ClearTimeUpdate()
 	{
 		clearScreenClock++;
 
-		float clearStrPosY = lerp(1700.0, 270, pow((clearScreenClock - 50) / 30.0, 0.2));
+		//float clearStrPosY = lerp(1700.0f, 270, pow((clearScreenClock - 50) / 30.0, 0.2));
+		float clearStrPosY = lerp(1700.0f, 400, pow((clearScreenClock - 50) / 30.0, 0.2));
 
 		clearStrSprite->SetPosition({ 960,clearStrPosY });
-		clearStrSprite->SetSize({ 512,512 });
+		clearStrSprite->SetSize({ 1028,1028 });
 
 		clearTimeLastDightPos.x = lerp(2400, 1856, pow((clearScreenClock - 100) / 30.0, 0.2));
 
@@ -496,6 +581,19 @@ void Stage::GameOverCameraUpdate()
 	}
 }
 
+void Stage::GenerateStar(const Vector3& pos)
+{
+	stars.emplace_back(move(make_unique<Star>()));
+	stars.back()->Generate(
+		{
+			pos.x,
+			ground->GetPos().y + ground->GetScale().y + 1.5f,
+			pos.z
+		},
+		{ 1,0,0 }, 0);
+	stars.back()->SetisCanHit(true);
+	stars.back()->SetisGround(true);
+}
 void Stage::GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale)
 {
 	if (isReverseVertical == false)
@@ -547,6 +645,8 @@ void Stage::PlayerGenerateStar(const Vector3& pos)
 				},
 				{ -1,0,0 }, 0);
 			stars.back()->SetSpeed(1.3);
+			stars.back()->SetisGround(true);
+
 		}
 		if (i == 1)
 		{
@@ -558,6 +658,7 @@ void Stage::PlayerGenerateStar(const Vector3& pos)
 				},
 				{ 1,0,0 }, 0);
 			stars.back()->SetSpeed(1.3);
+			stars.back()->SetisGround(true);
 		}
 	}
 }
@@ -576,7 +677,6 @@ void Stage::BlockGenerateStar(const Vector3& pos, const int& num)
 		stars.back()->Generate(pos, { cosf(angle),sinf(angle),0 }, 1);
 		stars.back()->SetSpeed(Random::RangeF(0.5, 1.5));
 	}
-
 }
 
 // 自機
@@ -592,22 +692,42 @@ void Stage::PlayerUpdate()
 		};
 
 		// 星を巻き込む処理
-		for (const auto& temp : stars)
-		{
-			SquareCollider starCollider
-			{
-				{ temp->GetPos().x,temp->GetPos().y },
-				{ temp->GetScale().x,temp->GetScale().y },
-			};
+		//for (const auto& temp : stars)
+		//{
+		//	SquareCollider starCollider
+		//	{
+		//		{ temp->GetPos().x,temp->GetPos().y },
+		//		{ temp->GetScale().x,temp->GetScale().y },
+		//	};
 
-			if (collision->SquareHitSquare(playerCollider, starCollider) &&
-				temp->GetisDestroy() == false)
-			{
-				ground->Damage(player->GetStarAttackDamage());
-				grainScatterEffect->Generate(temp->GetPos());
-				temp->SetisDestroy(true);
-			}
-		}
+		//	//if (collision->SquareHitSquare(playerCollider, starCollider) &&
+		//	//	temp->GetisDestroy() == false)
+		//	//{
+		//	//	//ground->Damage(player->GetStarAttackDamage());
+		//	//	//grainScatterEffect->Generate(temp->GetPos());
+		//	//	//temp->SetisDestroy(true);
+
+		//	//	temp->SetisAttack(true);
+		//	//	temp->SetSpeed(0.4);
+		//	//	int dir = 0;
+		//	//	if (temp->GetPos().x - player->GetPos().x >= 0)
+		//	//	{
+		//	//		dir = 1;
+		//	//	}
+		//	//	else
+		//	//	{
+		//	//		dir = -1;
+		//	//	}
+
+		//	//	temp->SetDirVec(
+		//	//		{
+		//	//			dir * cosf(DegreeToRad(75)),
+		//	//			cosf(DegreeToRad(75)),
+		//	//			0
+		//	//		});
+		//	//}
+		//}
+		// ブロックを巻き込む処理
 		for (const auto& temp : blocks)
 		{
 			SquareCollider blockCollider =
@@ -633,12 +753,13 @@ void Stage::PlayerUpdate()
 	{
 		if (collision->SphereHitSphere(
 			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius() &&
-			player->GetisGround() == false))
+			player->GetisGround() == false && player->GetisEngulfAttack() == false))
 		{
 			if (temp->GetisCanHit() == true && temp->GetisDestroy() == false)
 			{
 				player->HaveStarNumIncriment();
 				grainScatterEffect->Generate(temp->GetPos());
+				ground->Damage(player->GetHaveStarNum() * 5);
 				temp->SetisDestroy(true);
 			}
 		}
@@ -735,47 +856,50 @@ void Stage::FloorUpdate()
 	}
 
 	// 大きくなる処理
-	const int starSize = 5;
-	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
+	if (stageType != RaceStage)
 	{
-		ground->SetisAddScaleCountDown(1);
-	}
-	if (ground->GetisAddScaleCountDown() == 1)
-	{
-		for (const auto& temp : stars)
+		const int starSize = 5;
+		if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
 		{
-			temp->SetisAngleShacke(true);
+			ground->SetisAddScaleCountDown(1);
 		}
-	}
-	if (stars.size() < starSize)
-	{
-		ground->SetisAddScaleCountDown(0);
-		ground->SetisSuctionStar(false);
-		for (const auto& temp : stars)
+		if (ground->GetisAddScaleCountDown() == 1)
 		{
-			temp->SetisAngleShacke(false);
+			for (const auto& temp : stars)
+			{
+				temp->SetisAngleShacke(true);
+			}
 		}
-	}
+		if (stars.size() < starSize)
+		{
+			ground->SetisAddScaleCountDown(0);
+			ground->SetisSuctionStar(false);
+			for (const auto& temp : stars)
+			{
+				temp->SetisAngleShacke(false);
+			}
+		}
 
-	// 星を吸収する処理
-	if (ground->GetisSuctionStar() == true)
-	{
-		for (const auto& temp : stars)
+		// 星を吸収する処理
+		if (ground->GetisSuctionStar() == true)
 		{
-			repairEffect->Generate(temp->GetPos());
+			for (const auto& temp : stars)
+			{
+				repairEffect->Generate(temp->GetPos());
+			}
+			stars.clear();
+			ground->SetisSuctionStar(false);
 		}
-		stars.clear();
-		ground->SetisSuctionStar(false);
-	}
 
-	// 八個集まったか
-	if (stars.size() >= starSize - 2)
-	{
-		ground->SetisDanger(true);
-	}
-	else
-	{
-		ground->SetisDanger(false);
+		// 八個集まったか
+		if (stars.size() >= starSize - 2)
+		{
+			ground->SetisDanger(true);
+		}
+		else
+		{
+			ground->SetisDanger(false);
+		}
 	}
 
 	ground->Update();
@@ -795,7 +919,7 @@ void Stage::StarUpdate()
 		SquareCollider starCollider =
 		{
 			{ tempStar->GetPos().x,tempStar->GetPos().y },
-			{ tempStar->GetScale().x,tempStar->GetScale().y },
+			{ tempStar->GetScale().x,1.5 },
 		};
 		if (ground->GetHP() > 0)
 		{
@@ -812,6 +936,14 @@ void Stage::StarUpdate()
 				{
 					tempStar->SetSpeed(0);
 					tempStar->SetisGround(true);
+				}
+				if (tempStar->GetisAttack() == true)
+				{
+					windPressureEffect->Generate(tempStar->GetPos(), tempStar->GetDir());
+					ground->Damage(player->GetStarAttackDamage());
+					tempStar->SetisDestroy(true);
+					tempStar->SetisAttack(false);
+					tempStar->SetSpeed(0);
 				}
 			}
 		}
@@ -831,6 +963,8 @@ void Stage::StarUpdate()
 		}
 	}
 
+	WaveUpdate();
+
 	for (const auto& temp : stars)
 	{
 		temp->Update();
@@ -844,9 +978,16 @@ void Stage::StarUpdate()
 			if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40 ||
 				temp->GetisDestroy() == true)
 			{
+				grainScatterEffect->Generate(temp->GetPos());
 				stars.remove(temp);
 				break;
 			}
+		}
+		if (temp->GetisDestroy() == true)
+		{
+			grainScatterEffect->Generate(temp->GetPos());
+			stars.remove(temp);
+			break;
 		}
 	}
 }
@@ -885,7 +1026,6 @@ void Stage::ThornUpdate()
 					});
 			}
 		}
-
 
 		if (collision->SquareHitSquare(playerCollider, thornCollider))
 		{
@@ -1060,7 +1200,6 @@ void Stage::RaceUpdate()
 }
 
 // 耐久戦
-std::vector<int> enduranceTimeDightsNumber;
 void Stage::EnduranceUpdate()
 {
 	if (isGetTime == 0)
@@ -1080,8 +1219,6 @@ void Stage::EnduranceUpdate()
 			isGetTime = 2;
 		}
 	}
-
-	enduranceTimeDightsNumber.resize(2);
 
 	if (GetDightsNumber(enduranceTime - enduranceEndTime).size() == 2)
 	{
@@ -1103,4 +1240,45 @@ void Stage::EnduranceUpdate()
 	{
 		enduranceTimeSprites[i]->SetTextureHandle(numberSheet[enduranceTimeDightsNumber[i]]);
 	}
+}
+
+// 波動
+void Stage::WaveUpdate()
+{
+	for (int i = 0; i < windPressureEffect->waves.size(); i++)
+	{
+		for (const auto& temp : stars)
+		{
+			if (collision->SphereHitSphere(
+				windPressureEffect->waves[i]->GetPos(), 0.75, temp->GetPos(), 1.5))
+			{
+				if (/*temp->GetisCanHit() == true &&  */
+					temp->GetisGround() == true &&
+					temp->GetisDestroy() == false)
+				{
+					temp->SetGravity(1);
+					temp->SetisAttack(true);
+					temp->SetSpeed(0.4);
+					int dir = 0;
+					if (temp->GetPos().x - windPressureEffect->waves[i]->GetPos().x >= 0)
+					{
+						dir = 1;
+					}
+					else
+					{
+						dir = -1;
+					}
+
+					temp->SetDir(dir);
+					temp->SetDirVec(
+						{
+							dir * cosf(DegreeToRad(75)),
+							cosf(DegreeToRad(75)),
+							0
+						});
+				}
+			}
+		}
+	}
+
 }

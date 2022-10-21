@@ -8,21 +8,7 @@ uint32_t Particle::texture = {};
 uint32_t Particle::starTexture = {};
 uint32_t Particle::healTexture = {};
 uint32_t Particle::repairTexture = {};
-
-Particle::Particle() :
-	activeTimer(0), maxActiveTimer(120),
-	vec(0, 0, 0), speed(0)
-{
-	trans = move(make_unique<WorldTransform>());
-	trans->Initialize();
-	model = Model::Create();
-
-	//sprite.reset(Sprite::Create(texture, { 0,0 }));
-	//sprite->SetAnchorPoint({ 0.5,0.5 });
-
-	//outLineSprite.reset(Sprite::Create(texture, { 0,0 }));
-	//outLineSprite->SetAnchorPoint({ 0.5,0.5 });
-}
+uint32_t Particle::windPressureTexture = {};
 
 Particle::Particle(const int& spriteType) :
 	activeTimer(0), maxActiveTimer(120),
@@ -37,8 +23,6 @@ Particle::Particle(const int& spriteType) :
 	case 1:
 		sprite.reset(Sprite::Create(texture, { 0,0 }));
 		sprite->SetAnchorPoint({ 0.5,0.5 });
-		outLineSprite.reset(Sprite::Create(texture, { 0,0 }));
-		outLineSprite->SetAnchorPoint({ 0.5,0.5 });
 		break;
 	case 2:
 		sprite.reset(Sprite::Create(starTexture, { 0,0 }));
@@ -50,6 +34,10 @@ Particle::Particle(const int& spriteType) :
 		break;
 	case 4:
 		sprite.reset(Sprite::Create(repairTexture, { 0,0 }));
+		sprite->SetAnchorPoint({ 0.5,0.5 });
+		break;
+	case 5:
+		sprite.reset(Sprite::Create(windPressureTexture, { 0,0 }));
 		sprite->SetAnchorPoint({ 0.5,0.5 });
 		break;
 	default:
@@ -81,8 +69,6 @@ void Particle::UpdateSprite()
 		sprite->SetPosition(tempPos);
 		sprite->SetSize(size);
 		sprite->SetColor(color);
-		outLineSprite->SetPosition(tempPos);
-		outLineSprite->SetSize(outLineSize);
 		break;
 	case 2:
 		sprite->SetPosition(tempPos);
@@ -101,6 +87,15 @@ void Particle::UpdateSprite()
 		sprite->SetSize(size);
 		sprite->SetColor(color);
 		sprite->SetRotation(sprite->GetRotation() + DegreeToRad(rotAngle));
+		break;
+	case 5:
+		sprite->SetPosition(tempPos);
+		sprite->SetSize({ 48,48 });
+		sprite->SetColor(color);
+		if (vec.x < 0)
+		{
+			sprite->SetIsFlipX(true);
+		}
 		break;
 	default:
 		break;
@@ -121,37 +116,18 @@ void Particle::DrawModel(const int& type)
 
 void Particle::DrawSprite()
 {
-	switch (spriteType)
-	{
-	case 1:
-		outLineSprite->Draw();
-		sprite->Draw();
-		break;
-	case 2:
-		sprite->Draw();
-		break;
-	case 3:
-		sprite->Draw();
-		break;
-	case 4:
-		sprite->Draw();
-		break;
-
-	default:
-		break;
-	}
+	sprite->Draw();
 }
 
 void Particle::Load()
 {
 	breakGroundModel = Model::CreateFromOBJ("remnants", true);
 
-	//texture = TextureManager::Load("SpriteTexture/particle.png");
-	//texture = TextureManager::Load("SpriteTexture/particle2.png");
 	texture = TextureManager::Load("SpriteTexture/Particle/particle3.png");
 	starTexture = TextureManager::Load("SpriteTexture/Particle/starParticle.png");
 	healTexture = TextureManager::Load("SpriteTexture/Particle/heal.png");
 	repairTexture = TextureManager::Load("SpriteTexture/Particle/repair.png");
+	windPressureTexture = TextureManager::Load("SpriteTexture/Particle/temp.png");
 }
 
 void Particle::UnLoad()

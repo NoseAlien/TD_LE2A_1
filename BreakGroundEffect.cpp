@@ -2,7 +2,7 @@
 using namespace std;
 
 BreakGroundEffect::BreakGroundEffect() :
-	maxParticle(128)
+	maxParticle(64)
 {
 }
 
@@ -16,7 +16,7 @@ void BreakGroundEffect::Generate(const Vector3& pos, const Vector3& scale)
 	{
 		float radian = DegreeToRad(Random::Range(0, 360));
 
-		particles.emplace_back(move(make_unique<Particle>()));
+		particles.emplace_back(move(make_unique<Particle>(0)));
 		particles.back()->SetPos(
 			{
 				Random::RangeF(pos.x - scale.x,pos.x + scale.x),

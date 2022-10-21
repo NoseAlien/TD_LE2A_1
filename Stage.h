@@ -9,6 +9,7 @@
 #include "Vector2.h"
 #include "GrainScatterEffect.h"
 #include "RepairEffect.h"
+#include "WindPressureEffect.h"
 #include <vector>
 #include <memory>
 
@@ -30,6 +31,16 @@ enum StageProgress
 
 class Stage
 {
+private:
+	// ゲーム開始時のステージ表示
+	static std::vector<uint32_t> stageNumberTextures;
+	std::unique_ptr<Sprite> stageNumberSprite;
+	bool isShowStageNumber;
+	float sizeExrate;
+	float rotAngel;
+	float alpha;
+
+
 private:
 	// 開始カウント関連
 	static std::vector<uint32_t> startTextTextures;
@@ -68,6 +79,7 @@ private:
 	bool isCameraMoveStep;
 	Vector3 cameraMoveVec;
 	bool isPlayerDieEffectGenerate = false;
+	WindPressureEffect* windPressureEffect;
 
 private:
 	// ライン関連
@@ -85,6 +97,7 @@ private:
 	int enduranceStartTime;
 	int enduranceEndTime;
 	std::unique_ptr<WorldTransform> enduranceLineTrans;
+	std::vector<int> enduranceTimeDightsNumber;
 
 	Sprite* enduranceTimeSprites[2];
 
@@ -113,6 +126,7 @@ private:
 	void CannonGenerateStar(const Vector3& pos, const Vector3& dieVec);
 	void BlockGenerateStar(const Vector3& pos, const int& num);
 
+	void ShowStageNumberUpdate();
 	void CountDownUpdate();
 	void ClearTimeUpdate();
 	void PlayerUpdate();
@@ -123,12 +137,13 @@ private:
 	void CannonUpdate();
 	void RaceUpdate();
 	void EnduranceUpdate();
+	void WaveUpdate();
 
 	void GameOverCameraUpdate();
 
 
 public:
-	Stage(const int& stageType);
+	Stage(const int& stageType, const int& stageNumber);
 	~Stage();
 	static void Load();
 	static void UnLoad();
@@ -139,7 +154,8 @@ public:
 	void DrawEffectFront();
 	void DrawEffectBack();
 
-	void GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale = { 0.5,0.5,0.5 });
+	void GenerateStar(const Vector3& pos);
+	void GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale = { 0.25,0.5,0.25 });
 	void GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale = { 2,2,2 });
 	void GenerateCannon(const Vector3& pos, const Vector3& rot);
 	void GenerateGoal(const Vector3& pos);

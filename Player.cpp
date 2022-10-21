@@ -3,6 +3,7 @@
 #include "Stage.h"
 #include "GameScene.h"
 #include "Ground.h"
+#include "WindPressureEffect.h"
 #include <string>
 using namespace std;
 
@@ -23,7 +24,6 @@ Player::Player() :
 	heavyAttackEffect = move(make_unique<HeavyAttackEffect>());
 	playerDieEffect = move(make_unique<PlayerDieEffect>());
 	playerMoveEffect = move(make_unique<PlayerMoveEffect>());
-
 }
 Player::~Player()
 {
@@ -70,6 +70,7 @@ void Player::Load()
 static int tempTimer = 0; // ゲーム開始と同時に攻撃しないため
 void Player::Init()
 {
+
 	// アニメーション関連
 	animeIndex = 0;
 	fream = 0;
@@ -117,6 +118,7 @@ void Player::Init()
 	playerMoveEffect->Clear();
 	weakAttackEffect->Clear();
 	heavyAttackEffect->Clear();
+	playerDieEffect->Clear();
 }
 void Player::Update()
 {
@@ -258,11 +260,13 @@ void Player::MoveUpdate()
 	//	trans->translation_.x = -39.5;
 	//}
 
-	if (!isAttack)
-	{
-		speed += 0.02;
-	}
-	speed = min(speed, maxSpeed);
+	//if (!isAttack)
+	//{
+	//	speed += 0.25 / 3;
+	//}
+	//speed = min(speed, maxSpeed);
+
+	speed = maxSpeed;
 	// 移動処理
 	if (isAlive == true)
 	{
@@ -575,7 +579,16 @@ void Player::AttackUpdate()
 		trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
 		if (trans->scale_.y <= 0.5)
 		{
+			Vector3 tempTrans =
+			{
+				trans->translation_.x,
+				trans->translation_.y - 1,
+				trans->translation_.z,
+			};
+
 			isJumpAddScaleStep = 2;
+			WindPressureEffect::GetInstance()->Generate(tempTrans, 1);
+			WindPressureEffect::GetInstance()->Generate(tempTrans, -1);
 		}
 
 	}
@@ -595,7 +608,6 @@ void Player::AttackUpdate()
 			isJumpAddScaleStep = 2;
 			isJump = true;
 			isEngulfAttack = false;	// 巻き込み攻撃
-
 		}
 	}
 

@@ -20,11 +20,8 @@ private:
 private:
 	// スプライト関連
 	std::unique_ptr<Sprite> sprite;
-	std::unique_ptr<Sprite> outLineSprite;
 	Vector2 size;
 	Vector4 color;
-	Vector2 outLineSize;
-	Vector4 outLineColor;
 	float rotAngle;
 
 public:
@@ -33,9 +30,10 @@ public:
 	static uint32_t starTexture;
 	static uint32_t healTexture;
 	static uint32_t repairTexture;
+	static uint32_t windPressureTexture;
 
 public:
-	Particle();
+	Particle() {};
 	Particle(const int& spriteType);
 	~Particle();
 	static void Load();
@@ -55,8 +53,6 @@ public:	// セッター
 	inline void SetSpriteSize(const Vector2& size) { this->size = size; }
 	inline void SetSpriteColor(const Vector4& color) { this->color = color; }
 	inline void SetSpriteRotAngle(const float& rotAngle) { this->rotAngle = rotAngle; }
-	inline void SetOutLineSpriteSize(const Vector2& outLineSize) { this->outLineSize = outLineSize; }
-	inline void SetOutLineSpriteColor(const Vector4& outLineColor) { this->color = outLineColor; }
 
 
 public:	// ゲッター
@@ -65,6 +61,7 @@ public:	// ゲッター
 	inline Vector3 GetRot() { return trans->rotation_; }
 	inline Vector3 GetVec() { return vec; }
 	inline float GetSpeed() { return speed; }
+	inline Vector4 GetSpriteColor() { return color; }
 
 	inline Vector2 GetSpriteSize() { return size; }
 };

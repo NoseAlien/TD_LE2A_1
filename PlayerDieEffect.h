@@ -16,6 +16,7 @@ public:
 	void Generate(const Vector3& pos);
 	void Update();
 	void Draw();
+	void Clear();
 
 	inline bool GetisEnd() { return	isEnd; }
 	inline void SetisEnd(const bool& isEnd)

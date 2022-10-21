@@ -45,7 +45,15 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	trans->scale_ = { 1.5,1.5,1.5 };
 	trans->rotation_ = { 0,DegreeToRad(180),0 };
 	trans->UpdateMatrix();
-	gravity = 1;
+
+	if (generateType != 0)
+	{
+		gravity = 1;
+	}
+	else
+	{
+		gravity = 0;
+	}
 	collisionRadius = trans->scale_.x;
 	isNotGravity = false;
 	isAngleShake = false;
@@ -54,72 +62,101 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 
 	isDestroy = false;
 	isGround = false;
+
+	isAttack = 0;
 }
 
 void Star::Update()
 {
 	SlowMotion* slowMotion = SlowMotion::GetInstance();
 
-	if (generateType == 0)
+	if (isAttack == 0)
 	{
-		trans->translation_ += slowMotion->GetSlowExrate() * speed * dirVec.Normalized();
-		speed -= 0.1 * slowMotion->GetSlowExrate();
-		if (speed <= 0)
+		if (generateType == 0)
 		{
-			speed = 0;
+			gravity -= 0.05 * slowMotion->GetSlowExrate();
+			if (gravity <= -1) gravity = -1;
+			speed -= 0.1 * slowMotion->GetSlowExrate();
+			if (speed <= 0)
+			{
+				speed = 0;
+			}
+			trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
+			trans->translation_.y += gravity * slowMotion->GetSlowExrate();
+		}
+		else if (generateType == 1 || generateType == 2)
+		{
+			gravity -= 0.05 * slowMotion->GetSlowExrate();
+			if (gravity <= -1) gravity = -1;
+			trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
+			trans->translation_.y += gravity * slowMotion->GetSlowExrate();
+		}
+
+		// UŒ‚‰Â”\‚©‚Ç‚¤‚©
+		canHitTimer += 1 * slowMotion->GetSlowExrate();
+		if (canHitTimer >= maxCanHitTimer)
+		{
+			canHitTimer = maxCanHitTimer;
+			isCanHit = true;
+		}
+
+		//trans->rotation_ = { 0,0,trans->rotation_.z };
+
+		if (isAngleShake == true)
+		{
+			trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
+			trans->scale_.z *= cos(clock() * 0.05) * 0.15 + 1;
+			trans->scale_.x *= cos(clock() * 0.05) * 0.15 + 1;
+			trans->scale_.y *= sin(clock() * 0.05) * 0.15 + 1;
+		}
+		else
+		{
+			trans->rotation_.z = 0;
+
+			int sign = 1;
+			if (dirVec.x < 0)
+			{
+				sign = -1;
+			}
+
+			if (generateType == 0)
+			{
+				trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),1.5 };
+				//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
+			}
+			else if (generateType == 1 || generateType == 2)
+			{
+				trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
+				//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
+			}
+			trans->scale_.z *= cos(clock() * 0.005) * 0.1 + 1;
+			trans->scale_.x *= cos(clock() * 0.005) * 0.1 + 1;
+			trans->scale_.y *= sin(clock() * 0.005) * 0.1 + 1;
 		}
 	}
-	else if (generateType == 1 || generateType == 2)
+
+
+	AttackUpdate();
+
+	trans->UpdateMatrix();
+}
+
+void Star::AttackUpdate()
+{
+	if (isAttack == 1)
 	{
+		if (gravity > 0)
+		{
+			isGround = false;
+		}
+
+		SlowMotion* slowMotion = SlowMotion::GetInstance();
+
 		gravity -= 0.05 * slowMotion->GetSlowExrate();
 		if (gravity <= -1) gravity = -1;
 		trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
 		trans->translation_.y += gravity * slowMotion->GetSlowExrate();
 	}
-
-	// UŒ‚‰Â”\‚©‚Ç‚¤‚©
-	canHitTimer += 1 * slowMotion->GetSlowExrate();
-	if (canHitTimer >= maxCanHitTimer)
-	{
-		canHitTimer = maxCanHitTimer;
-		isCanHit = true;
-	}
-
-	//trans->rotation_ = { 0,0,trans->rotation_.z };
-
-	if (isAngleShake == true)
-	{
-		trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
-		trans->scale_.z *= cos(clock() * 0.05) * 0.15 + 1;
-		trans->scale_.x *= cos(clock() * 0.05) * 0.15 + 1;
-		trans->scale_.y *= sin(clock() * 0.05) * 0.15 + 1;
-	}
-	else
-	{
-		trans->rotation_.z = 0;
-
-		int sign = 1;
-		if (dirVec.x < 0)
-		{
-			sign = -1;
-		}
-
-		if (generateType == 0)
-		{
-			trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),1.5 };
-			//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
-		}
-		else if (generateType == 1 || generateType == 2)
-		{
-			trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
-			//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
-		}
-		trans->scale_.z *= cos(clock() * 0.005) * 0.1 + 1;
-		trans->scale_.x *= cos(clock() * 0.005) * 0.1 + 1;
-		trans->scale_.y *= sin(clock() * 0.005) * 0.1 + 1;
-	}
-
-	trans->UpdateMatrix();
 }
 
 void Star::Draw(const ViewProjection& viewProjection_)

@@ -27,7 +27,7 @@ void Ground::Load()
 	largeDamageSE = audio->LoadWave("se/floor_damage_L.wav");
 	defeatSE = audio->LoadWave("se/floor_break.wav");
 	//enemyTexture = TextureManager::Load("groundColor1x1.png");
-	enemyDangerTexture = TextureManager::Load("red1x1.png");
+	enemyDangerTexture = TextureManager::Load("SpriteTexture/GroundCrack/groundDengerColor1x1.png");
 	//enemyModel = Model::Create();
 	enemyModel = Model::CreateFromOBJ("ground", true);
 	trans = new WorldTransform();
@@ -36,6 +36,7 @@ void Ground::Load()
 	idleTexture = TextureManager::Load("SpriteTexture/ground_face/ground_face_rest.png");	// 待機状態
 	faceSprite.reset(Sprite::Create(idleTexture, { 0,0 }));
 	faceSprite->SetAnchorPoint({ 0.5f,0.5f });
+	faceSprite->SetSize({ 128,128 });
 
 	// まばたき
 	for (int i = 1; i <= 4; i++)
@@ -54,7 +55,7 @@ void Ground::Load()
 	}
 
 	// ひび表現
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		groundCrackTexture.push_back(
 			TextureManager::Load(
@@ -87,8 +88,8 @@ void Ground::Init(const int& maxhp)
 
 	auto tempPos = WorldToScreen(
 		{
-			trans->translation_.x + 35,
-			trans->translation_.y + 5,
+			trans->translation_.x + 32,
+			trans->translation_.y + 6 * trans->scale_.y,
 			trans->translation_.z,
 		}, viewProjection_);
 	faceSprite->SetPosition(tempPos);
@@ -107,6 +108,7 @@ void Ground::Init(const int& maxhp)
 	surprisedAnimeMaxTimer = 3;
 	surprisedAnimeIndex = 0;
 	surprisedCount = 0;
+	faceSprite->SetTextureHandle(idleTexture);
 }
 
 void Ground::Update()
@@ -174,8 +176,8 @@ void Ground::Update()
 	// スプライトの座標を求める
 	auto tempPos = WorldToScreen(
 		{
-			trans->translation_.x + 35,
-			trans->translation_.y + 5 * trans->scale_.y,
+			trans->translation_.x + 32,
+			trans->translation_.y + 6 * trans->scale_.y,
 			trans->translation_.z,
 		}, viewProjection_);
 	faceSprite->SetPosition(tempPos);
@@ -234,7 +236,22 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 
 	if (isDanger == true)
 	{
-		enemyModel->Draw(*trans, viewProjection_, enemyDangerTexture);
+		if (hp <= maxhp * 0.25)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[5]);
+		}
+		else if (hp <= maxhp * 0.5)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[4]);
+		}
+		else if (hp <= maxhp * 0.75)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[3]);
+		}
+		else if (hp <= maxhp)
+		{
+			enemyModel->Draw(*trans, viewProjection_, enemyDangerTexture);
+		}
 	}
 	else
 	{
@@ -271,7 +288,7 @@ void Ground::EffectDraw()
 void Ground::DrawSprite()
 {
 	if (isAlive == false) return;
-	
+
 	faceSprite->Draw();
 }
 
