@@ -1248,7 +1248,7 @@ void Stage::WaveUpdate()
 					temp->SetisAttack(true);
 					temp->SetSpeed(0.4);
 					int dir = 0;
-					if (temp->GetPos().x - player->GetPos().x >= 0)
+					if (temp->GetPos().x - windPressureEffect->waves[i]->GetPos().x >= 0)
 					{
 						dir = 1;
 					}
