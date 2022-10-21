@@ -55,7 +55,6 @@ void GameScene::Initialize()
 	slowMotion->Init();
 
 	backGroundSprite.reset(Sprite::Create(backGroundTexture, { 0,0 }));
-	//backGroundSprite->SetSize({ 1920,1080 });
 	selectFrameSprite.reset(Sprite::Create(selectFrameTexture, { 0,0 }));
 
 	stages.clear();
