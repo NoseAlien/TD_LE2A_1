@@ -90,6 +90,10 @@ void Star::Update()
 		}
 
 		//trans->rotation_ = { 0,0,trans->rotation_.z };
+		if (gravity > 0)
+		{
+			isGround = false;
+		}
 
 		if (isAngleShake == true)
 		{

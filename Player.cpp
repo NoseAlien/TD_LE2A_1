@@ -70,6 +70,7 @@ void Player::Load()
 static int tempTimer = 0; // ゲーム開始と同時に攻撃しないため
 void Player::Init()
 {
+
 	// アニメーション関連
 	animeIndex = 0;
 	fream = 0;
@@ -117,6 +118,7 @@ void Player::Init()
 	playerMoveEffect->Clear();
 	weakAttackEffect->Clear();
 	heavyAttackEffect->Clear();
+	playerDieEffect->Clear();
 }
 void Player::Update()
 {

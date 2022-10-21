@@ -103,3 +103,8 @@ void PlayerDieEffect::Draw()
 		particles[i]->DrawSprite();
 	}
 }
+
+void PlayerDieEffect::Clear()
+{
+	particles.clear();
+}

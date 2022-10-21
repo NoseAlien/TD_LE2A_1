@@ -26,7 +26,7 @@ void WindPressureEffect::Update()
 		if (waves[i]->GetSpeed() <= 0.01)
 		{
 			auto a = waves[i]->GetSpriteColor().w;
-			a -= 0.025;
+			a -= 0.05;
 			waves[i]->SetSpriteColor({ 1,1,1,a });
 		}
 

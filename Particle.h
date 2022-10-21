@@ -20,11 +20,8 @@ private:
 private:
 	// スプライト関連
 	std::unique_ptr<Sprite> sprite;
-	std::unique_ptr<Sprite> outLineSprite;
 	Vector2 size;
 	Vector4 color;
-	Vector2 outLineSize;
-	Vector4 outLineColor;
 	float rotAngle;
 
 public:
@@ -56,8 +53,6 @@ public:	// セッター
 	inline void SetSpriteSize(const Vector2& size) { this->size = size; }
 	inline void SetSpriteColor(const Vector4& color) { this->color = color; }
 	inline void SetSpriteRotAngle(const float& rotAngle) { this->rotAngle = rotAngle; }
-	inline void SetOutLineSpriteSize(const Vector2& outLineSize) { this->outLineSize = outLineSize; }
-	inline void SetOutLineSpriteColor(const Vector4& outLineColor) { this->color = outLineColor; }
 
 
 public:	// ゲッター

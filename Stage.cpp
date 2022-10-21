@@ -106,7 +106,6 @@ Stage::~Stage()
 		delete enduranceTimeSprites[i];
 	}
 
-	windPressureEffect->Clear();
 }
 
 Vector2 clearStrSize(0, 0);
@@ -138,6 +137,9 @@ void Stage::UnLoad()
 
 void Stage::Init()
 {
+	windPressureEffect->Clear();
+
+
 	// ƒ‰ƒCƒ“ŠÖ˜A
 	lineTrans = move(make_unique<WorldTransform>());
 	lineTrans->Initialize();
@@ -589,6 +591,7 @@ void Stage::GenerateStar(const Vector3& pos)
 		},
 		{ 1,0,0 }, 0);
 	stars.back()->SetisCanHit(true);
+	stars.back()->SetisGround(true);
 }
 void Stage::GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale)
 {
@@ -641,6 +644,8 @@ void Stage::PlayerGenerateStar(const Vector3& pos)
 				},
 				{ -1,0,0 }, 0);
 			stars.back()->SetSpeed(1.3);
+			stars.back()->SetisGround(true);
+
 		}
 		if (i == 1)
 		{
@@ -652,6 +657,7 @@ void Stage::PlayerGenerateStar(const Vector3& pos)
 				},
 				{ 1,0,0 }, 0);
 			stars.back()->SetSpeed(1.3);
+			stars.back()->SetisGround(true);
 		}
 	}
 }
@@ -918,6 +924,7 @@ void Stage::StarUpdate()
 		{
 			if (collision->SquareHitSquare(starCollider, floorCollider) && tempStar->GetisCanHit() == true)
 			{
+
 				tempStar->SetPos(
 					{
 						tempStar->GetPos().x,

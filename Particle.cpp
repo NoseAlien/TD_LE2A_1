@@ -38,8 +38,6 @@ Particle::Particle(const int& spriteType) :
 	case 1:
 		sprite.reset(Sprite::Create(texture, { 0,0 }));
 		sprite->SetAnchorPoint({ 0.5,0.5 });
-		outLineSprite.reset(Sprite::Create(texture, { 0,0 }));
-		outLineSprite->SetAnchorPoint({ 0.5,0.5 });
 		break;
 	case 2:
 		sprite.reset(Sprite::Create(starTexture, { 0,0 }));
@@ -86,8 +84,6 @@ void Particle::UpdateSprite()
 		sprite->SetPosition(tempPos);
 		sprite->SetSize(size);
 		sprite->SetColor(color);
-		outLineSprite->SetPosition(tempPos);
-		outLineSprite->SetSize(outLineSize);
 		break;
 	case 2:
 		sprite->SetPosition(tempPos);
@@ -135,27 +131,7 @@ void Particle::DrawModel(const int& type)
 
 void Particle::DrawSprite()
 {
-	switch (spriteType)
-	{
-	case 1:
-		outLineSprite->Draw();
-		sprite->Draw();
-		break;
-	case 2:
-		sprite->Draw();
-		break;
-	case 3:
-		sprite->Draw();
-		break;
-	case 4:
-		sprite->Draw();
-		break;
-	case 5:
-		sprite->Draw();
-		break;
-	default:
-		break;
-	}
+	sprite->Draw();
 }
 
 void Particle::Load()
