@@ -16,6 +16,8 @@ DirectXCommon* DirectXCommon::GetInstance() {
 }
 
 void DirectXCommon::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t backBufferHeight) {
+	InitializeFixFPS();
+
 	// nullptrチェック
 	assert(winApp);
 	assert(4 <= backBufferWidth && backBufferWidth <= 4096);
@@ -119,6 +121,8 @@ void DirectXCommon::PostDraw() {
 		WaitForSingleObject(event, INFINITE);
 		CloseHandle(event);
 	}
+
+	UpdateFixFPS();
 
 	commandAllocator_->Reset(); // キューをクリア
 	commandList_->Reset(commandAllocator_.Get(),
@@ -373,4 +377,39 @@ void DirectXCommon::CreateFence() {
 	// フェンスの生成
 	result = device_->CreateFence(fenceVal_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
 	assert(SUCCEEDED(result));
+}
+
+void DirectXCommon::InitializeFixFPS()
+{
+	reference_ = std::chrono::steady_clock::now();
+}
+
+void DirectXCommon::UpdateFixFPS()
+{
+	//1/60秒ぴったりの時間
+	const std::chrono::microseconds KMinTime(uint64_t(1000000.0f / 60.0f));
+	//1/60秒よりわずかに短い時間
+	const std::chrono::microseconds KMinCheckTime(uint64_t(1000000.0f / 65.0f));
+
+	//現在の時間を取得する
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	//前回の記録からの経過時間を取得する
+	std::chrono::microseconds elapsed =
+		std::chrono::duration_cast<std::chrono::microseconds>(now - reference_);
+
+	//経過時間が1/60秒未満(処理時間に余裕がある)
+	if (elapsed < KMinTime)
+	{
+		//分解能を上げる(こうしないとSleepの精度はガタガタ)
+		timeBeginPeriod(1);
+		while (std::chrono::steady_clock::now() - reference_ < KMinTime)
+		{
+			//1マイクロ秒スリープ
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
+		}
+		//戻す
+		timeEndPeriod(1);
+	}
+	//計測終了時間を計測開始時間に
+	reference_ = std::chrono::steady_clock::now();
 }

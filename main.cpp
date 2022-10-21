@@ -70,22 +70,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	GameScene::audio = audio;
 	sceneManager->Initialize();
 
-	//1フレームの時間
-	const float FRAME_TIME = 1.0f / 60.0f;
-	//フレームの経過時間
-	float frameTime = 0;
-	//計測開始時間
-	LARGE_INTEGER timeStart;
-	//計測終了時間
-	LARGE_INTEGER timeEnd;
-	//計測周波数
-	LARGE_INTEGER timeFreq;
-
-	//周波数取得
-	QueryPerformanceFrequency(&timeFreq);
-	//計測開始時間の初期化
-	QueryPerformanceCounter(&timeStart);
-
 	// メインループ
 	while (true) {
 		// メッセージ処理
@@ -112,34 +96,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		primitiveDrawer->Reset();
 		// 描画終了
 		dxCommon->PostDraw();
-
-		// 今の時間を取得
-		QueryPerformanceCounter(&timeEnd);
-		// (今の時間 - 前フレームの時間) / 周波数 = 経過時間(秒単位)
-		frameTime = static_cast<float>(timeEnd.QuadPart - timeStart.QuadPart) / static_cast<float>(timeFreq.QuadPart);
-
-		//経過時間が1/60秒未満(処理時間に余裕がある)
-		if (frameTime < FRAME_TIME)
-		{
-			//Sleepの時間を計算
-			DWORD sleepTime = static_cast<DWORD>((FRAME_TIME - frameTime) * 1000);
-			//分解能を上げる(こうしないとSleepの精度はガタガタ)
-			timeBeginPeriod(1);
-			//寝る
-			Sleep(sleepTime);
-			//戻す
-			timeEndPeriod(1);
-			//計測終了時間を計測開始時間に
-			timeStart = timeEnd;
-
-			//std::string fps = std::to_string(frameTime) + "\n";
-			//OutputDebugStringA(fps.c_str());
-
-			//処理を中断しループへ
-			continue;
-		}
-		//計測終了時間を計測開始時間に
-		timeStart = timeEnd;
 	}
 
 	// 各種解放

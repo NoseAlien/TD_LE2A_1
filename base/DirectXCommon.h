@@ -9,6 +9,9 @@
 
 #include "WinApp.h"
 
+#include <chrono>
+#include <thread>
+
 /// <summary>
 /// DirectX汎用
 /// </summary>
@@ -92,6 +95,8 @@ class DirectXCommon {
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
 
+	std::chrono::steady_clock::time_point reference_;
+
   private: // メンバ関数
 	DirectXCommon() = default;
 	~DirectXCommon() = default;
@@ -127,4 +132,7 @@ class DirectXCommon {
 	/// フェンス生成
 	/// </summary>
 	void CreateFence();
+
+	void InitializeFixFPS();
+	void UpdateFixFPS();
 };
