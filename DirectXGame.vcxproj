@@ -129,6 +129,7 @@
     <ClCompile Include="Star.cpp" />
     <ClCompile Include="Thorn.cpp" />
     <ClCompile Include="WeakAttackEffect.cpp" />
+    <ClCompile Include="WindPressureEffect.cpp" />
     <ClCompile Include="WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +178,7 @@
     <ClInclude Include="PlayerMoveEffect.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="RepairEffect.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="scene\GameScene.h" />
@@ -186,6 +188,7 @@
     <ClInclude Include="Star.h" />
     <ClInclude Include="Thorn.h" />
     <ClInclude Include="WeakAttackEffect.h" />
+    <ClInclude Include="WindPressureEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">
@@ -241,6 +244,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Sprite.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXGame.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

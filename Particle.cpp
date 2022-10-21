@@ -8,10 +8,11 @@ uint32_t Particle::texture = {};
 uint32_t Particle::starTexture = {};
 uint32_t Particle::healTexture = {};
 uint32_t Particle::repairTexture = {};
+uint32_t Particle::windPressureTexture = {};
 
 Particle::Particle() :
 	activeTimer(0), maxActiveTimer(120),
-	vec(0, 0, 0), speed(0)
+	vec(0, 0, 0), speed(0), color(1, 1, 1, 1)
 {
 	trans = move(make_unique<WorldTransform>());
 	trans->Initialize();
@@ -50,6 +51,10 @@ Particle::Particle(const int& spriteType) :
 		break;
 	case 4:
 		sprite.reset(Sprite::Create(repairTexture, { 0,0 }));
+		sprite->SetAnchorPoint({ 0.5,0.5 });
+		break;
+	case 5:
+		sprite.reset(Sprite::Create(windPressureTexture, { 0,0 }));
 		sprite->SetAnchorPoint({ 0.5,0.5 });
 		break;
 	default:
@@ -102,6 +107,15 @@ void Particle::UpdateSprite()
 		sprite->SetColor(color);
 		sprite->SetRotation(sprite->GetRotation() + DegreeToRad(rotAngle));
 		break;
+	case 5:
+		sprite->SetPosition(tempPos);
+		sprite->SetSize({ 48,48 });
+		sprite->SetColor(color);
+		if (vec.x < 0)
+		{
+			sprite->SetIsFlipX(true);
+		}
+		break;
 	default:
 		break;
 	}
@@ -136,7 +150,9 @@ void Particle::DrawSprite()
 	case 4:
 		sprite->Draw();
 		break;
-
+	case 5:
+		sprite->Draw();
+		break;
 	default:
 		break;
 	}
@@ -152,6 +168,7 @@ void Particle::Load()
 	starTexture = TextureManager::Load("SpriteTexture/Particle/starParticle.png");
 	healTexture = TextureManager::Load("SpriteTexture/Particle/heal.png");
 	repairTexture = TextureManager::Load("SpriteTexture/Particle/repair.png");
+	windPressureTexture = TextureManager::Load("SpriteTexture/Particle/temp.png");
 }
 
 void Particle::UnLoad()

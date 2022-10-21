@@ -32,6 +32,12 @@ private:
 	bool isDestroy;	// 削除可能なフラグ
 	bool isGround;
 
+	int dir;
+
+private:
+	// 攻撃関連
+	bool isAttack;
+
 private: // アニメーション関連
 	int animeIndex;
 	int fream;
@@ -44,6 +50,7 @@ public:
 	static void UnLoad();
 	void Generate(const Vector3& pos, const Vector3& dirVec, const int& generateType);
 	void Update();
+	void AttackUpdate();
 	void Draw(const ViewProjection& viewProjection_);
 
 	void UpdateEffect();
@@ -54,17 +61,23 @@ public:
 	inline bool GetGenerateType() { return generateType; }
 
 	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
+	inline void SetDirVec(const Vector3& dirVec) { this->dirVec = dirVec; }
 	inline void SetisAngleShacke(const bool& isAngleShake) { this->isAngleShake = isAngleShake; }
 	inline void SetSpeed(const float& speed) { this->speed = speed; }
 	inline void SetGravity(const float& gravity) { this->gravity = gravity; }
 	inline void SetisDestroy(const bool& isDestroy) { this->isDestroy = isDestroy; }
 	inline void SetisGround(const bool& isGround) { this->isGround = isGround; }
 	inline void SetisCanHit(const bool& isCanHit) { this->isCanHit = isCanHit; }
+	inline void SetisAttack(const bool& isAttack) { this->isAttack = isAttack; }
+	inline void SetDir(const int& dir) { this->dir = dir; }
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
 	inline float GetRadius() { return collisionRadius; }
 	inline bool GetisDestroy() { return isDestroy; }
+	inline bool GetisAttack() { return isAttack; }
+	inline bool GetisGround() { return isGround; }
+	inline int GetDir() { return dir; }
 	//inline void SetAngleShakeValue(const Vector3& angleShakeValue) { this->angleShakeValue = angleShakeValue; }
 };
 

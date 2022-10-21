@@ -141,7 +141,7 @@ void GameScene::Update()
 			//gameState = isSelect;
 
 			player->Init();
-			//stageSelect->ResetObjPos();
+			stageSelect->ResetObjPos();
 			viewProjection_.eye = { 0,0,-50 };
 			viewProjection_.target = { 0,0,0 };
 			viewProjection_.UpdateMatrix();
@@ -157,7 +157,6 @@ void GameScene::Update()
 					gameState = isSelect;
 				}
 				stageSelect->SetCurrentStage(currentStage);
-				//stageSelect->ResetObjPos();
 				CurrentStageInit();
 			}
 			if (stages[currentStage]->GetGameOver() == true)

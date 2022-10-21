@@ -33,6 +33,7 @@ public:
 	static uint32_t starTexture;
 	static uint32_t healTexture;
 	static uint32_t repairTexture;
+	static uint32_t windPressureTexture;
 
 public:
 	Particle();
@@ -65,6 +66,7 @@ public:	// ƒQƒbƒ^[
 	inline Vector3 GetRot() { return trans->rotation_; }
 	inline Vector3 GetVec() { return vec; }
 	inline float GetSpeed() { return speed; }
+	inline Vector4 GetSpriteColor() { return color; }
 
 	inline Vector2 GetSpriteSize() { return size; }
 };

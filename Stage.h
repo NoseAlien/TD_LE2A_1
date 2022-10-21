@@ -9,6 +9,7 @@
 #include "Vector2.h"
 #include "GrainScatterEffect.h"
 #include "RepairEffect.h"
+#include "WindPressureEffect.h"
 #include <vector>
 #include <memory>
 
@@ -78,6 +79,7 @@ private:
 	bool isCameraMoveStep;
 	Vector3 cameraMoveVec;
 	bool isPlayerDieEffectGenerate = false;
+	WindPressureEffect* windPressureEffect;
 
 private:
 	// ƒ‰ƒCƒ“ŠÖ˜A
@@ -95,6 +97,7 @@ private:
 	int enduranceStartTime;
 	int enduranceEndTime;
 	std::unique_ptr<WorldTransform> enduranceLineTrans;
+	std::vector<int> enduranceTimeDightsNumber;
 
 	Sprite* enduranceTimeSprites[2];
 
@@ -134,6 +137,7 @@ private:
 	void CannonUpdate();
 	void RaceUpdate();
 	void EnduranceUpdate();
+	void WaveUpdate();
 
 	void GameOverCameraUpdate();
 

@@ -108,6 +108,7 @@ void Ground::Init(const int& maxhp)
 	surprisedAnimeMaxTimer = 3;
 	surprisedAnimeIndex = 0;
 	surprisedCount = 0;
+	faceSprite->SetTextureHandle(idleTexture);
 }
 
 void Ground::Update()

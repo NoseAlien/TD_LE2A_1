@@ -5,6 +5,7 @@
 #include "Collision.h"
 #include "SceneChange.h"
 #include "Star.h"
+#include "WindPressureEffect.h"
 
 SceneManager::SceneManager()
 {
@@ -24,7 +25,7 @@ SceneManager::~SceneManager()
 	Thorn::UnLoad();
 	Cannon::UnLoad();
 	StageSelect::UnLoad();
-
+	WindPressureEffect::DestroyInstance();
 }
 
 

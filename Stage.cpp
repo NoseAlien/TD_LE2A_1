@@ -83,6 +83,8 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 
 	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber - 1], { 960,540 }));
 	stageNumberSprite->SetAnchorPoint({ 0.5f,0.5f });
+
+	windPressureEffect = WindPressureEffect::GetInstance();
 }
 Stage::~Stage()
 {
@@ -103,6 +105,8 @@ Stage::~Stage()
 	{
 		delete enduranceTimeSprites[i];
 	}
+
+	windPressureEffect->Clear();
 }
 
 Vector2 clearStrSize(0, 0);
@@ -193,6 +197,9 @@ void Stage::Init()
 	enduranceNowTime = 0;
 	enduranceStartTime = 0;
 	enduranceEndTime = 0;
+	enduranceTimeDightsNumber.resize(2);
+	enduranceTimeDightsNumber[0] = 3;
+	enduranceTimeDightsNumber[0] = 0;
 
 	enduranceLineTrans = move(make_unique<WorldTransform>());
 	enduranceLineTrans->Initialize();
@@ -208,6 +215,7 @@ void Stage::Init()
 	stageNumberSprite->SetSize({ 0,0 });
 	stageNumberSprite->SetRotation(0);
 	stageNumberSprite->SetColor({ 1,1,1,1 });
+
 }
 
 void Stage::Update()
@@ -297,6 +305,7 @@ void Stage::Update()
 		}
 	}
 
+	WaveUpdate();
 	GameOverCameraUpdate();
 	ClearTimeUpdate();
 
@@ -304,6 +313,7 @@ void Stage::Update()
 	viewProjection_.UpdateMatrix();
 	player->EffectUpdate();
 	ground->EffectUpdate();
+	windPressureEffect->Update();
 	grainScatterEffect->Update();
 	repairEffect->Update();
 }
@@ -392,6 +402,7 @@ void Stage::DrawEffectFront()
 
 	grainScatterEffect->Draw();
 	repairEffect->Draw();
+	windPressureEffect->Draw();
 	player->DrawSpriteFront();
 }
 void Stage::DrawEffectBack()
@@ -659,7 +670,6 @@ void Stage::BlockGenerateStar(const Vector3& pos, const int& num)
 		stars.back()->Generate(pos, { cosf(angle),sinf(angle),0 }, 1);
 		stars.back()->SetSpeed(Random::RangeF(0.5, 1.5));
 	}
-
 }
 
 // 自機
@@ -683,13 +693,32 @@ void Stage::PlayerUpdate()
 				{ temp->GetScale().x,temp->GetScale().y },
 			};
 
-			if (collision->SquareHitSquare(playerCollider, starCollider) &&
-				temp->GetisDestroy() == false)
-			{
-				ground->Damage(player->GetStarAttackDamage());
-				grainScatterEffect->Generate(temp->GetPos());
-				temp->SetisDestroy(true);
-			}
+			//if (collision->SquareHitSquare(playerCollider, starCollider) &&
+			//	temp->GetisDestroy() == false)
+			//{
+			//	//ground->Damage(player->GetStarAttackDamage());
+			//	//grainScatterEffect->Generate(temp->GetPos());
+			//	//temp->SetisDestroy(true);
+
+			//	temp->SetisAttack(true);
+			//	temp->SetSpeed(0.4);
+			//	int dir = 0;
+			//	if (temp->GetPos().x - player->GetPos().x >= 0)
+			//	{
+			//		dir = 1;
+			//	}
+			//	else
+			//	{
+			//		dir = -1;
+			//	}
+
+			//	temp->SetDirVec(
+			//		{
+			//			dir * cosf(DegreeToRad(75)),
+			//			cosf(DegreeToRad(75)),
+			//			0
+			//		});
+			//}
 		}
 		// ブロックを巻き込む処理
 		for (const auto& temp : blocks)
@@ -901,6 +930,14 @@ void Stage::StarUpdate()
 					tempStar->SetSpeed(0);
 					tempStar->SetisGround(true);
 				}
+				if (tempStar->GetisAttack() == true)
+				{
+					windPressureEffect->Generate(tempStar->GetPos(), tempStar->GetDir());
+					ground->Damage(player->GetStarAttackDamage());
+					tempStar->SetisDestroy(true);
+					tempStar->SetisAttack(false);
+					tempStar->SetSpeed(0);
+				}
 			}
 		}
 
@@ -932,12 +969,14 @@ void Stage::StarUpdate()
 			if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40 ||
 				temp->GetisDestroy() == true)
 			{
+				grainScatterEffect->Generate(temp->GetPos());
 				stars.remove(temp);
 				break;
 			}
 		}
 		if (temp->GetisDestroy() == true)
 		{
+			grainScatterEffect->Generate(temp->GetPos());
 			stars.remove(temp);
 			break;
 		}
@@ -1152,7 +1191,6 @@ void Stage::RaceUpdate()
 }
 
 // 耐久戦
-std::vector<int> enduranceTimeDightsNumber;
 void Stage::EnduranceUpdate()
 {
 	if (isGetTime == 0)
@@ -1172,8 +1210,6 @@ void Stage::EnduranceUpdate()
 			isGetTime = 2;
 		}
 	}
-
-	enduranceTimeDightsNumber.resize(2);
 
 	if (GetDightsNumber(enduranceTime - enduranceEndTime).size() == 2)
 	{
@@ -1195,4 +1231,42 @@ void Stage::EnduranceUpdate()
 	{
 		enduranceTimeSprites[i]->SetTextureHandle(numberSheet[enduranceTimeDightsNumber[i]]);
 	}
+}
+
+void Stage::WaveUpdate()
+{
+	for (int i = 0; i < windPressureEffect->waves.size(); i++)
+	{
+		for (const auto& temp : stars)
+		{
+			if (collision->SphereHitSphere(
+				windPressureEffect->waves[i]->GetPos(), 0.75, temp->GetPos(), 1.5))
+			{
+				if (/*temp->GetisCanHit() == true && temp->GetisGround() == true && */
+					temp->GetisDestroy() == false)
+				{
+					temp->SetisAttack(true);
+					temp->SetSpeed(0.4);
+					int dir = 0;
+					if (temp->GetPos().x - player->GetPos().x >= 0)
+					{
+						dir = 1;
+					}
+					else
+					{
+						dir = -1;
+					}
+
+					temp->SetDir(dir);
+					temp->SetDirVec(
+						{
+							dir * cosf(DegreeToRad(75)),
+							cosf(DegreeToRad(75)),
+							0
+						});
+				}
+			}
+		}
+	}
+
 }
