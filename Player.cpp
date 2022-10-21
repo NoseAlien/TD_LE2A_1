@@ -164,15 +164,69 @@ void Player::Update()
 }
 void Player::SelectSceneUpdate()
 {
-	AttackUpdate();
+	if (input_->TriggerKey(DIK_SPACE))
+	{
+		trans->rotation_ = { DegreeToRad(180),0,0 };
+
+		if (trans->translation_.y == 20)
+		{
+			isAttack = true;
+			addScaleStep = 1;
+			isWeakAttack = true;
+			maxSize = 1;
+			trans->scale_ = { 2,2,2 };
+			speed *= 0.5;
+		}
+		audio->PlayWave(jumpSE);
+	}
+	if (isAttack == true && isWeakAttack == true)
+	{
+		if (isReverse == false)
+		{
+			trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
+		}
+		else
+		{
+			if (addScaleStep == 1)
+			{
+				stopTimer++;
+
+				trans->translation_.y -= 1;
+				trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+				trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+				trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
+				if (trans->scale_.y <= 0)
+				{
+					trans->translation_.y = 20;
+					trans->scale_ = { 0,0,0 };
+					addScaleStep = 2;
+				}
+			}
+			else if (addScaleStep == 2)
+			{
+				trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
+				trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
+				trans->scale_.z -= 0.05 * slowMotion->GetSlowExrate();
+				trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
+
+				if (trans->scale_.x >= radius)
+				{
+					isReverse = false;		// ”½“]ƒtƒ‰ƒO
+					isWeakAttack = false;	// ŽãUŒ‚
+					isHeavyAttack = false;	// ‹­UŒ‚
+					isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
+					isAttack = false;		// UŒ‚ƒtƒ‰ƒO
+
+					stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
+					trans->scale_ = { radius,radius,radius };
+					trans->rotation_ = { DegreeToRad(180),0,0 };
+
+				}
+			}
+		}
+	}
+
 	trans->UpdateMatrix();
-	//spawnTrans->translation_ =
-	//{
-	//	trans->translation_.x,
-	//	trans->translation_.y + 10,
-	//	trans->translation_.z,
-	//};
-	//spawnTrans->UpdateMatrix();
 }
 void Player::Draw(const ViewProjection& viewProjection_)
 {

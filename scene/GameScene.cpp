@@ -253,7 +253,6 @@ void GameScene::Draw()
 	{
 		selectFrameSprite->Draw(); // セレクト画面のフレーム
 	}
-	sceneChange->Draw();
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
@@ -262,7 +261,7 @@ void GameScene::Draw()
 	// ------------------------------------------------------------------ //
 
 	// ゲーム時手前に表示するエフェクトの描画
-	Sprite::PreDraw(commandList, Sprite::BlendMode::kNormal);
+	Sprite::PreDraw(commandList);
 	if (gameState == isGame)
 	{
 		stages[currentStage]->DrawEffectFront();	// エフェクト
@@ -280,6 +279,12 @@ void GameScene::Draw()
 		player->Draw(viewProjection_);	// 自機
 	}
 	Model::PostDraw();
+
+	// シーンチェンジの描画
+	Sprite::PreDraw(commandList);
+	sceneChange->Draw();
+	Sprite::PostDraw();
+
 }
 
 IScene* GameScene::GetNextScene()
@@ -379,26 +384,18 @@ void GameScene::SelectUpdate()
 
 		// テキストの座標
 		auto tempPos1 = stageSelect->GetTextPos(currentStage);
-		tempPos1.y -= speed * 4;
+		// 距離：0.5 プライヤーが下に降りるフレーム：7.5
+		tempPos1.y -= 23 / 7.5f;
 		if (tempPos1.y <= -12)
 		{
 			tempPos1.y = -12;
 		}
 		stageSelect->SetTextPos(tempPos1, currentStage);
 
-		// 板の座標
-	/*	auto tempPos2 = stageSelect->GetSelectPos(currentStage);
-		tempPos2.y -= speed;
-		if (tempPos2.y <= -12)
-		{
-			tempPos2.y = -12;
-		}
-		stageSelect->SetSelectPos(tempPos2, currentStage);*/
-
 		// 板のスケール
 		auto tempScale2 = stageSelect->GetSelectScale(currentStage);
-		tempScale2.y -= speed / 2;
-
+		// スケールサイズ：0.5 プライヤーが下に降りるフレーム：7.5
+		tempScale2.y -= 0.5f / 7.5f;
 		if (tempScale2.y < 0.0001)
 		{
 			tempScale2.y = 0.0001;
@@ -406,9 +403,9 @@ void GameScene::SelectUpdate()
 		stageSelect->SetSelectScale(tempScale2, currentStage);
 
 		//if (player->GetPos().y <= 2)
-		if (player->GetPos().y <= -4.5 + player->GetRadius())
+		if (player->GetPos().y <= -7)
 		{
-			player->SetPos({ player->GetPos().x, -3.5f + player->GetRadius(), player->GetPos().z });
+			player->SetPos({ player->GetPos().x, -7, player->GetPos().z });
 			player->SetisReverse(true);
 		}
 	}
@@ -418,24 +415,17 @@ void GameScene::SelectUpdate()
 
 		// テキストの座標
 		auto tempPos1 = stageSelect->GetTextPos(currentStage);
-		tempPos1.y += speed * 4;
+		// 距離：0.5 プライヤーが下に降りるフレーム：7.5
+		tempPos1.y += 23 / 7.5f;
 		if (tempPos1.y >= 11)
 		{
 			tempPos1.y = 11;
 		}
 		stageSelect->SetTextPos(tempPos1, currentStage);
 
-		/*	auto tempPos2 = stageSelect->GetSelectPos(currentStage);
-			tempPos2.y += speed;
-			if (tempPos2.y >= 0)
-			{
-				tempPos2.y = 0;
-			}
-			stageSelect->SetSelectPos(tempPos2, currentStage);*/
-
 		auto tempScale2 = stageSelect->GetSelectScale(currentStage);
-		tempScale2.y += speed / 2;
-
+		// スケールサイズ：0.5 プライヤーが下に降りるフレーム：7.5
+		tempScale2.y += 0.5 / 7.5;
 		if (tempScale2.y > 0.5f)
 		{
 			tempScale2.y = 0.5f;

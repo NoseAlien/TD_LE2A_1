@@ -728,24 +728,24 @@ void Stage::PlayerUpdate()
 		//	//}
 		//}
 		// ƒuƒƒbƒN‚ðŠª‚«ž‚Þˆ—
-		for (const auto& temp : blocks)
-		{
-			SquareCollider blockCollider =
-			{
-				{ temp->GetPos().x,temp->GetPos().y },
-				{ temp->GetScale().x,temp->GetScale().y },
-			};
+		//for (const auto& temp : blocks)
+		//{
+		//	SquareCollider blockCollider =
+		//	{
+		//		{ temp->GetPos().x,temp->GetPos().y },
+		//		{ temp->GetScale().x,temp->GetScale().y },
+		//	};
 
-			if (collision->SquareHitSquare(playerCollider, blockCollider))
-			{
-				if (temp->GetHaveStar() == true)
-				{
-					BlockGenerateStar(temp->GetPos(), 5);
-				}
-				blocks.remove(temp);
-				break;
-			}
-		}
+		//	if (collision->SquareHitSquare(playerCollider, blockCollider))
+		//	{
+		//		if (temp->GetHaveStar() == true)
+		//		{
+		//			BlockGenerateStar(temp->GetPos(), 5);
+		//		}
+		//		blocks.remove(temp);
+		//		break;
+		//	}
+		//}
 	}
 
 	// ¯‚ð‚Â‚Ô‚·ˆ—
@@ -756,7 +756,7 @@ void Stage::PlayerUpdate()
 			player->GetisGround() == false && player->GetisEngulfAttack() == false))
 		{
 			if (temp->GetisCanHit() == true && temp->GetisDestroy() == false &&
-				temp->GetisAttack() == false && temp->GetisGround() == false)
+				temp->GetisAttack() == false && temp->GetisGround() == true)
 			{
 				player->HaveStarNumIncriment();
 				grainScatterEffect->Generate(temp->GetPos());
@@ -940,7 +940,7 @@ void Stage::StarUpdate()
 				}
 				if (tempStar->GetisAttack() == true)
 				{
-					windPressureEffect->Generate(tempStar->GetPos(), tempStar->GetDir());
+					//windPressureEffect->Generate(tempStar->GetPos(), tempStar->GetDir());
 					ground->Damage(player->GetStarAttackDamage());
 					tempStar->SetisDestroy(true);
 					tempStar->SetisAttack(false);
@@ -1259,7 +1259,7 @@ void Stage::WaveUpdate()
 				{
 					temp->SetGravity(1);
 					temp->SetisAttack(true);
-					temp->SetSpeed(0.4);
+					temp->SetSpeed(0);
 					int dir = 0;
 					if (temp->GetPos().x - windPressureEffect->waves[i]->GetPos().x >= 0)
 					{
