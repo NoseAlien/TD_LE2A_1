@@ -60,7 +60,6 @@ void GameScene::Initialize()
 
 	stages.clear();
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 2)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 3)));
 	stages.emplace_back(move(make_unique<Stage>(RaceStage, 4)));
@@ -70,6 +69,8 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 8)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 9)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 10)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
+
 
 	stageSelect = move(make_unique<StageSelect>(stages.size()));
 
@@ -303,26 +304,31 @@ void GameScene::CurrentStageInit()
 
 	switch (currentStage)
 	{
-	case 0:	// デバッグ用のステージ
-		ground->Init(10000);
-		//stages[currentStage]->GenerateBlock({ 20,0,0 }, false, { 20,2,2 });
-
+	case 0:
+		ground->Init(10);
 		break;
 	case 1:
 		ground->Init(25);
+		for (int i = 0; i < 3; i++)
+		{
+			stages[currentStage]->GenerateStar({ (float)(-20 + i * 20),0,0 });
+		}
+
+		//stages[currentStage]->GenerateThorn({ 25,21.5,0 }, false);
+		//stages[currentStage]->GenerateThorn({ -25,21.5,0 }, false);
 		break;
 	case 2:
 		ground->Init(35);
-		stages[currentStage]->GenerateThorn({ 25,21.5,0 }, false);
-		stages[currentStage]->GenerateThorn({ -25,21.5,0 }, false);
-		break;
-	case 3:
-		ground->Init(35);
-		stages[currentStage]->GenerateThorn({ -20,21.5,0 }, false);
-		stages[currentStage]->GenerateThorn({ 20,-10,0 }, true);
+		for (int i = 0; i < 4; i++)
+		{
+			stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 });
+		}
+
+		//stages[currentStage]->GenerateThorn({ -20,21.5,0 }, false);
+		//stages[currentStage]->GenerateThorn({ 20,-10,0 }, true);
 		//stages[currentStage]->GenerateThorn({ 0,-10,0 }, true);
 		break;
-	case 4:
+	case 3:
 		ground->Init(50);
 		stages[currentStage]->GenerateGoal({ 150,20,0 });
 
@@ -331,37 +337,41 @@ void GameScene::CurrentStageInit()
 			stages[currentStage]->GenerateStar({ (float)(15 + i * 15),0,0 });
 		}
 		break;
-	case 5:
+	case 4:
 		ground->Init(55);
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		break;
-	case 6:
+	case 5:
 		ground->Init(60);
 		stages[currentStage]->GenerateBlock({ 20,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ -20,0,0 }, true, { 2,2,2 });
 		break;
-	case 7:
+	case 6:
 		ground->Init(50);
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ 4,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ -4,0,0 }, true, { 2,2,2 });
 		break;
-	case 8:
+	case 7:
 		ground->Init(80);
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
-	case 9:
+	case 8:
 		ground->Init(40);
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
-	case 10:
+	case 9:
 		ground->Init(1000000);
 		stages[currentStage]->SetisEndurance(true);
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
+		break;
+	case 10:	// デバッグ用のステージ
+		ground->Init(10000);
+		//stages[currentStage]->GenerateBlock({ 20,0,0 }, false, { 20,2,2 });
 		break;
 
 	default:

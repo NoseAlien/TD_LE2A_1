@@ -43,7 +43,6 @@ private:
 	uint32_t jumpSE = 0;
 	uint32_t damageSE = 0;
 
-
 	SlowMotion* slowMotion;
 
 private:

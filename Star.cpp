@@ -11,7 +11,7 @@ Model* Star::starModel = nullptr;
 Star::Star() :
 	gravity(2), collisionRadius(1),
 	isCanHit(false), maxCanHitTimer(10), stageType(BaseStage),
-	isChangeColor(false), changeColorTimer(0), changeColorMaxTimer(360),
+	isChangeColor(false), changeColorTimer(0), changeColorMaxTimer(210),
 	isSucked(false), suckedMaxTimer(180), suckedTimer(0)
 {
 	grainMoveEffect = move(make_unique<GrainMoveEffect>());
