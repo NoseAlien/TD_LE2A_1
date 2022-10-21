@@ -71,18 +71,11 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 		enduranceTimeSprites[i]->SetSize({ 32,32 });
 	}
 
-	grainScatterEffect = move(make_unique<GrainScatterEffect>());
-	repairEffect = move(make_unique<RepairEffect>());
-
-	for (int i = 1; i <= 10; i++)
-	{
-		stageNumberTextures.push_back(
-			TextureManager::Load(
-				"SpriteTexture/select_nuber/stage_number_" + to_string(i) + ".png"));
-	}
-
 	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber - 1], { 960,540 }));
 	stageNumberSprite->SetAnchorPoint({ 0.5f,0.5f });
+
+	grainScatterEffect = move(make_unique<GrainScatterEffect>());
+	repairEffect = move(make_unique<RepairEffect>());
 
 	windPressureEffect = WindPressureEffect::GetInstance();
 }
@@ -129,6 +122,13 @@ void Stage::Load()
 
 	lineModel = Model::CreateFromOBJ("lineModel", true);
 	lineModelTexture = TextureManager::Load("lineModel/lineModel2.png");
+
+	for (int i = 1; i <= 10; i++)
+	{
+		stageNumberTextures.push_back(
+			TextureManager::Load(
+				"SpriteTexture/select_nuber/stage_number_" + to_string(i) + ".png"));
+	}
 }
 void Stage::UnLoad()
 {
@@ -760,7 +760,15 @@ void Stage::PlayerUpdate()
 			{
 				player->HaveStarNumIncriment();
 				grainScatterEffect->Generate(temp->GetPos());
-				ground->Damage(player->GetHaveStarNum() * 5);
+
+				if (temp->GetisChangeColor() == false)
+				{
+					ground->Damage(player->GetHaveStarNum() * 5);
+				}
+				else
+				{
+					ground->Damage(player->GetHaveStarNum() * 10);
+				}
 				temp->SetisDestroy(true);
 			}
 		}
@@ -856,52 +864,52 @@ void Stage::FloorUpdate()
 			});
 	}
 
-	// ‘å‚«‚­‚È‚éˆ—
-	if (stageType != RaceStage)
-	{
-		const int starSize = 5;
-		if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
-		{
-			ground->SetisAddScaleCountDown(1);
-		}
-		if (ground->GetisAddScaleCountDown() == 1)
-		{
-			for (const auto& temp : stars)
-			{
-				temp->SetisAngleShacke(true);
-			}
-		}
-		if (stars.size() < starSize)
-		{
-			ground->SetisAddScaleCountDown(0);
-			ground->SetisSuctionStar(false);
-			for (const auto& temp : stars)
-			{
-				temp->SetisAngleShacke(false);
-			}
-		}
+	//// ‘å‚«‚­‚È‚éˆ—
+	//if (stageType != RaceStage)
+	//{
+	//	const int starSize = 5;
+	//	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
+	//	{
+	//		ground->SetisAddScaleCountDown(1);
+	//	}
+	//	if (ground->GetisAddScaleCountDown() == 1)
+	//	{
+	//		for (const auto& temp : stars)
+	//		{
+	//			temp->SetisAngleShacke(true);
+	//		}
+	//	}
+	//	if (stars.size() < starSize)
+	//	{
+	//		ground->SetisAddScaleCountDown(0);
+	//		ground->SetisSuctionStar(false);
+	//		for (const auto& temp : stars)
+	//		{
+	//			temp->SetisAngleShacke(false);
+	//		}
+	//	}
 
-		// ¯‚ð‹zŽû‚·‚éˆ—
-		if (ground->GetisSuctionStar() == true)
-		{
-			for (const auto& temp : stars)
-			{
-				repairEffect->Generate(temp->GetPos());
-			}
-			stars.clear();
-			ground->SetisSuctionStar(false);
-		}
+	//	// ¯‚ð‹zŽû‚·‚éˆ—
+	//	if (ground->GetisSuctionStar() == true)
+	//	{
+	//		for (const auto& temp : stars)
+	//		{
+	//			repairEffect->Generate(temp->GetPos());
+	//		}
+	//		stars.clear();
+	//		ground->SetisSuctionStar(false);
+	//	}
 
-		// ”ªŒÂW‚Ü‚Á‚½‚©
-		if (stars.size() >= starSize - 2)
-		{
-			ground->SetisDanger(true);
-		}
-		else
-		{
-			ground->SetisDanger(false);
-		}
-	}
+	//	// ”ªŒÂW‚Ü‚Á‚½‚©
+	//	if (stars.size() >= starSize - 2)
+	//	{
+	//		ground->SetisDanger(true);
+	//	}
+	//	else
+	//	{
+	//		ground->SetisDanger(false);
+	//	}
+	//}
 
 	ground->Update();
 }
@@ -941,7 +949,14 @@ void Stage::StarUpdate()
 				if (tempStar->GetisAttack() == true)
 				{
 					//windPressureEffect->Generate(tempStar->GetPos(), tempStar->GetDir());
-					ground->Damage(player->GetStarAttackDamage());
+					if (tempStar->GetisChangeColor() == false)
+					{
+						ground->Damage(player->GetStarAttackDamage());
+					}
+					else
+					{
+						ground->Damage(player->GetStarAttackDamage() * 2);
+					}
 					tempStar->SetisDestroy(true);
 					tempStar->SetisAttack(false);
 					tempStar->SetSpeed(0);
@@ -979,9 +994,12 @@ void Stage::StarUpdate()
 			if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40 ||
 				temp->GetisDestroy() == true)
 			{
-				grainScatterEffect->Generate(temp->GetPos());
-				stars.remove(temp);
-				break;
+				if (temp->GetisSucked() == false)
+				{
+					grainScatterEffect->Generate(temp->GetPos());
+					stars.remove(temp);
+					break;
+				}
 			}
 		}
 		if (temp->GetisDestroy() == true)

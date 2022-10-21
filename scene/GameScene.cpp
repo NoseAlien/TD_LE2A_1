@@ -251,6 +251,7 @@ void GameScene::Draw()
 	}
 	else if (gameState == isSelect)
 	{
+		stageSelect->DrawSprite();
 		selectFrameSprite->Draw(); // セレクト画面のフレーム
 	}
 

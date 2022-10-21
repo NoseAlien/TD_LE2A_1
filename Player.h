@@ -27,6 +27,8 @@ public:	// テクスチャー
 	int animeIndex;
 	int fream;
 	int maxFream;
+	static uint32_t redPixel;		// テクスチャー
+
 
 private:
 	Input* input_ = nullptr;
@@ -42,7 +44,6 @@ private:
 	uint32_t damageSE = 0;
 
 
-	uint32_t redPixel = 0;			// テクスチャー
 	SlowMotion* slowMotion;
 
 private:

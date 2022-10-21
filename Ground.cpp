@@ -133,27 +133,27 @@ void Ground::Update()
 		}
 	}
 
-	if (isAddScale == true)
-	{
-		//const float difference = (fabs(trans->translation_.y) - 9.5) / 3;
-		const float difference = 1.3 / 3;
-		addScale += 0.01;
-		trans->scale_.y += addScale;
-		if (trans->scale_.y - preScaleY >= difference)
-		{
-			hp += 10;
-			if (hp >= maxhp)
-			{
-				hp = maxhp;
-			}
+	//if (isAddScale == true)
+	//{
+	//	//const float difference = (fabs(trans->translation_.y) - 9.5) / 3;
+	//	const float difference = 1.3 / 3;
+	//	addScale += 0.01;
+	//	trans->scale_.y += addScale;
+	//	if (trans->scale_.y - preScaleY >= difference)
+	//	{
+	//		hp += 10;
+	//		if (hp >= maxhp)
+	//		{
+	//			hp = maxhp;
+	//		}
 
-			trans->scale_.y = preScaleY + difference;
-			addScale = 0;
-			addScaleCount = 240;
-			isAddScaleCountDown = 0;
-			isAddScale = false;
-		}
-	}
+	//		trans->scale_.y = preScaleY + difference;
+	//		addScale = 0;
+	//		addScaleCount = 240;
+	//		isAddScaleCountDown = 0;
+	//		isAddScale = false;
+	//	}
+	//}
 
 	if (hp <= 0)
 	{
@@ -161,6 +161,10 @@ void Ground::Update()
 		breakGroundEffect->Generate(trans->translation_, { 46,10,5 });
 		audio->PlayWave(defeatSE);
 		isAlive = false;
+	}
+	if (hp >= maxhp)
+	{
+		hp = maxhp;
 	}
 
 	// まばたきする間隔を決めるタイマー
@@ -248,7 +252,7 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 		{
 			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[3]);
 		}
-		else if (hp <= maxhp)
+		else
 		{
 			enemyModel->Draw(*trans, viewProjection_, enemyDangerTexture);
 		}
@@ -267,7 +271,7 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 		{
 			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[0]);
 		}
-		else if (hp <= maxhp)
+		else
 		{
 			enemyModel->Draw(*trans, viewProjection_);
 		}

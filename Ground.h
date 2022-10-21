@@ -92,9 +92,17 @@ public:
 		audio->PlayWave(largeDamageSE);
 	}
 
+	inline void AddHP(const int& addhp)
+	{
+		hp += addhp;
+		//trans->scale_.y += (fabs(trans->translation_.y) - 9.5) / 15;
+		trans->scale_.y += 1.2f / 15;
+	}
+
 	inline Vector3 GetPos() { return trans->translation_; }
 	//inline Vector3 GetScale() { return trans->scale_; }
 	inline Vector3 GetScale() { return { 46,10 * trans->scale_.y,5 }; }
+	inline Vector3 GetScaleExrate() { return trans->scale_; }
 	inline float GetRadius() { return collisionRadius; }
 	inline int GetHP() { return hp; }
 	inline int GetAddScaleCount() { return addScaleCount; }
@@ -110,6 +118,7 @@ public:
 	inline void SetAddScaleCount(const int& addScaleCount) { this->addScaleCount = addScaleCount; }
 	inline void SetisSuctionStar(const bool& isSuctionStar) { this->isSuctionStar = isSuctionStar; }
 	inline void SetisHit(const int& isHit) { this->isHit = isHit; }
+
 
 public:
 	static Ground* GetInstance();

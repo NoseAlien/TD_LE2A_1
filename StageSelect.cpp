@@ -2,6 +2,8 @@
 #include "GameScene.h"
 #include "Input.h"
 #include "Player.h"
+#include "Stage.h"
+#include "Particle.h"
 using namespace std;
 
 Model* StageSelect::stageSelectModel = nullptr;
@@ -11,10 +13,20 @@ StageSelect::StageSelect(const int& stageSize) :
 	currentStage(0), moveSpeed(0.13), stageSize(stageSize),
 	stageSelectSize(0.5)
 {
+	for (int i = 0; i < Stage::stageNumberTextures.size(); i++)
+	{
+		stageNumberSprites.push_back(Sprite::Create(Stage::stageNumberTextures[i], { 0,0 }));
+		stageNumberSprites.back()->SetAnchorPoint({ 0.5f,0.75f });
+		stageNumberSprites.back()->SetSize({ 420,98 });
+	}
 }
 
 StageSelect::~StageSelect()
 {
+	for (int i = 0; i < Stage::stageNumberTextures.size(); i++)
+	{
+		delete stageNumberSprites[i];
+	}
 }
 
 void StageSelect::Load()
@@ -88,7 +100,20 @@ void StageSelect::Update()
 		stageTextTrans[i]->UpdateMatrix();
 	}
 
+	StageNumberUpdate();
+
 	viewProjection_.UpdateMatrix();
+}
+
+void StageSelect::StageNumberUpdate()
+{
+	for (int i = 0; i < stageNumberSprites.size(); i++)
+	{
+		Vector2 tempPos = WorldToScreen(stageTextTrans[i]->translation_, viewProjection_);
+
+		stageNumberSprites[i]->SetPosition(tempPos);
+	}
+
 }
 
 void StageSelect::Draw()
@@ -97,6 +122,14 @@ void StageSelect::Draw()
 	{
 		stageSelectModel->Draw(*stageSelectTrans[i], viewProjection_);
 		stageTextModel->Draw(*stageTextTrans[i], viewProjection_);
+	}
+}
+
+void StageSelect::DrawSprite()
+{
+	for (int i = 0; i < stageNumberSprites.size(); i++)
+	{
+		stageNumberSprites[i]->Draw();
 	}
 }
 

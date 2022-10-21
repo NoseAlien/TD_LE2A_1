@@ -99,10 +99,12 @@
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\TextureManager.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
+    <ClCompile Include="BezierCurve.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BreakGroundEffect.cpp" />
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="Easing.cpp" />
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="GrainMoveEffect.cpp" />
     <ClCompile Include="GrainScatterEffect.cpp" />
@@ -155,10 +157,12 @@
     <ClInclude Include="base\SafeDelete.h" />
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
+    <ClInclude Include="BezierCurve.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="BreakGroundEffect.h" />
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="Easing.h" />
     <ClInclude Include="Goal.h" />
     <ClInclude Include="GrainMoveEffect.h" />
     <ClInclude Include="GrainScatterEffect.h" />

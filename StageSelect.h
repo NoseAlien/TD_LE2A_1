@@ -1,6 +1,7 @@
 #pragma once
 #include "WorldTransform.h"
 #include "Model.h"
+#include "Sprite.h"
 #include <memory>
 
 class StageSelect
@@ -11,6 +12,8 @@ private:
 	std::vector<std::unique_ptr<WorldTransform>> stageSelectTrans;
 	static Model* stageTextModel;
 	std::vector<std::unique_ptr<WorldTransform>> stageTextTrans;
+
+	std::vector<Sprite*> stageNumberSprites;
 
 	int stageSize;
 	int currentStage;
@@ -23,7 +26,9 @@ public:
 	static void UnLoad();
 	void Initialize();
 	void Update();
+	void StageNumberUpdate();
 	void Draw();
+	void DrawSprite();
 	void ResetObjPos();
 
 	inline int GetCurrentStage() { return currentStage; }

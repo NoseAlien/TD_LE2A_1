@@ -31,15 +31,15 @@ enum StageProgress
 
 class Stage
 {
-private:
+public:
 	// ゲーム開始時のステージ表示
 	static std::vector<uint32_t> stageNumberTextures;
+private:
 	std::unique_ptr<Sprite> stageNumberSprite;
 	bool isShowStageNumber;
 	float sizeExrate;
 	float rotAngel;
 	float alpha;
-
 
 private:
 	// 開始カウント関連

@@ -11,6 +11,7 @@ Audio* Player::audio = nullptr;
 uint32_t Player::playerTexAnime[9] = {};
 uint32_t Player::heartTexture = {};
 unique_ptr<Model> Player::spawnModel = nullptr;
+uint32_t Player::redPixel = 0;
 
 Player::Player() :
 	isAttack(false), maxSpeed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),

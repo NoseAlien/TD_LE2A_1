@@ -10,11 +10,14 @@ Model* Star::starModel = nullptr;
 
 Star::Star() :
 	gravity(2), collisionRadius(1),
-	isCanHit(false), maxCanHitTimer(10), stageType(BaseStage)
+	isCanHit(false), maxCanHitTimer(10), stageType(BaseStage),
+	isChangeColor(false), changeColorTimer(0), changeColorMaxTimer(360),
+	isSucked(false), suckedMaxTimer(180), suckedTimer(0)
 {
 	grainMoveEffect = move(make_unique<GrainMoveEffect>());
 	trans = new WorldTransform();
 	trans->Initialize();
+	suckedCurve = move(make_unique<BezierCurve>(60));
 }
 
 Star::~Star()
@@ -138,6 +141,8 @@ void Star::Update()
 
 	AttackUpdate();
 
+	SuckedUpdate();
+
 	trans->UpdateMatrix();
 }
 
@@ -159,6 +164,72 @@ void Star::AttackUpdate()
 	}
 }
 
+void Star::SuckedUpdate()
+{
+	changeColorTimer++;
+	if (changeColorTimer >= changeColorMaxTimer)
+	{
+		changeColorTimer = changeColorMaxTimer;
+		isChangeColor = true;
+	}
+
+	if (isChangeColor == true)
+	{
+		suckedTimer++;
+		if (suckedTimer >= suckedMaxTimer)
+		{
+			suckedTimer = suckedMaxTimer;
+			if (isSucked == false)
+			{
+				Vector3 targetPos(
+					ground->GetPos().x + 29.5,
+					ground->GetPos().y + 6 * ground->GetScaleExrate().y,
+					-5);
+
+				Vector3 p1 =
+				{
+					trans->translation_.x - 10,
+					(targetPos.y - trans->translation_.y) / 3,
+					-10,
+				};
+
+				Vector3 p2 =
+				{
+					(targetPos.x - trans->translation_.x) / 2,
+					(targetPos.y - trans->translation_.y) / 2,
+					-15,
+				};
+
+				Vector3 p3 =
+				{
+					targetPos.x,
+					targetPos.y,
+					-10,
+				};
+
+				suckedCurve->AddPoint(trans->translation_);
+				suckedCurve->AddPoint(p1);
+				suckedCurve->AddPoint(p2);
+				suckedCurve->AddPoint(p3);
+				suckedCurve->AddPoint(targetPos);
+				isSucked = true;
+			}
+		}
+	}
+
+	if (isSucked == true)
+	{
+		suckedCurve->Update();
+		trans->translation_ = suckedCurve->InterPolation(BezierCurve::InterPolationType::EaseIn);
+
+		if (suckedCurve->GetisEnd() == true)
+		{
+			ground->AddHP(2);
+			isDestroy = true;
+		}
+	}
+}
+
 void Star::Draw(const ViewProjection& viewProjection_)
 {
 	fream++;
@@ -171,7 +242,15 @@ void Star::Draw(const ViewProjection& viewProjection_)
 		}
 		fream = 0;
 	}
-	starModel->Draw(*trans, viewProjection_, Player::playerTexAnime[animeIndex]);
+
+	if (isChangeColor == false)
+	{
+		starModel->Draw(*trans, viewProjection_, Player::playerTexAnime[animeIndex]);
+	}
+	else
+	{
+		starModel->Draw(*trans, viewProjection_, Player::redPixel);
+	}
 }
 
 void Star::DrawEffectBack()

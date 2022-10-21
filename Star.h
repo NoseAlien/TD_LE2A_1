@@ -1,8 +1,8 @@
 #pragma once
 #include "WorldTransform.h"
 #include "Model.h"
-#include "Input.h"
 #include "GrainMoveEffect.h"
+#include "BezierCurve.h"
 #include <memory>
 
 class Star
@@ -14,8 +14,6 @@ private:
 	WorldTransform* trans = nullptr;
 	static Model* starModel; //= nullptr;		// モデル
 	uint32_t starTexture;
-
-	Input* input_ = nullptr;
 
 	float speed;
 	bool isCanHit;
@@ -35,6 +33,19 @@ private:
 	int dir;
 
 private:
+	// 色変わる関連
+	bool isChangeColor;
+	int changeColorTimer;
+	int changeColorMaxTimer;
+
+private:
+	// 床に吸い込まれる関連
+	bool isSucked;
+	int suckedMaxTimer;
+	int suckedTimer;
+	std::unique_ptr<BezierCurve> suckedCurve;
+
+private:
 	// 攻撃関連
 	bool isAttack;
 
@@ -51,6 +62,7 @@ public:
 	void Generate(const Vector3& pos, const Vector3& dirVec, const int& generateType);
 	void Update();
 	void AttackUpdate();
+	void SuckedUpdate();
 	void Draw(const ViewProjection& viewProjection_);
 
 	void UpdateEffect();
@@ -70,6 +82,7 @@ public:
 	inline void SetisCanHit(const bool& isCanHit) { this->isCanHit = isCanHit; }
 	inline void SetisAttack(const bool& isAttack) { this->isAttack = isAttack; }
 	inline void SetDir(const int& dir) { this->dir = dir; }
+	//inline void SetisSucked(const bool& isSucked) { this->isSucked = isSucked; }
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
@@ -78,6 +91,8 @@ public:
 	inline bool GetisAttack() { return isAttack; }
 	inline bool GetisGround() { return isGround; }
 	inline int GetDir() { return dir; }
+	inline bool GetisSucked() { return isSucked; }
+	inline bool GetisChangeColor() { return isChangeColor; }
 	//inline void SetAngleShakeValue(const Vector3& angleShakeValue) { this->angleShakeValue = angleShakeValue; }
 };
 
