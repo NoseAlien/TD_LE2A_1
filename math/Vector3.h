@@ -40,6 +40,7 @@ public:
 		return *this;
 	}
 
+	Vector3 operator+(float num) const { return { x + num, y + num, z + num }; }
 	Vector3 operator*(float num) const { return { x * num, y * num, z * num }; }
 	Vector3 operator+(const Vector3& other) const { return { x + other.x, y + other.y, z + other.z }; }
 	Vector3 operator-(const Vector3& other) const { return { x - other.x, y - other.y, z - other.z }; }

@@ -49,9 +49,14 @@ void Player::Load()
 		playerTexAnime[i] = TextureManager::Load(str.c_str());
 	}
 	redPixel = TextureManager::Load("red1x1.png");
+
 	playerModel = Model::CreateFromOBJ("player", true);
 	trans = new WorldTransform();
 	trans->Initialize();
+
+	collapseModel.reset(Model::CreateFromOBJ("player_collapse", true));
+	collapseTrans = move(make_unique<WorldTransform>());
+	collapseTrans->Initialize();
 
 	heartTexture = TextureManager::Load("SpriteTexture/Heart.png");
 
@@ -70,18 +75,18 @@ void Player::Load()
 static int tempTimer = 0; // ƒQ[ƒ€ŠJŽn‚Æ“¯Žž‚ÉUŒ‚‚µ‚È‚¢‚½‚ß
 void Player::Init()
 {
-
 	// ƒAƒjƒ[ƒVƒ‡ƒ“ŠÖ˜A
 	animeIndex = 0;
 	fream = 0;
 	maxFream = 5;
+	radius = 2;
 
 	tempTimer = 0;
+
 	trans->translation_ = { 0,20,0 };
 	trans->scale_ = { 2,2,2 };
 	trans->rotation_ = { DegreeToRad(180),0,0 };
 	trans->UpdateMatrix();
-	radius = 2;
 	spawnTrans->translation_ =
 	{
 		trans->translation_.x,
@@ -89,6 +94,11 @@ void Player::Init()
 		trans->translation_.z,
 	};
 	spawnTrans->UpdateMatrix();
+
+	collapseTrans->translation_ = { 0,20,0 };
+	collapseTrans->scale_ = { 4,4,4 };
+	collapseTrans->rotation_ = { 0,0,0 };
+	collapseTrans->UpdateMatrix();
 
 	slowMotion = SlowMotion::GetInstance();
 
@@ -179,13 +189,23 @@ void Player::Draw(const ViewProjection& viewProjection_)
 
 	if (damageTimer % 10 < 5)
 	{
-		if (pushKeyFream >= maxPushKeyFream)
+		if (isGround == true)
 		{
-			playerModel->Draw(*trans, viewProjection_, redPixel);
+			collapseTrans->translation_ = { trans->translation_.x,trans->translation_.y - 3,trans->translation_.z };
+			collapseTrans->scale_ = trans->scale_ + 2;
+			collapseTrans->UpdateMatrix();
+			collapseModel->Draw(*collapseTrans, viewProjection_);
 		}
 		else
 		{
-			playerModel->Draw(*trans, viewProjection_, playerTexAnime[animeIndex]);
+			if (pushKeyFream >= maxPushKeyFream)
+			{
+				playerModel->Draw(*trans, viewProjection_, redPixel);
+			}
+			else
+			{
+				playerModel->Draw(*trans, viewProjection_, playerTexAnime[animeIndex]);
+			}
 		}
 	}
 
@@ -334,33 +354,8 @@ void Player::AttackUpdate()
 					trans->scale_ = { 3,3,3 };
 				}
 			}
-			//else
-			//{
-			//	trans->translation_.y = 20;
-			//	isGround = false;
-			//}
-
 			audio->PlayWave(jumpSE);
 		}
-
-		//if (input_->ReleasedKey(DIK_SPACE))
-		//{
-		//	isAttack = true;
-		//	addScaleStep = 1;
-		//	if (pushKeyFream < maxPushKeyFream)
-		//	{
-		//		isWeakAttack = true;
-		//		maxSize = 2.5;
-		//	}
-		//	else if (pushKeyFream >= maxPushKeyFream)
-		//	{
-		//		isHeavyAttack = true;
-		//		maxSize = 4;
-		//		viewProjection_.SetShakeValue(0.5, 10);
-		//	}
-
-		//	audio->PlayWave(jumpSE);
-		//}
 	}
 
 	// UŒ‚ˆ—
@@ -567,61 +562,60 @@ void Player::AttackUpdate()
 				isJumpAddScaleStep = 1;
 			}
 		}
-	}
 
-	const float offset = 0.25f;
-	if (isJumpAddScaleStep == 1)
-	{
-		trans->translation_.y -= offset * slowMotion->GetSlowExrate();
-
-		trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
-		trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
-		trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
-		if (trans->scale_.y <= 0.5)
+		const float offset = 0.25f;
+		if (isJumpAddScaleStep == 1)
 		{
-			Vector3 tempTrans =
+			trans->translation_.y -= offset * slowMotion->GetSlowExrate();
+
+			trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+			trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+			trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
+			if (trans->scale_.y <= 0.5)
 			{
-				trans->translation_.x,
-				trans->translation_.y - 1,
-				trans->translation_.z,
-			};
+				Vector3 tempTrans =
+				{
+					trans->translation_.x,
+					trans->translation_.y - 1,
+					trans->translation_.z,
+				};
 
-			isJumpAddScaleStep = 2;
-			WindPressureEffect::GetInstance()->Generate(tempTrans, 1);
-			WindPressureEffect::GetInstance()->Generate(tempTrans, -1);
+				isJumpAddScaleStep = 2;
+				WindPressureEffect::GetInstance()->Generate(tempTrans, 1);
+				WindPressureEffect::GetInstance()->Generate(tempTrans, -1);
+			}
+
+		}
+		else if (isJumpAddScaleStep == 2)
+		{
+			isEngulfAttack = true;
+
+			trans->translation_.y += offset * slowMotion->GetSlowExrate();
+
+			trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
+			trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
+			trans->scale_.z -= addScaleValue / 2 * slowMotion->GetSlowExrate();
+
+			if (trans->scale_.y >= radius)
+			{
+				trans->scale_ = { radius,radius,radius };
+				isJumpAddScaleStep = 2;
+				isJump = true;
+				isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
+			}
 		}
 
-	}
-	else if (isJumpAddScaleStep == 2)
-	{
-		isEngulfAttack = true;
-
-		trans->translation_.y += offset * slowMotion->GetSlowExrate();
-
-		trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
-		trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
-		trans->scale_.z -= addScaleValue / 2 * slowMotion->GetSlowExrate();
-
-		if (trans->scale_.y >= radius)
+		if (isJump == true)
 		{
-			trans->scale_ = { radius,radius,radius };
-			isJumpAddScaleStep = 2;
-			isJump = true;
-			isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
-		}
-	}
+			trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
 
-	if (isJump == true)
-	{
-		trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
-
-
-		if (trans->translation_.y >= 20)
-		{
-			trans->translation_.y = 20;
-			isGround = false;
-			isJump = false;
-			isJumpAddScaleStep = 0;
+			if (trans->translation_.y >= 20)
+			{
+				trans->translation_.y = 20;
+				isGround = false;
+				isJump = false;
+				isJumpAddScaleStep = 0;
+			}
 		}
 	}
 

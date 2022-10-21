@@ -755,7 +755,8 @@ void Stage::PlayerUpdate()
 			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius() &&
 			player->GetisGround() == false && player->GetisEngulfAttack() == false))
 		{
-			if (temp->GetisCanHit() == true && temp->GetisDestroy() == false)
+			if (temp->GetisCanHit() == true && temp->GetisDestroy() == false &&
+				temp->GetisAttack() == false && temp->GetisGround() == false)
 			{
 				player->HaveStarNumIncriment();
 				grainScatterEffect->Generate(temp->GetPos());

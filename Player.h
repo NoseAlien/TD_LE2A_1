@@ -33,12 +33,16 @@ private:
 
 	WorldTransform* trans = nullptr;	// トランスフォーム
 	Model* playerModel = nullptr;		// モデル
+	std::unique_ptr<Model> collapseModel = nullptr;
+	std::unique_ptr<WorldTransform> collapseTrans = nullptr;
 
+private:
+	// SE関連	
 	uint32_t jumpSE = 0;
 	uint32_t damageSE = 0;
 
-	uint32_t redPixel = 0;			// テクスチャー
 
+	uint32_t redPixel = 0;			// テクスチャー
 	SlowMotion* slowMotion;
 
 private:
