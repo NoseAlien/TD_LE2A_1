@@ -77,6 +77,11 @@ public:
 	void DrawSprite();
 	void EffectUpdate();
 	void EffectDraw();
+	inline void SetThickness(const int& num)
+	{
+		trans->scale_.y += 1.2f / 15 * num;
+		trans->UpdateMatrix();
+	}
 
 	inline void Damage(const int subhp)
 	{
@@ -94,9 +99,11 @@ public:
 
 	inline void AddHP(const int& addhp)
 	{
-		hp += addhp;
-		//trans->scale_.y += (fabs(trans->translation_.y) - 9.5) / 15;
-		trans->scale_.y += 1.2f / 15;
+		if (isAlive == true)
+		{
+			hp += addhp;
+			trans->scale_.y += 1.2f / 15;
+		}
 	}
 
 	inline Vector3 GetPos() { return trans->translation_; }

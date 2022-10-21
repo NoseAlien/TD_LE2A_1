@@ -61,9 +61,9 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 2)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 3)));
-	stages.emplace_back(move(make_unique<Stage>(RaceStage, 4)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage, 5)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage, 6)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage, 4)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage, 5)));
+	stages.emplace_back(move(make_unique<Stage>(RaceStage, 6)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 7)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 8)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 9)));
@@ -328,22 +328,29 @@ void GameScene::CurrentStageInit()
 		//stages[currentStage]->GenerateThorn({ 0,-10,0 }, true);
 		break;
 	case 3:
-		ground->Init(50);
-		stages[currentStage]->GenerateGoal({ 150,20,0 });
+		ground->Init(40);
+		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 
+		break;
+	case 4:
+		ground->Init(55);
+		ground->SetThickness(14);
+		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
+
+		//stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
+		break;
+	case 5:
+		ground->Init(60);
+		stages[currentStage]->GenerateGoal({ 150,20,0 });
 		for (int i = 0; i < 9; i++)
 		{
 			stages[currentStage]->GenerateStar({ (float)(15 + i * 15),0,0 });
 		}
-		break;
-	case 4:
-		ground->Init(55);
-		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
-		break;
-	case 5:
-		ground->Init(60);
-		stages[currentStage]->GenerateBlock({ 20,0,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ -20,0,0 }, true, { 2,2,2 });
+
+		/*stages[currentStage]->GenerateBlock({ 20,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ -20,0,0 }, true, { 2,2,2 });*/
 		break;
 	case 6:
 		ground->Init(50);

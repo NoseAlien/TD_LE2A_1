@@ -664,11 +664,15 @@ void Stage::PlayerGenerateStar(const Vector3& pos)
 		}
 	}
 }
-void Stage::CannonGenerateStar(const Vector3& pos, const Vector3& dieVec)
+void Stage::CannonGenerateStar(const Vector3& pos, const Vector3& dieVec, const float& angle)
 {
 	stars.emplace_back(move(make_unique<Star>()));
 	stars.back()->Generate(pos, dieVec, 1);
-	stars.back()->SetSpeed(Random::RangeF(0.2, 1.7));
+
+	int random = Random::Range(player->GetPos().x, player->GetPos().x + 30);
+	float l = (random - pos.x) / 2;
+	float speed = (l * 0.05) / sinf(2 * DegreeToRad(angle));
+	stars.back()->SetSpeed(speed);
 }
 void Stage::BlockGenerateStar(const Vector3& pos, const int& num)
 {
@@ -934,6 +938,19 @@ void Stage::StarUpdate()
 		};
 		if (ground->GetHP() > 0)
 		{
+			if (stageType == RaceStage)
+			{
+				if (tempStar->GetPos().y - 1.5 <= ground->GetPos().y + ground->GetScale().y)
+				{
+					tempStar->SetPos(
+						{
+							tempStar->GetPos().x,
+							ground->GetPos().y + ground->GetScale().y + 1.5f,
+							tempStar->GetPos().z,
+						});
+				}
+			}
+
 			if (collision->SquareHitSquare(starCollider, floorCollider) && tempStar->GetisCanHit() == true)
 			{
 				tempStar->SetPos(
@@ -1164,22 +1181,20 @@ void Stage::BlockUpdate()
 void Stage::CannonUpdate()
 {
 	int count = 0;
+	float speed = 0;
 	for (const auto& temp : cannons)
 	{
 		if (temp->GetisShot() == true)
 		{
-			//CannonGenerateStar(
-			//	{ temp->GetPos().x,temp->GetPos().y + 10,temp->GetPos().z }, temp->GetDirVec());
-
 			if (count == 0)
 			{
 				CannonGenerateStar(
-					{ temp->GetPos().x - 12,temp->GetPos().y + 10,temp->GetPos().z }, temp->GetDirVec());
+					{ temp->GetPos().x - 12,temp->GetPos().y + 10,temp->GetPos().z }, temp->GetDirVec(), 135);
 			}
 			else if (count == 1)
 			{
 				CannonGenerateStar(
-					{ temp->GetPos().x + 12,temp->GetPos().y + 10,temp->GetPos().z }, temp->GetDirVec());
+					{ temp->GetPos().x + 12,temp->GetPos().y + 10,temp->GetPos().z }, temp->GetDirVec(), 45);
 			}
 			temp->SetisShot(false);
 			count++;
