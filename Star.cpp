@@ -45,7 +45,15 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	trans->scale_ = { 1.5,1.5,1.5 };
 	trans->rotation_ = { 0,DegreeToRad(180),0 };
 	trans->UpdateMatrix();
-	gravity = 1;
+
+	if (generateType != 0)
+	{
+		gravity = 1;
+	}
+	else
+	{
+		gravity = 0;
+	}
 	collisionRadius = trans->scale_.x;
 	isNotGravity = false;
 	isAngleShake = false;
@@ -55,23 +63,26 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	isDestroy = false;
 	isGround = false;
 
-	isAttack = false;
+	isAttack = 0;
 }
 
 void Star::Update()
 {
 	SlowMotion* slowMotion = SlowMotion::GetInstance();
 
-	if (isAttack == false)
+	if (isAttack == 0)
 	{
 		if (generateType == 0)
 		{
-			trans->translation_ += slowMotion->GetSlowExrate() * speed * dirVec.Normalized();
+			gravity -= 0.05 * slowMotion->GetSlowExrate();
+			if (gravity <= -1) gravity = -1;
 			speed -= 0.1 * slowMotion->GetSlowExrate();
 			if (speed <= 0)
 			{
 				speed = 0;
 			}
+			trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
+			trans->translation_.y += gravity * slowMotion->GetSlowExrate();
 		}
 		else if (generateType == 1 || generateType == 2)
 		{
@@ -90,10 +101,6 @@ void Star::Update()
 		}
 
 		//trans->rotation_ = { 0,0,trans->rotation_.z };
-		if (gravity > 0)
-		{
-			isGround = false;
-		}
 
 		if (isAngleShake == true)
 		{
@@ -128,6 +135,7 @@ void Star::Update()
 		}
 	}
 
+
 	AttackUpdate();
 
 	trans->UpdateMatrix();
@@ -135,8 +143,13 @@ void Star::Update()
 
 void Star::AttackUpdate()
 {
-	if (isAttack == true)
+	if (isAttack == 1)
 	{
+		if (gravity > 0)
+		{
+			isGround = false;
+		}
+
 		SlowMotion* slowMotion = SlowMotion::GetInstance();
 
 		gravity -= 0.05 * slowMotion->GetSlowExrate();

@@ -10,21 +10,6 @@ uint32_t Particle::healTexture = {};
 uint32_t Particle::repairTexture = {};
 uint32_t Particle::windPressureTexture = {};
 
-Particle::Particle() :
-	activeTimer(0), maxActiveTimer(120),
-	vec(0, 0, 0), speed(0), color(1, 1, 1, 1)
-{
-	trans = move(make_unique<WorldTransform>());
-	trans->Initialize();
-	model = Model::Create();
-
-	//sprite.reset(Sprite::Create(texture, { 0,0 }));
-	//sprite->SetAnchorPoint({ 0.5,0.5 });
-
-	//outLineSprite.reset(Sprite::Create(texture, { 0,0 }));
-	//outLineSprite->SetAnchorPoint({ 0.5,0.5 });
-}
-
 Particle::Particle(const int& spriteType) :
 	activeTimer(0), maxActiveTimer(120),
 	vec(0, 0, 0), speed(0), spriteType(spriteType)
@@ -138,8 +123,6 @@ void Particle::Load()
 {
 	breakGroundModel = Model::CreateFromOBJ("remnants", true);
 
-	//texture = TextureManager::Load("SpriteTexture/particle.png");
-	//texture = TextureManager::Load("SpriteTexture/particle2.png");
 	texture = TextureManager::Load("SpriteTexture/Particle/particle3.png");
 	starTexture = TextureManager::Load("SpriteTexture/Particle/starParticle.png");
 	healTexture = TextureManager::Load("SpriteTexture/Particle/heal.png");

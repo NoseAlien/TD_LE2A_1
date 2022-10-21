@@ -238,6 +238,7 @@ void Stage::Update()
 	if (stagePcrogress == Play || stagePcrogress == Staging)
 	{
 		StarUpdate();
+		//WaveUpdate();
 		BlockUpdate();
 		FloorUpdate();
 		ThornUpdate();
@@ -307,7 +308,6 @@ void Stage::Update()
 		}
 	}
 
-	WaveUpdate();
 	GameOverCameraUpdate();
 	ClearTimeUpdate();
 
@@ -527,10 +527,11 @@ void Stage::ClearTimeUpdate()
 	{
 		clearScreenClock++;
 
-		float clearStrPosY = lerp(1700.0, 270, pow((clearScreenClock - 50) / 30.0, 0.2));
+		//float clearStrPosY = lerp(1700.0f, 270, pow((clearScreenClock - 50) / 30.0, 0.2));
+		float clearStrPosY = lerp(1700.0f, 400, pow((clearScreenClock - 50) / 30.0, 0.2));
 
 		clearStrSprite->SetPosition({ 960,clearStrPosY });
-		clearStrSprite->SetSize({ 512,512 });
+		clearStrSprite->SetSize({ 1028,1028 });
 
 		clearTimeLastDightPos.x = lerp(2400, 1856, pow((clearScreenClock - 100) / 30.0, 0.2));
 
@@ -691,41 +692,41 @@ void Stage::PlayerUpdate()
 		};
 
 		// ¯‚ðŠª‚«ž‚Þˆ—
-		for (const auto& temp : stars)
-		{
-			SquareCollider starCollider
-			{
-				{ temp->GetPos().x,temp->GetPos().y },
-				{ temp->GetScale().x,temp->GetScale().y },
-			};
+		//for (const auto& temp : stars)
+		//{
+		//	SquareCollider starCollider
+		//	{
+		//		{ temp->GetPos().x,temp->GetPos().y },
+		//		{ temp->GetScale().x,temp->GetScale().y },
+		//	};
 
-			//if (collision->SquareHitSquare(playerCollider, starCollider) &&
-			//	temp->GetisDestroy() == false)
-			//{
-			//	//ground->Damage(player->GetStarAttackDamage());
-			//	//grainScatterEffect->Generate(temp->GetPos());
-			//	//temp->SetisDestroy(true);
+		//	//if (collision->SquareHitSquare(playerCollider, starCollider) &&
+		//	//	temp->GetisDestroy() == false)
+		//	//{
+		//	//	//ground->Damage(player->GetStarAttackDamage());
+		//	//	//grainScatterEffect->Generate(temp->GetPos());
+		//	//	//temp->SetisDestroy(true);
 
-			//	temp->SetisAttack(true);
-			//	temp->SetSpeed(0.4);
-			//	int dir = 0;
-			//	if (temp->GetPos().x - player->GetPos().x >= 0)
-			//	{
-			//		dir = 1;
-			//	}
-			//	else
-			//	{
-			//		dir = -1;
-			//	}
+		//	//	temp->SetisAttack(true);
+		//	//	temp->SetSpeed(0.4);
+		//	//	int dir = 0;
+		//	//	if (temp->GetPos().x - player->GetPos().x >= 0)
+		//	//	{
+		//	//		dir = 1;
+		//	//	}
+		//	//	else
+		//	//	{
+		//	//		dir = -1;
+		//	//	}
 
-			//	temp->SetDirVec(
-			//		{
-			//			dir * cosf(DegreeToRad(75)),
-			//			cosf(DegreeToRad(75)),
-			//			0
-			//		});
-			//}
-		}
+		//	//	temp->SetDirVec(
+		//	//		{
+		//	//			dir * cosf(DegreeToRad(75)),
+		//	//			cosf(DegreeToRad(75)),
+		//	//			0
+		//	//		});
+		//	//}
+		//}
 		// ƒuƒƒbƒN‚ðŠª‚«ž‚Þˆ—
 		for (const auto& temp : blocks)
 		{
@@ -752,7 +753,7 @@ void Stage::PlayerUpdate()
 	{
 		if (collision->SphereHitSphere(
 			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius() &&
-			player->GetisGround() == false))
+			player->GetisGround() == false && player->GetisEngulfAttack() == false))
 		{
 			if (temp->GetisCanHit() == true && temp->GetisDestroy() == false)
 			{
@@ -924,7 +925,6 @@ void Stage::StarUpdate()
 		{
 			if (collision->SquareHitSquare(starCollider, floorCollider) && tempStar->GetisCanHit() == true)
 			{
-
 				tempStar->SetPos(
 					{
 						tempStar->GetPos().x,
@@ -962,6 +962,8 @@ void Stage::StarUpdate()
 			}
 		}
 	}
+
+	WaveUpdate();
 
 	for (const auto& temp : stars)
 	{
@@ -1240,6 +1242,7 @@ void Stage::EnduranceUpdate()
 	}
 }
 
+// ”g“®
 void Stage::WaveUpdate()
 {
 	for (int i = 0; i < windPressureEffect->waves.size(); i++)
@@ -1249,9 +1252,11 @@ void Stage::WaveUpdate()
 			if (collision->SphereHitSphere(
 				windPressureEffect->waves[i]->GetPos(), 0.75, temp->GetPos(), 1.5))
 			{
-				if (/*temp->GetisCanHit() == true && temp->GetisGround() == true && */
+				if (/*temp->GetisCanHit() == true &&  */
+					temp->GetisGround() == true &&
 					temp->GetisDestroy() == false)
 				{
+					temp->SetGravity(1);
 					temp->SetisAttack(true);
 					temp->SetSpeed(0.4);
 					int dir = 0;

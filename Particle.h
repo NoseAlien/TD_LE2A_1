@@ -33,7 +33,7 @@ public:
 	static uint32_t windPressureTexture;
 
 public:
-	Particle();
+	Particle() {};
 	Particle(const int& spriteType);
 	~Particle();
 	static void Load();
