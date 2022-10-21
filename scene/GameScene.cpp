@@ -319,11 +319,11 @@ void GameScene::CurrentStageInit()
 		break;
 	case 4:
 		ground->Init(50);
-		stages[currentStage]->GenerateGoal({ 100,20,0 });
+		stages[currentStage]->GenerateGoal({ 150,20,0 });
 
 		for (int i = 0; i < 9; i++)
 		{
-			stages[currentStage]->GenerateStar({ (float)(10 + i * 10),0,0 });
+			stages[currentStage]->GenerateStar({ (float)(15 + i * 15),0,0 });
 		}
 		break;
 	case 5:

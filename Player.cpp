@@ -258,11 +258,13 @@ void Player::MoveUpdate()
 	//	trans->translation_.x = -39.5;
 	//}
 
-	if (!isAttack)
-	{
-		speed += 0.02;
-	}
-	speed = min(speed, maxSpeed);
+	//if (!isAttack)
+	//{
+	//	speed += 0.25 / 3;
+	//}
+	//speed = min(speed, maxSpeed);
+
+	speed = maxSpeed;
 	// ˆÚ“®ˆ—
 	if (isAlive == true)
 	{
