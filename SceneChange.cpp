@@ -5,7 +5,9 @@ using namespace std;
 
 void SceneChange::Load()
 {
-	tex = TextureManager::Load("black1x1.png");
+	//tex = TextureManager::Load("black1x1.png");
+	tex = TextureManager::Load("SpriteTexture/sceneChange.png");
+	sprite.reset(Sprite::Create(tex, { 0,0 }));
 }
 
 void SceneChange::Initialize()
@@ -19,6 +21,7 @@ void SceneChange::Initialize()
 	index = 0;
 	addDightIndex = 0;
 	blocks.clear();
+	sprite->SetPosition({ 0, -1080 });
 }
 
 void SceneChange::Update()
@@ -27,113 +30,162 @@ void SceneChange::Update()
 	{
 		if (isGenerate == true)
 		{
-			for (int y = 0; y < 9; y++)
-			{
-				for (int x = 0; x < 16; x++)
-				{
-					blocks.push_back(move(make_unique<SceneChangeBlock>(tex)));
-					blocks.back()->pos = { (float)(60 + x * 120), (float)(60 + y * 120) };
-					blocks.back()->exrate = 0;
-					blocks.back()->angle = 0;
-				}
-			}
+			ease.SetEaseTimer(60);
+			ease.SetPowNum(5);
 			isGenerate = false;
 			isSceneChangeIn = true;
 		}
 
 		if (isSceneChangeIn == true)
 		{
-			if (blocks.size() > 0)
-			{
-				if (addDightIndex < 24)
-				{
-					index = 0;
-					for (int y = 0; y < 9; y++)
-					{
-						for (int x = 0; x < 16; x++)
-						{
-							if (y + x == addDightIndex)
-							{
-								blocks[index]->isIn = true;
-							}
-							index++;
-						}
-					}
-					addDightIndex++;
-				}
-				else if (addDightIndex == 24)
-				{
-					int count = 0;
+			ease.Update();
+			sprite->SetPosition(ease.Out({ 0, -1080 }, { 0,0 }));
 
-					for (int i = 0; i < blocks.size(); i++)
-					{
-						if (blocks[i]->isIn == false)
-						{
-							count++;
-						}
-					}
-					if (count >= blocks.size() - 1)
-					{
-						isSceneChangeIn = false;
-						isSceneChangeOut = true;
-						isChange = true;
-						index = 0;
-						addDightIndex = 0;
-					}
-				}
+			if (ease.GetisEnd() == true)
+			{
+				isSceneChangeIn = false;
+				isSceneChangeOut = true;
+				isChange = true;
+				ease.ReSet();
 			}
 		}
+
 		if (isSceneChangeOut == true)
 		{
-			if (blocks.size() > 0)
-			{
-				if (addDightIndex < 24)
-				{
-					index = 0;
-					for (int y = 0; y < 9; y++)
-					{
-						for (int x = 0; x < 16; x++)
-						{
-							if (y + x == addDightIndex)
-							{
-								blocks[index]->isOut = true;
-							}
-							index++;
-						}
-					}
-					addDightIndex++;
-				}
-				else if (addDightIndex == 24)
-				{
-					int count = 0;
+			ease.Update();
+			sprite->SetPosition(ease.In({ 0,0 }, { 0,1080 }));
 
-					for (int i = 0; i < blocks.size(); i++)
-					{
-						if (blocks[i]->isIn == false)
-						{
-							count++;
-						}
-					}
-					if (count >= blocks.size() - 1)
-					{
-						Initialize();
-					}
-				}
+			if (ease.GetisEnd() == true)
+			{
+				Initialize();
+				//isSceneChangeIn = false;
+				//isSceneChangeOut = true;
+				//isChange = true;
+				ease.ReSet();
 			}
 		}
-
-		for (int i = 0; i < blocks.size(); i++)
-		{
-			blocks[i]->Update(frame);
-		}
+	}
+	else
+	{
+		sprite->SetPosition({ 0, -1080 });
 	}
 }
+
+//void SceneChange::Update()
+//{
+//	if (isSceneChange == true)
+//	{
+//		if (isGenerate == true)
+//		{
+//			for (int y = 0; y < 9; y++)
+//			{
+//				for (int x = 0; x < 16; x++)
+//				{
+//					blocks.push_back(move(make_unique<SceneChangeBlock>(tex)));
+//					blocks.back()->pos = { (float)(60 + x * 120), (float)(60 + y * 120) };
+//					blocks.back()->exrate = 0;
+//					blocks.back()->angle = 0;
+//				}
+//			}
+//			isGenerate = false;
+//			isSceneChangeIn = true;
+//		}
+//
+//		if (isSceneChangeIn == true)
+//		{
+//			if (blocks.size() > 0)
+//			{
+//				if (addDightIndex < 24)
+//				{
+//					index = 0;
+//					for (int y = 0; y < 9; y++)
+//					{
+//						for (int x = 0; x < 16; x++)
+//						{
+//							if (y + x == addDightIndex)
+//							{
+//								blocks[index]->isIn = true;
+//							}
+//							index++;
+//						}
+//					}
+//					addDightIndex++;
+//				}
+//				else if (addDightIndex == 24)
+//				{
+//					int count = 0;
+//
+//					for (int i = 0; i < blocks.size(); i++)
+//					{
+//						if (blocks[i]->isIn == false)
+//						{
+//							count++;
+//						}
+//					}
+//					if (count >= blocks.size() - 1)
+//					{
+//						isSceneChangeIn = false;
+//						isSceneChangeOut = true;
+//						isChange = true;
+//						index = 0;
+//						addDightIndex = 0;
+//					}
+//				}
+//			}
+//		}
+//		if (isSceneChangeOut == true)
+//		{
+//			if (blocks.size() > 0)
+//			{
+//				if (addDightIndex < 24)
+//				{
+//					index = 0;
+//					for (int y = 0; y < 9; y++)
+//					{
+//						for (int x = 0; x < 16; x++)
+//						{
+//							if (y + x == addDightIndex)
+//							{
+//								blocks[index]->isOut = true;
+//							}
+//							index++;
+//						}
+//					}
+//					addDightIndex++;
+//				}
+//				else if (addDightIndex == 24)
+//				{
+//					int count = 0;
+//
+//					for (int i = 0; i < blocks.size(); i++)
+//					{
+//						if (blocks[i]->isIn == false)
+//						{
+//							count++;
+//						}
+//					}
+//					if (count >= blocks.size() - 1)
+//					{
+//						Initialize();
+//					}
+//				}
+//			}
+//		}
+//
+//		for (int i = 0; i < blocks.size(); i++)
+//		{
+//			blocks[i]->Update(frame);
+//		}
+//	}
+//}
 void SceneChange::Draw()
 {
-	for (int i = 0; i < blocks.size(); i++)
-	{
-		blocks[i]->Draw();
-	}
+	//for (int i = 0; i < blocks.size(); i++)
+	//{
+	//	blocks[i]->Draw();
+	//}
+
+	sprite->Draw();
 }
 
 void SceneChange::StartSceneChange()
@@ -141,6 +193,7 @@ void SceneChange::StartSceneChange()
 	if (isSceneChange == false)
 	{
 		Initialize();
+		isSceneChangeIn = true;
 		isSceneChange = true;
 		isGenerate = true;
 	}

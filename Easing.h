@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector2.h"
 #include "Vector3.h"
 
 class Easing
@@ -27,10 +28,11 @@ public:
 
 	// イーズグイン
 	float In(const float& startPos, const float& endPos);
-	//Vec2 In();
+	Vector2 In(const Vector2& startPos, const Vector2& endPos);
 	Vector3 In(const Vector3& startPos, const Vector3& endPos);
 
 	// イーズアウト
 	float Out(const float& startPos, const float& endPos);
+	Vector2 Out(const Vector2& startPos, const Vector2& endPos);
 	Vector3 Out(const Vector3& startPos, const Vector3& endPos);
 };

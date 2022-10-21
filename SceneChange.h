@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "Vector2.h"
+#include "Easing.h"
 #include "Sprite.h"
 
 struct SceneChangeBlock
@@ -26,6 +27,7 @@ class SceneChange
 {
 private:
 	std::vector<std::unique_ptr<SceneChangeBlock>> blocks;
+	std::unique_ptr<Sprite> sprite;
 	uint32_t tex;
 	bool isSceneChange;
 	bool isSceneChangeIn;
@@ -35,6 +37,13 @@ private:
 	float frame;
 	int index;
 	int addDightIndex;
+
+private:
+	// イージング関連
+	Easing ease;
+
+	//Easing easeIn;
+	//Easing easeOut;
 
 public:
 	void Load();

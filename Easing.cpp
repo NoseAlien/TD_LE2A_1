@@ -58,6 +58,12 @@ float Easing::In(const float& startPos, const float& endPos)
 	return dis * powf(timeRate, powNum) + startPos;
 }
 
+Vector2 Easing::In(const Vector2& startPos, const Vector2& endPos)
+{
+	Vector2 dis = endPos - startPos;
+	return dis * powf(timeRate, powNum) + startPos;
+}
+
 Vector3 Easing::In(const Vector3& startPos, const Vector3& endPos)
 {
 	Vector3 dis = endPos - startPos;
@@ -67,6 +73,19 @@ Vector3 Easing::In(const Vector3& startPos, const Vector3& endPos)
 float Easing::Out(const float& startPos, const float& endPos)
 {
 	float dis = endPos - startPos;
+	if ((int)powNum % 2 == 1)
+	{
+		return dis * (powf(timeRate - 1, powNum) + 1) + startPos;
+	}
+	else if ((int)powNum % 2 == 0)
+	{
+		return dis * -1 * (powf(timeRate - 1, powNum) - 1) + startPos;
+	}
+}
+
+Vector2 Easing::Out(const Vector2& startPos, const Vector2& endPos)
+{
+	Vector2 dis = endPos - startPos;
 	if ((int)powNum % 2 == 1)
 	{
 		return dis * (powf(timeRate - 1, powNum) + 1) + startPos;

@@ -139,7 +139,6 @@ void Stage::Init()
 {
 	windPressureEffect->Clear();
 
-
 	// ライン関連
 	lineTrans = move(make_unique<WorldTransform>());
 	lineTrans->Initialize();
@@ -229,11 +228,14 @@ void Stage::Update()
 	//static float rotAngel = 0;
 	//static float alpha = 1;
 
-	// ステージ表示
-	ShowStageNumberUpdate();
+	if (sceneChange->GetisSceneChangeNow() == false)
+	{
+		// ステージ表示
+		ShowStageNumberUpdate();
 
-	// カウントダウン処理
-	CountDownUpdate();
+		// カウントダウン処理
+		CountDownUpdate();
+	}
 
 	if (stagePcrogress == Play || stagePcrogress == Staging)
 	{
