@@ -45,7 +45,8 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 
 	//------
 	trans->translation_ = pos;
-	trans->scale_ = { 1.5,1.5,1.5 };
+	//trans->scale_ = { 1.5,1.5,1.5 };
+	trans->scale_ = { 0,0,0 };
 	trans->rotation_ = { 0,DegreeToRad(180),0 };
 	trans->UpdateMatrix();
 
@@ -67,82 +68,116 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	isGround = false;
 
 	isAttack = 0;
+
+	// ¶¬‚ÌŒ©‚½–ÚŠÖ˜A
+	isGenerate = false;
+	geneAddScaleEase.SetEaseTimer(60);
+	geneAddScaleEase.SetPowNum(5);
+}
+
+void Star::GenerateUpdate()
+{
+	SlowMotion* slowMotion = SlowMotion::GetInstance();
+	if (isGenerate == true)
+	{
+		geneAddScaleEase.Update();
+		trans->scale_ = geneAddScaleEase.Out({ 0,0,0 }, { 1.5f,1.5f,1.5f });
+		trans->rotation_.z = Random::RangeF(-0.15f, 0.15f);
+		//if (geneAddScaleEase.GetisEnd() == true)
+		//{
+		//	trans->scale_ = { 1.5f,1.5f,1.5f };
+		//	trans->rotation_ = { 0,DegreeToRad(180),0 };
+		//	isGenerate = false;
+		//	geneAddScaleEase.ReSet();
+		//}
+		if (trans->scale_.x >= 1.4f)
+		{
+			trans->scale_ = { 1.5f,1.5f,1.5f };
+			trans->rotation_ = { 0,DegreeToRad(180),0 };
+			isGenerate = false;
+			geneAddScaleEase.ReSet();
+		}
+	}
 }
 
 void Star::Update()
 {
 	SlowMotion* slowMotion = SlowMotion::GetInstance();
 
-	if (isAttack == 0)
+	GenerateUpdate();
+
+	if (isGenerate == false)
 	{
-		if (generateType == 0)
+		if (isAttack == false)
 		{
-			gravity -= 0.05 * slowMotion->GetSlowExrate();
-			if (gravity <= -1) gravity = -1;
-			speed -= 0.1 * slowMotion->GetSlowExrate();
-			if (speed <= 0)
-			{
-				speed = 0;
-			}
-			trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
-			trans->translation_.y += gravity * slowMotion->GetSlowExrate();
-		}
-		else if (generateType == 1 || generateType == 2)
-		{
-			gravity -= 0.05 * slowMotion->GetSlowExrate();
-			if (gravity <= -1) gravity = -1;
-			trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
-			trans->translation_.y += gravity * slowMotion->GetSlowExrate();
-		}
-
-		// UŒ‚‰Â”\‚©‚Ç‚¤‚©
-		canHitTimer += 1 * slowMotion->GetSlowExrate();
-		if (canHitTimer >= maxCanHitTimer)
-		{
-			canHitTimer = maxCanHitTimer;
-			isCanHit = true;
-		}
-
-		//trans->rotation_ = { 0,0,trans->rotation_.z };
-
-		if (isAngleShake == true)
-		{
-			trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
-			trans->scale_.z *= cos(clock() * 0.05) * 0.15 + 1;
-			trans->scale_.x *= cos(clock() * 0.05) * 0.15 + 1;
-			trans->scale_.y *= sin(clock() * 0.05) * 0.15 + 1;
-		}
-		else
-		{
-			trans->rotation_.z = 0;
-
-			int sign = 1;
-			if (dirVec.x < 0)
-			{
-				sign = -1;
-			}
-
 			if (generateType == 0)
 			{
-				trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),1.5 };
-				//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
+				gravity -= 0.05 * slowMotion->GetSlowExrate();
+				if (gravity <= -1) gravity = -1;
+				speed -= 0.1 * slowMotion->GetSlowExrate();
+				if (speed <= 0)
+				{
+					speed = 0;
+				}
+				trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
+				trans->translation_.y += gravity * slowMotion->GetSlowExrate();
 			}
 			else if (generateType == 1 || generateType == 2)
 			{
-				trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
-				//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
+				gravity -= 0.05 * slowMotion->GetSlowExrate();
+				if (gravity <= -1) gravity = -1;
+				trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
+				trans->translation_.y += gravity * slowMotion->GetSlowExrate();
 			}
-			trans->scale_.z *= cos(clock() * 0.005) * 0.1 + 1;
-			trans->scale_.x *= cos(clock() * 0.005) * 0.1 + 1;
-			trans->scale_.y *= sin(clock() * 0.005) * 0.1 + 1;
+
+			// UŒ‚‰Â”\‚©‚Ç‚¤‚©
+			canHitTimer += 1 * slowMotion->GetSlowExrate();
+			if (canHitTimer >= maxCanHitTimer)
+			{
+				canHitTimer = maxCanHitTimer;
+				isCanHit = true;
+			}
+
+			//trans->rotation_ = { 0,0,trans->rotation_.z };
+
+			if (isAngleShake == true)
+			{
+				trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
+				trans->scale_.z *= cos(clock() * 0.05) * 0.15 + 1;
+				trans->scale_.x *= cos(clock() * 0.05) * 0.15 + 1;
+				trans->scale_.y *= sin(clock() * 0.05) * 0.15 + 1;
+			}
+			else
+			{
+				trans->rotation_.z = 0;
+
+				int sign = 1;
+				if (dirVec.x < 0)
+				{
+					sign = -1;
+				}
+
+				if (generateType == 0)
+				{
+					trans->scale_ = { 1.5f / (1 + speed),1.5f / (1 + speed),1.5 };
+					//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
+				}
+				else if (generateType == 1 || generateType == 2)
+				{
+					trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
+					//trans->rotation_.z += sign * 0.05 * slowMotion->GetSlowExrate();
+				}
+				trans->scale_.z *= cos(clock() * 0.005) * 0.1 + 1;
+				trans->scale_.x *= cos(clock() * 0.005) * 0.1 + 1;
+				trans->scale_.y *= sin(clock() * 0.005) * 0.1 + 1;
+			}
 		}
+
+
+		AttackUpdate();
+
+		SuckedUpdate();
 	}
-
-
-	AttackUpdate();
-
-	SuckedUpdate();
-
 	trans->UpdateMatrix();
 }
 
@@ -166,66 +201,67 @@ void Star::AttackUpdate()
 
 void Star::SuckedUpdate()
 {
-	changeColorTimer++;
-	if (changeColorTimer >= changeColorMaxTimer)
+	if (isAttack == false)
 	{
-		changeColorTimer = changeColorMaxTimer;
-		isChangeColor = true;
-	}
-
-	if (isChangeColor == true)
-	{
-		suckedTimer++;
-		if (suckedTimer >= suckedMaxTimer)
+		changeColorTimer++;
+		if (changeColorTimer >= changeColorMaxTimer)
 		{
-			suckedTimer = suckedMaxTimer;
-			if (isSucked == false)
+			changeColorTimer = changeColorMaxTimer;
+			isChangeColor = true;
+		}
+
+		if (isChangeColor == true)
+		{
+			suckedTimer++;
+			if (suckedTimer >= suckedMaxTimer)
 			{
-				Vector3 targetPos(
-					ground->GetPos().x + 29.5,
-					ground->GetPos().y + 6 * ground->GetScaleExrate().y,
-					-5);
-
-				Vector3 p1 =
+				suckedTimer = suckedMaxTimer;
+				if (isSucked == false)
 				{
-					trans->translation_.x - 10,
-					(targetPos.y - trans->translation_.y) / 3,
-					-10,
-				};
+					Vector3 targetPos = ground->GetMouthPos();
 
-				Vector3 p2 =
-				{
-					(targetPos.x - trans->translation_.x) / 2,
-					(targetPos.y - trans->translation_.y) / 2,
-					-15,
-				};
+					Vector3 p1 =
+					{
+						trans->translation_.x - 10,
+						(targetPos.y - trans->translation_.y) / 3,
+						-10,
+					};
 
-				Vector3 p3 =
-				{
-					targetPos.x,
-					targetPos.y,
-					-10,
-				};
+					Vector3 p2 =
+					{
+						(targetPos.x - trans->translation_.x) / 2,
+						(targetPos.y - trans->translation_.y) / 2,
+						-15,
+					};
 
-				suckedCurve->AddPoint(trans->translation_);
-				suckedCurve->AddPoint(p1);
-				suckedCurve->AddPoint(p2);
-				suckedCurve->AddPoint(p3);
-				suckedCurve->AddPoint(targetPos);
-				isSucked = true;
+					Vector3 p3 =
+					{
+						targetPos.x,
+						targetPos.y,
+						-10,
+					};
+
+					suckedCurve->AddPoint(trans->translation_);
+					suckedCurve->AddPoint(p1);
+					suckedCurve->AddPoint(p2);
+					suckedCurve->AddPoint(p3);
+					suckedCurve->AddPoint(targetPos);
+					isSucked = true;
+				}
 			}
 		}
-	}
 
-	if (isSucked == true)
-	{
-		suckedCurve->Update();
-		trans->translation_ = suckedCurve->InterPolation(BezierCurve::InterPolationType::EaseIn);
-
-		if (suckedCurve->GetisEnd() == true)
+		if (isSucked == true)
 		{
-			ground->AddHP(2);
-			isDestroy = true;
+			suckedCurve->SetBackPoint(ground->GetMouthPos());
+			suckedCurve->Update();
+			trans->translation_ = suckedCurve->InterPolation(BezierCurve::InterPolationType::EaseIn);
+
+			if (suckedCurve->GetisEnd() == true && isDestroy == false)
+			{
+				ground->AddHP(2);
+				isDestroy = true;
+			}
 		}
 	}
 }

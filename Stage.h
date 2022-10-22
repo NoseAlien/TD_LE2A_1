@@ -29,6 +29,14 @@ enum StageProgress
 	End,
 };
 
+struct RevivalObject
+{
+	bool isRevival = false;
+	int timer = 0;
+	int maxTimer = 180;
+	Vector3 pos;
+};
+
 class Stage
 {
 public:
@@ -108,8 +116,15 @@ private:
 
 private:
 	std::list<std::unique_ptr<Star>> stars;
+	std::vector<std::unique_ptr<RevivalObject>> starRevivals;
+	uint32_t starsIndex;
+
 	std::list<std::unique_ptr<Thorn>> thorns;
+
 	std::list<std::unique_ptr<Block>> blocks;
+	//std::vector<std::unique_ptr<RevivalObject>> blockRevivals;
+	//uint32_t blocksIndex;
+
 	std::list<std::unique_ptr<Cannon>> cannons;
 	std::unique_ptr<Goal> goal;
 	static uint32_t thornTexture;		// トゲテクスチャー
@@ -140,7 +155,6 @@ private:
 	void WaveUpdate();
 
 	void GameOverCameraUpdate();
-
 
 public:
 	Stage(const int& stageType, const int& stageNumber);

@@ -126,10 +126,15 @@ void Player::Init()
 	isGround = false;
 	isJump = false;
 
+	// ƒuƒƒbƒN‚É“–‚½‚Á‚½ŠÖ˜A
+	isHitBlock = false;
+	hitedBlockStep = 0;
+
 	playerMoveEffect->Clear();
 	weakAttackEffect->Clear();
 	heavyAttackEffect->Clear();
 	playerDieEffect->Clear();
+
 }
 void Player::Update()
 {
@@ -144,6 +149,7 @@ void Player::Update()
 		tempTimer = 10;
 		AttackUpdate();
 		DamageUpdate();
+		HitBlockUpdate();
 
 		playerMoveEffect->Generate(
 			{
@@ -341,7 +347,10 @@ void Player::MoveUpdate()
 	//}
 	//speed = min(speed, maxSpeed);
 
-	speed = maxSpeed;
+	if (isGround == false)
+	{
+		speed = maxSpeed;
+	}
 	// ˆÚ“®ˆ—
 	if (isAlive == true)
 	{
@@ -440,11 +449,9 @@ void Player::AttackUpdate()
 						addScaleStep = 2;
 					}
 				}
-				else if (addScaleStep == 2)
+				if (addScaleStep == 2)
 				{
-					trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
-					trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
-					trans->scale_.z -= 0.05 * slowMotion->GetSlowExrate();
+					trans->scale_ += 0.05 * slowMotion->GetSlowExrate();
 					trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 
 					if (trans->scale_.x >= radius)
@@ -458,7 +465,6 @@ void Player::AttackUpdate()
 						stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
 						trans->scale_ = { radius,radius,radius };
 						trans->rotation_ = { DegreeToRad(180),0,0 };
-
 					}
 				}
 			}
@@ -641,7 +647,7 @@ void Player::AttackUpdate()
 			}
 
 		}
-		else if (isJumpAddScaleStep == 2)
+		if (isJumpAddScaleStep == 2)
 		{
 			isEngulfAttack = true;
 
@@ -658,22 +664,115 @@ void Player::AttackUpdate()
 				isJump = true;
 				isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
 			}
-		}
 
-		if (isJump == true)
-		{
-			trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
-
-			if (trans->translation_.y >= 20)
+			if (isJump == true)
 			{
-				trans->translation_.y = 20;
-				isGround = false;
-				isJump = false;
-				isJumpAddScaleStep = 0;
+				trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
+
+				if (trans->translation_.y >= 20)
+				{
+					trans->translation_.y = 20;
+					isGround = false;
+					isJump = false;
+					isJumpAddScaleStep = 0;
+				}
 			}
 		}
 	}
+}
+void Player::DamageUpdate()
+{
+	if (isDamage == true)
+	{
+		damageTimer++;
+		if (damageTimer >= maxDamageTimer)
+		{
+			damageTimer = 0;
+			isDamage = false;
+		}
+	}
+}
+void Player::HitBlockUpdate()
+{
+	if (isHitBlock == true)
+	{
+		if (hitedBlockStep == 0)
+		{
+			//trans->translation_.y -= 1;
+			//trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+			//trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+			//trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
+			//if (trans->scale_.y <= 0)
+			//{
+			trans->translation_.y = 20;
+			trans->scale_ = { 0,0,0 };
+			hitedBlockStep = 1;
+			isJumpAddScaleStep = 0;
+			isGround = false;
+			isJump = false;
+			//}
+		}
+		if (hitedBlockStep == 1)
+		{
+			trans->scale_ += 0.05 * slowMotion->GetSlowExrate();
+			//trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
+			//trans->scale_.z += 0.05 * slowMotion->GetSlowExrate();
+			trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 
+			if (trans->scale_.x >= radius)
+			{
+				isReverse = false;		// ”½“]ƒtƒ‰ƒO
+				isWeakAttack = false;	// ŽãUŒ‚
+				isHeavyAttack = false;	// ‹­UŒ‚
+				isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
+				isAttack = false;		// UŒ‚ƒtƒ‰ƒO
+
+				stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
+				trans->scale_ = { radius,radius,radius };
+				trans->rotation_ = { DegreeToRad(180),0,0 };
+
+				hitedBlockStep = 0;
+				isHitBlock = false;
+			}
+		}
+
+		//if (hitedBlockStep == 0)
+		//{
+		//	trans->translation_.y -= 1;
+		//	trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
+		//	trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
+		//	trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
+		//	if (trans->scale_.y <= 0)
+		//	{
+		//		trans->translation_.y = 20;
+		//		trans->scale_ = { 0,0,0 };
+		//		hitedBlockStep = 1;
+		//	}
+		//}
+		//else if (hitedBlockStep == 1)
+		//{
+		//	trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
+		//	trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
+		//	trans->scale_.z += 0.05 * slowMotion->GetSlowExrate();
+		//	trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
+
+		//	if (trans->scale_.x >= radius)
+		//	{
+		//		isReverse = false;		// ”½“]ƒtƒ‰ƒO
+		//		isWeakAttack = false;	// ŽãUŒ‚
+		//		isHeavyAttack = false;	// ‹­UŒ‚
+		//		isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
+		//		isAttack = false;		// UŒ‚ƒtƒ‰ƒO
+
+		//		stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
+		//		trans->scale_ = { radius,radius,radius };
+		//		trans->rotation_ = { DegreeToRad(180),0,0 };
+
+		//		hitedBlockStep = 0;
+		//		isHitBlock = false;
+		//	}
+		//}
+	}
 }
 
 void Player::SetisDamage(const bool& isDamage)
@@ -686,19 +785,6 @@ void Player::SetisDamage(const bool& isDamage)
 
 		viewProjection_.SetShakeValue(2, 15, 2);
 		audio->PlayWave(damageSE);
-	}
-}
-
-void Player::DamageUpdate()
-{
-	if (isDamage == true)
-	{
-		damageTimer++;
-		if (damageTimer >= maxDamageTimer)
-		{
-			damageTimer = 0;
-			isDamage = false;
-		}
 	}
 }
 

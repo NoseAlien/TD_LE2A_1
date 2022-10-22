@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "GrainMoveEffect.h"
 #include "BezierCurve.h"
+#include "Easing.h"
 #include <memory>
 
 class Star
@@ -54,12 +55,18 @@ private: // アニメーション関連
 	int fream;
 	int maxFream;
 
+private:
+	// 生成の見た目関連
+	bool isGenerate;
+	Easing geneAddScaleEase;
+
 public:
 	Star();
 	~Star();
 	static void Load();
 	static void UnLoad();
 	void Generate(const Vector3& pos, const Vector3& dirVec, const int& generateType);
+	void GenerateUpdate();
 	void Update();
 	void AttackUpdate();
 	void SuckedUpdate();
@@ -82,6 +89,7 @@ public:
 	inline void SetisCanHit(const bool& isCanHit) { this->isCanHit = isCanHit; }
 	inline void SetisAttack(const bool& isAttack) { this->isAttack = isAttack; }
 	inline void SetDir(const int& dir) { this->dir = dir; }
+	inline void SetisGenerate(const bool& isGenerate) { this->isGenerate = isGenerate; }
 	//inline void SetisSucked(const bool& isSucked) { this->isSucked = isSucked; }
 
 	inline Vector3 GetPos() { return trans->translation_; }
