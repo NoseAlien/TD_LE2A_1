@@ -1336,8 +1336,11 @@ void Stage::BlockUpdate()
 		if (collision->SphereHitSphere(player->GetPos(), 1.5, temp->GetPos(), 2) ||
 			collision->SphereHitSphere({ player->GetPos().x + 3,player->GetPos().y,player->GetPos().z }, 1, temp->GetPos(), 2))
 		{
-			player->SetSpeed(0);
-			break;
+			if (temp->revival->isRevival == false)
+			{
+				player->SetSpeed(0);
+				break;
+			}
 		}
 		else
 		{
