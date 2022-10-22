@@ -182,7 +182,7 @@ void Player::SelectSceneUpdate()
 			isWeakAttack = true;
 			maxSize = 1;
 			trans->scale_ = { 2,2,2 };
-			speed *= 0.5;
+			//speed *= 0.5;
 		}
 		audio->PlayWave(jumpSE);
 	}
@@ -347,10 +347,10 @@ void Player::MoveUpdate()
 	//}
 	//speed = min(speed, maxSpeed);
 
-	if (isGround == false)
-	{
-		speed = maxSpeed;
-	}
+	//if (isGround == false)
+	//{
+	//	speed = maxSpeed;
+	//}
 	// ˆÚ“®ˆ—
 	if (isAlive == true)
 	{
@@ -406,11 +406,11 @@ void Player::AttackUpdate()
 					isWeakAttack = true;
 					maxSize = 1;
 					trans->scale_ = { 2,2,2 };
-					speed *= 0.5;
+					//speed *= 0.5;
 				}
 				else
 				{
-					speed = 0;
+					//speed = 0;
 					isHeavyAttack = true;
 					maxSize = 2;
 					weakAttackEffect->Generate(trans->translation_ - Vector3{ 0,2 - radius,0 });

@@ -245,7 +245,6 @@ void Stage::Update()
 	if (stagePcrogress == Play || stagePcrogress == Staging)
 	{
 		StarUpdate();
-		//WaveUpdate();
 		BlockUpdate();
 		FloorUpdate();
 		ThornUpdate();
@@ -1242,35 +1241,24 @@ void Stage::BlockUpdate()
 			}
 		}
 
-		if (player->GetisGround() == true)
+		//if (player->GetisGround() == true)
+		//{
+		SquareCollider tempCollider1 =
 		{
-			SquareCollider tempCollider1 =
-			{
-				{ player->GetPos().x, player->GetPos().y - player->GetRadius() },
-				{ player->GetRadius(), player->GetRadius() },
-			};
-			//SquareCollider tempCollider2 =
-			//{
-			//	{ player->GetPos().x + player->GetRadius(), player->GetPos().y - player->GetRadius() - 1},
-			//	{ 1.5, 1 },
-			//};
-			//SquareCollider tempCollider3 =
-			//{
-			//	{ player->GetPos().x - player->GetRadius(), player->GetPos().y - player->GetRadius() - 1},
-			//	{ 1.5, 1 },
-			//};
-			if (collision->SquareHitSquare(tempCollider1, blockCollider) /* ||
-				collision->SquareHitSquare(tempCollider2, blockCollider) ||
-				collision->SquareHitSquare(tempCollider3, blockCollider)*/)
-			{
-				//player->SetisHitBlock(true);
-				player->SetSpeed(0);
-			}
-			else
-			{
-				player->SetSpeed(0.25);
-			}
+			{ player->GetPos().x, player->GetPos().y - player->GetRadius() },
+			{ player->GetRadius(), player->GetRadius() },
+		};
+		if (collision->SquareHitSquare(tempCollider1, blockCollider))
+		{
+			//player->SetisHitBlock(true);
+			player->SetSpeed(0);
+			break;
 		}
+		else
+		{
+			player->SetSpeed(0.25);
+		}
+		//}
 
 		// ’n–Ê
 		if (collision->SquareHitSquare(floorCollider, blockCollider))
@@ -1361,18 +1349,22 @@ void Stage::CannonUpdate()
 // ƒŒ[ƒX
 void Stage::RaceUpdate()
 {
-	Vector3 tempGroundPos = ground->GetPos();
 	ground->SetPos(
 		{
-			tempGroundPos.x + player->GetSpeed() * SlowMotion::GetInstance()->GetSlowExrate(),
-			tempGroundPos.y,
-			tempGroundPos.z,
+			ground->GetPos().x + player->GetSpeed() * SlowMotion::GetInstance()->GetSlowExrate(),
+			ground->GetPos().y,
+			ground->GetPos().z,
 		});
 
 	if (player->GetPos().x >= 92)
 	{
 		lineTrans->translation_.x = 184;
 		lineTrans->UpdateMatrix();
+	}
+	if (player->GetPos().x >= 184)
+	{
+		lineTrans2->translation_.x = 276;
+		lineTrans2->UpdateMatrix();
 	}
 
 	if (player->GetPos().x >= goal->GetPos().x - goal->GetScale().x)
