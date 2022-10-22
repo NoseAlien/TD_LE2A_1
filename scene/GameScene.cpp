@@ -374,42 +374,44 @@ void GameScene::CurrentStageInit()
 		break;
 	case 9:
 		ground->Init(200);
-		stages[currentStage]->GenerateBlock({ 20,20,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ 40,-10,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 30,21,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 50,-10,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateThorn({ 60,21.5,0 }, false);
-		stages[currentStage]->GenerateThorn({ 80,-10,0 }, true);
+		stages[currentStage]->GenerateThorn({ 70,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 90,-10,0 }, true);
 
-		stages[currentStage]->GenerateBlock({ 100,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 110,0,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateBlock({ 120,+2,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ 120,-2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 130,+2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 130,-2,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateBlock({ 140,-10,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 150,-10,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateThorn({ 160,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 170,21.5,0 }, false);
 
-		stages[currentStage]->GenerateBlock({ 180,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 190,0,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateBlock({ 200,+2,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ 200,-2,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateThorn({ 200,-10,0 }, true);
+		stages[currentStage]->GenerateBlock({ 210,+0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 210,-4,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateThorn({ 210,-10,0 }, true);
 
-		stages[currentStage]->GenerateBlock({ 220,-10,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 230,-10,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateThorn({ 240,21.5,0 }, false);
-		stages[currentStage]->GenerateThorn({ 245,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 250,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 255,21.5,0 }, false);
 
-		stages[currentStage]->GenerateBlock({ 265,+2,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ 265,-2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 275,+2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 275,-2,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateGoal({ 280,20,0 });
-		//stages[currentStage]->SetisEndurance(true);
-		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
-		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
+		stages[currentStage]->GenerateGoal({ 300,20,0 });
 		break;
 	case 10:	// デバッグ用のステージ
 		ground->Init(10000);
+		stages[currentStage]->GenerateBlock({ -10,-10,0 }, true, { 2,2,2 });
+
+		//stages[currentStage]->SetisEndurance(true);
+		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		//stages[currentStage]->GenerateBlock({ 20,0,0 }, false, { 20,2,2 });
 		break;
 

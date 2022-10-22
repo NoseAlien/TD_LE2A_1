@@ -15,6 +15,7 @@ private:
 	WorldTransform* trans = nullptr;
 	static Model* starModel; //= nullptr;		// ƒ‚ƒfƒ‹
 	uint32_t starTexture;
+	static std::unique_ptr<Model> powerUpModel;
 
 	float speed;
 	bool isCanHit;
