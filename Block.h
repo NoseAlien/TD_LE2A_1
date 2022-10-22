@@ -1,6 +1,16 @@
 #pragma once
 #include "WorldTransform.h"
 #include "Model.h"
+#include "Easing.h"
+
+struct RevivalObj
+{
+	bool isCanRevival = false;
+	bool isRevival = false;
+	int timer = 0;
+	int maxTimer = 180;
+	Vector3 pos;
+};
 
 class Block
 {
@@ -16,10 +26,19 @@ private:
 	bool haveStar;
 
 public:
+	std::unique_ptr<RevivalObj> revival;
+
+private:
+	// ¶¬‚ÌŒ©‚½–ÚŠÖ˜A
+	bool isGenerate;
+	Easing geneAddScaleEase;
+
+public:
 	Block();
 	~Block();
 	static void Load();
 	static void UnLoad();
+	void GenerateUpdate();
 	void Generate(const Vector3& pos, const Vector3& scale, const bool& haveStar);
 	void Update();
 	void Draw(const ViewProjection& viewProjection_);
@@ -34,5 +53,7 @@ public:
 
 	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
 	inline void SetisHit(const int& isHit) { this->isHit = isHit; }
+	inline void SetisGenerate(const bool& isGenerate) { this->isGenerate = isGenerate; }
+	inline void SetisDestroy(const bool& isDestroy) { this->isDestroy = isDestroy; }
 };
 

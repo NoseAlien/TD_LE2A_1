@@ -29,6 +29,7 @@ public:
 	void Update();
 	Vector3 InterPolation(const int& type);
 	inline void AddPoint(const Vector3& pos) { points.push_back(pos); }
+	inline void SetBackPoint(const Vector3& pos) { points.back() = pos; }
 	inline bool GetisEnd() { return isEnd; }
 
 private:

@@ -106,6 +106,16 @@ public:
 		}
 	}
 
+	inline Vector3 GetMouthPos()
+	{
+		return
+		{
+			trans->translation_.x + 32,
+			trans->translation_.y + 6 * trans->scale_.y,
+			trans->translation_.z
+		};
+	}
+
 	inline Vector3 GetPos() { return trans->translation_; }
 	//inline Vector3 GetScale() { return trans->scale_; }
 	inline Vector3 GetScale() { return { 46,10 * trans->scale_.y,5 }; }

@@ -65,9 +65,9 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 5)));
 	stages.emplace_back(move(make_unique<Stage>(RaceStage, 6)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 7)));
-	stages.emplace_back(move(make_unique<Stage>(CannonStage, 8)));
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 8)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 9)));
-	stages.emplace_back(move(make_unique<Stage>(CannonStage, 10)));
+	stages.emplace_back(move(make_unique<Stage>(RaceStage, 10)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
 
 
@@ -355,25 +355,58 @@ void GameScene::CurrentStageInit()
 	case 6:
 		ground->Init(50);
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ 4,0,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ -4,0,0 }, true, { 2,2,2 });
 		break;
 	case 7:
 		ground->Init(80);
-		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
-		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
+		stages[currentStage]->GenerateBlock({ +20,+2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ +20,-2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ -20,+2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ -20,-2,0 }, true, { 2,2,2 });
+		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 	case 8:
 		ground->Init(40);
-		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ +15,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ -15,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 	case 9:
-		ground->Init(1000000);
-		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
-		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
+		ground->Init(200);
+		stages[currentStage]->GenerateBlock({ 20,20,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 40,-10,0 }, true, { 2,2,2 });
+
+		stages[currentStage]->GenerateThorn({ 60,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 80,-10,0 }, true);
+
+		stages[currentStage]->GenerateBlock({ 100,0,0 }, true, { 2,2,2 });
+
+		stages[currentStage]->GenerateBlock({ 120,+2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 120,-2,0 }, true, { 2,2,2 });
+
+		stages[currentStage]->GenerateBlock({ 140,-10,0 }, true, { 2,2,2 });
+
+		stages[currentStage]->GenerateThorn({ 160,21.5,0 }, false);
+
+		stages[currentStage]->GenerateBlock({ 180,0,0 }, true, { 2,2,2 });
+
+		stages[currentStage]->GenerateBlock({ 200,+2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 200,-2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateThorn({ 200,-10,0 }, true);
+
+		stages[currentStage]->GenerateBlock({ 220,-10,0 }, true, { 2,2,2 });
+
+		stages[currentStage]->GenerateThorn({ 240,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 245,21.5,0 }, false);
+
+		stages[currentStage]->GenerateBlock({ 265,+2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 265,-2,0 }, true, { 2,2,2 });
+
+		stages[currentStage]->GenerateGoal({ 280,20,0 });
+		//stages[currentStage]->SetisEndurance(true);
+		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 	case 10:	// デバッグ用のステージ
 		ground->Init(10000);
@@ -508,4 +541,3 @@ void GameScene::BackGroundDraw()
 		backCubeModel->Draw(*backCubeTrans[i].get(), viewProjection_);
 	}
 }
-

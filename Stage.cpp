@@ -217,6 +217,11 @@ void Stage::Init()
 	stageNumberSprite->SetRotation(0);
 	stageNumberSprite->SetColor({ 1,1,1,1 });
 
+	// 星復活関連
+	starRevivals.clear();
+	starsIndex = 0;
+	//blockRevivals.clear();
+	//blocksIndex = 0;
 }
 
 void Stage::Update()
@@ -240,7 +245,6 @@ void Stage::Update()
 	if (stagePcrogress == Play || stagePcrogress == Staging)
 	{
 		StarUpdate();
-		//WaveUpdate();
 		BlockUpdate();
 		FloorUpdate();
 		ThornUpdate();
@@ -595,6 +599,14 @@ void Stage::GenerateStar(const Vector3& pos)
 		{ 1,0,0 }, 0);
 	stars.back()->SetisCanHit(true);
 	stars.back()->SetisGround(true);
+	stars.back()->SetisGenerate(true);
+	starRevivals.emplace_back(move(make_unique<RevivalObject>()));
+	starRevivals.back()->pos =
+	{
+		pos.x,
+		ground->GetPos().y + ground->GetScale().y + 1.5f,
+		pos.z
+	};
 }
 void Stage::GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale)
 {
@@ -613,6 +625,11 @@ void Stage::GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector
 {
 	blocks.emplace_back(move(make_unique<Block>()));
 	blocks.back()->Generate(pos, scale, haveStar);
+	blocks.back()->SetisGenerate(true);
+	blocks.back()->revival->isCanRevival = true;
+	blocks.back()->revival->pos = pos;
+	//blockRevivals.emplace_back(move(make_unique<RevivalObject>()));
+	//blockRevivals.back()->pos = pos;
 }
 void Stage::GenerateCannon(const Vector3& pos, const Vector3& rot)
 {
@@ -757,30 +774,41 @@ void Stage::PlayerUpdate()
 	// 星をつぶす処理
 	for (const auto& temp : stars)
 	{
-		if (collision->SphereHitSphere(
-			player->GetPos(), player->GetRadius(), temp->GetPos(), temp->GetRadius() &&
-			player->GetisGround() == false && player->GetisEngulfAttack() == false))
+		float tmepRadius = 0;
+		if (player->GetisWeakAttack() == true)
 		{
-			if (temp->GetisCanHit() == true && temp->GetisDestroy() == false &&
-				temp->GetisAttack() == false && temp->GetisGround() == true)
-			{
-				player->HaveStarNumIncriment();
-				grainScatterEffect->Generate(temp->GetPos());
+			tmepRadius = 2;
+		}
+		if (player->GetisHeavyAttack() == true)
+		{
+			tmepRadius = 3;
+		}
 
-				if (temp->GetisChangeColor() == false)
+		if (collision->SphereHitSphere(
+			player->GetPos(), tmepRadius, temp->GetPos(), temp->GetRadius() &&
+			player->GetisEngulfAttack() == false))
+		{
+			if (player->GetisGround() == false)
+			{
+				if (temp->GetisCanHit() == true && temp->GetisDestroy() == false &&
+					temp->GetisAttack() == false && temp->GetisGround() == true)
 				{
-					ground->Damage(player->GetHaveStarNum() * 5);
+					player->HaveStarNumIncriment();
+
+					if (temp->GetisChangeColor() == false)
+					{
+						ground->Damage(player->GetHaveStarNum() * 5);
+					}
+					else
+					{
+						ground->Damage(player->GetHaveStarNum() * 10);
+					}
+					temp->SetisDestroy(true);
 				}
-				else
-				{
-					ground->Damage(player->GetHaveStarNum() * 10);
-				}
-				temp->SetisDestroy(true);
 			}
 		}
 	}
 
-	// 更新処理
 	player->Update();
 
 	//auto text = DebugText::GetInstance();
@@ -789,11 +817,6 @@ void Stage::PlayerUpdate()
 // 床
 void Stage::FloorUpdate()
 {
-	SquareCollider playerCollider =
-	{
-		{ player->GetPos().x, player->GetPos().y - player->GetRadius() - player->GetAttackMoveSpeed()},
-		{ player->GetScale().x, player->GetScale().y },
-	};
 	SquareCollider groundCollider =
 	{
 		{ ground->GetPos().x, ground->GetPos().y },
@@ -801,6 +824,11 @@ void Stage::FloorUpdate()
 	};
 	if (ground->GetisHit() == 0)
 	{
+		SquareCollider playerCollider =
+		{
+			{ player->GetPos().x, player->GetPos().y - player->GetRadius() - player->GetAttackMoveSpeed()},
+			{ player->GetScale().x, player->GetScale().y },
+		};
 		while (collision->SquareHitSquare(playerCollider, groundCollider))
 		{
 			auto tempPos = player->GetPos();
@@ -854,13 +882,18 @@ void Stage::FloorUpdate()
 			}
 		}
 	}
+	//if (ground->GetisHit() == 2)
+	//{
+	//	player->SetisGround(true);
+	//}
 
 	if (player->GetPos().y >= 20)
 	{
 		ground->SetisHit(0);
 		player->SetHaveStarNum(0);
 	}
-	if (player->GetisGround() == true && player->GetisJump() == false && player->GetisJumpAddScaleStep() == 0)
+	if (player->GetisGround() == true && player->GetisJump() == false &&
+		/*player->GetisDown() == false &&*/ player->GetisJumpAddScaleStep() == 0)
 	{
 		player->SetPos(
 			{
@@ -869,6 +902,15 @@ void Stage::FloorUpdate()
 				player->GetPos().z
 			});
 	}
+	//if (player->GetisDown() == false)
+	//{
+	//	player->SetPos(
+	//		{
+	//			player->GetPos().x,
+	//			ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
+	//			player->GetPos().z
+	//		});
+	//}
 
 	//// 大きくなる処理
 	//if (stageType != RaceStage)
@@ -991,7 +1033,8 @@ void Stage::StarUpdate()
 				{ tempBlock->GetScale().x,tempBlock->GetScale().y },
 			};
 
-			if (collision->SquareHitSquare(starCollider, blockCollider))
+			if (collision->SquareHitSquare(starCollider, blockCollider) &&
+				tempBlock->revival->isRevival == false)
 			{
 				tempStar->SetSpeed(0);
 			}
@@ -1008,24 +1051,55 @@ void Stage::StarUpdate()
 
 	for (const auto& temp : stars)
 	{
-		if (stageType != RaceStage)
+		if (temp->GetisDestroy() == true)
 		{
-			if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40 ||
-				temp->GetisDestroy() == true)
+			if (stageType != RaceStage)
 			{
-				if (temp->GetisSucked() == false)
+				if (temp->GetPos().x >= 40 || temp->GetPos().x <= -40)
+				{
+					if (temp->GetisSucked() == false)
+					{
+						grainScatterEffect->Generate(temp->GetPos());
+						stars.remove(temp);
+						break;
+					}
+				}
+				else
 				{
 					grainScatterEffect->Generate(temp->GetPos());
 					stars.remove(temp);
+					if (starRevivals.size() > 0)
+					{
+						starRevivals[starsIndex]->isRevival = true;
+						starsIndex++;
+						if (starsIndex >= starRevivals.size())
+						{
+							starsIndex = 0;
+						}
+					}
 					break;
 				}
 			}
+			else
+			{
+				grainScatterEffect->Generate(temp->GetPos());
+				stars.remove(temp);
+				break;
+			}
 		}
-		if (temp->GetisDestroy() == true)
+	}
+
+	for (int i = 0; i < starRevivals.size(); i++)
+	{
+		if (starRevivals[i]->isRevival == true)
 		{
-			grainScatterEffect->Generate(temp->GetPos());
-			stars.remove(temp);
-			break;
+			starRevivals[i]->timer++;
+			if (starRevivals[i]->timer >= starRevivals[i]->maxTimer)
+			{
+				GenerateStar(starRevivals[i]->pos);
+				starRevivals[i]->isRevival = false;
+				starRevivals[i]->timer = 0;
+			}
 		}
 	}
 }
@@ -1084,7 +1158,6 @@ void Stage::BlockUpdate()
 	{
 		{ player->GetPos().x, player->GetPos().y - player->GetRadius() - player->GetAttackMoveSpeed()},
 		{ player->GetRadius(), player->GetRadius() - 0.25f},
-		//{ player->GetScale().x, player->GetScale().y},
 	};
 	SquareCollider floorCollider =
 	{
@@ -1102,8 +1175,9 @@ void Stage::BlockUpdate()
 		};
 
 		// プレイヤー
-		if (temp->GetisHit() == 0)
+		if (temp->GetisHit() == 0 && player->GetisGround() == false)
 		{
+			// 上から下の当たり判定
 			while (collision->SquareHitSquare(playerCollider, blockCollider))
 			{
 				auto tempPos = player->GetPos();
@@ -1137,6 +1211,54 @@ void Stage::BlockUpdate()
 				temp->SetisHit(2);
 			}
 		}
+		if (player->GetisJump() == true && player->GetisHitBlock() == false)
+		{
+			SquareCollider playerCollider =
+			{
+				{ player->GetPos().x, player->GetPos().y - player->GetRadius() + player->GetAttackMoveSpeed()},
+				{ player->GetRadius(), player->GetRadius() - 0.25f},
+			};
+
+			// 下から上の当たり判定
+			while (collision->SquareHitSquare(playerCollider, blockCollider))
+			{
+				auto tempPos = player->GetPos();
+				tempPos.y += 0.1f;
+				player->SetPos(tempPos);
+				player->UpdateMatrix();
+
+				SquareCollider tempCollider =
+				{
+					{ player->GetPos().x, player->GetPos().y - player->GetRadius() },
+					{ player->GetRadius(), player->GetRadius() },
+				};
+				if (collision->SquareHitSquare(tempCollider, blockCollider))
+				{
+					player->SetisHitBlock(true);
+					//temp->SetisHit(3);
+					break;
+				}
+			}
+		}
+
+		//if (player->GetisGround() == true)
+		//{
+		SquareCollider tempCollider1 =
+		{
+			{ player->GetPos().x, player->GetPos().y - player->GetRadius() },
+			{ player->GetRadius(), player->GetRadius() },
+		};
+		if (collision->SquareHitSquare(tempCollider1, blockCollider))
+		{
+			//player->SetisHitBlock(true);
+			player->SetSpeed(0);
+			break;
+		}
+		else
+		{
+			player->SetSpeed(0.25);
+		}
+		//}
 
 		// 地面
 		if (collision->SquareHitSquare(floorCollider, blockCollider))
@@ -1167,13 +1289,30 @@ void Stage::BlockUpdate()
 	{
 		if (temp->GetisDestroy() == true)
 		{
-			if (temp->GetHaveStar() == true)
+			if (temp->revival->isCanRevival == true)
 			{
-				BlockGenerateStar(temp->GetPos(), 5);
+				if (temp->GetHaveStar() == true &&
+					temp->revival->isRevival == false)
+				{
+					BlockGenerateStar(temp->GetPos(), 5);
+				}
+
+				temp->revival->isRevival = true;
+				temp->SetisDestroy(false);
 			}
-			blocks.remove(temp);
-			break;
+			else
+			{
+				if (temp->GetHaveStar() == true)
+				{
+					BlockGenerateStar(temp->GetPos(), 5);
+				}
+
+				blocks.remove(temp);
+				break;
+			}
+
 		}
+
 	}
 }
 
@@ -1210,18 +1349,22 @@ void Stage::CannonUpdate()
 // レース
 void Stage::RaceUpdate()
 {
-	Vector3 tempGroundPos = ground->GetPos();
 	ground->SetPos(
 		{
-			tempGroundPos.x + player->GetSpeed() * SlowMotion::GetInstance()->GetSlowExrate(),
-			tempGroundPos.y,
-			tempGroundPos.z,
+			ground->GetPos().x + player->GetSpeed() * SlowMotion::GetInstance()->GetSlowExrate(),
+			ground->GetPos().y,
+			ground->GetPos().z,
 		});
 
 	if (player->GetPos().x >= 92)
 	{
 		lineTrans->translation_.x = 184;
 		lineTrans->UpdateMatrix();
+	}
+	if (player->GetPos().x >= 184)
+	{
+		lineTrans2->translation_.x = 276;
+		lineTrans2->UpdateMatrix();
 	}
 
 	if (player->GetPos().x >= goal->GetPos().x - goal->GetScale().x)

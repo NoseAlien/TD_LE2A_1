@@ -94,6 +94,11 @@ private:
 	int isJumpAddScaleStep = 0;
 
 private:
+	// ブロックの当たった関連
+	bool isHitBlock;
+	int hitedBlockStep;
+
+private:
 	// 自機のスポーンモデル関連
 	static std::unique_ptr<Model> spawnModel;
 	std::unique_ptr<WorldTransform> spawnTrans = nullptr;	// トランスフォーム
@@ -102,6 +107,7 @@ private:
 	void MoveUpdate();
 	void AttackUpdate();
 	void DamageUpdate();
+	void HitBlockUpdate();
 
 public:
 	void Load();
@@ -112,7 +118,6 @@ public:
 	void Draw(const ViewProjection& viewProjection_);
 	void DrawSpriteBack();
 	void DrawSpriteFront();
-
 
 	void EffectGenerate(const Vector3& pos);
 	void EffectUpdate();
@@ -146,6 +151,7 @@ public:
 	inline bool GetisGround() { return isGround; }
 	inline bool GetisJump() { return isJump; }
 	inline int GetisJumpAddScaleStep() { return isJumpAddScaleStep; }
+	inline bool GetisHitBlock() { return isHitBlock; }
 
 	inline void HaveStarNumIncriment() { haveStarNum++; }
 
@@ -156,6 +162,8 @@ public:
 	inline void SetHaveStarNum(const int& haveStarNum) { this->haveStarNum = haveStarNum; }
 	inline void SetStageType(const int& stageType) { this->stageType = stageType; }
 	inline void SetLife(const int& life) { this->life = life; }
+	inline void SetisHitBlock(const bool& isHitBlock) { this->isHitBlock = isHitBlock; }
+	inline void SetSpeed(const float& speed) { this->speed = speed; }
 
 public:
 	static Player* GetInstance();
