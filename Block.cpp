@@ -31,6 +31,7 @@ void Block::Generate(const Vector3& pos, const Vector3& scale, const bool& haveS
 	trans->translation_ = pos;
 	//trans->scale_ = scale;
 	trans->scale_ = { 0,0,0 };
+	trans->rotation_ = { 0,DegreeToRad(180),0 };
 	trans->UpdateMatrix();
 	isDestroy = false;
 	isHit = 0;
