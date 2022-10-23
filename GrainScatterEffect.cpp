@@ -14,7 +14,7 @@ GrainScatterEffect::~GrainScatterEffect()
 	particles.clear();
 }
 
-void GrainScatterEffect::Generate(const Vector3& pos)
+void GrainScatterEffect::Generate(const Vector3& pos, const bool& colorType)
 {
 	float startRad = DegreeToRad(Random::Range(0, 360 / maxParticle));
 	for (int i = 0; i < maxParticle; i++)
@@ -28,8 +28,33 @@ void GrainScatterEffect::Generate(const Vector3& pos)
 		particles.back()->SetSpeed(0.7);
 		particles.back()->SetVec(Vector3(cosf(radian), sinf(radian), 1).Normalized());
 		particles.back()->SetScale({ particleScale,particleScale,particleScale });
-		particles.back()->SetSpriteColor({ 0.248,0.839,0.396,1 });
+
+		if (colorType == false)
+		{
+			particles.back()->SetSpriteColor({ 0.248f,0.839f,0.396f,1 });
+		}
+		else
+		{
+			particles.back()->SetSpriteColor({ 1,0.46f,0.46f,1 });
+		}
 	}
+	//else
+	//{
+	//switch (Random::Range(1, 3))
+	//{
+	//case 1:
+	//	break;
+	//case 2:
+	//	particles.back()->SetSpriteColor({ 0.82f,0.27f,0.27f,1 });
+	//	break;
+	//case 3:
+	//	particles.back()->SetSpriteColor({ 1,0.56f,0.56f,1 });
+	//	break;
+	//default:
+	//	break;
+	//}
+	//}
+
 }
 
 void GrainScatterEffect::Update()

@@ -36,15 +36,18 @@ private:
 
 private:
 	// 色変わる関連
-	bool isChangeColor;
 	int changeColorTimer;
 	int changeColorMaxTimer;
+public:
+	bool isChangeColor;
 
 private:
 	// 床に吸い込まれる関連
 	bool isSucked;
 	int suckedMaxTimer;
 	int suckedTimer;
+public:
+	// 床に吸い込まれる関連
 	std::unique_ptr<BezierCurve> suckedCurve;
 
 private:

@@ -1035,10 +1035,20 @@ void Stage::StarUpdate()
 					if (tempStar->GetisChangeColor() == false)
 					{
 						ground->Damage(player->GetStarAttackDamage());
+						//if (viewProjection_.GetisShake() == true)
+						//{
+						//	//viewProjection_.AddShakeValue(0.25);
+						//	viewProjection_.AddShakeValue(10);
+						//}
+						//else
+						//{
+						viewProjection_.SetShakeValue(2.5, 20, 1.5);
+						//}
 					}
 					else
 					{
 						ground->Damage(player->GetStarAttackDamage() * 2);
+						viewProjection_.SetShakeValue(3, 20, 2);
 					}
 					tempStar->SetisDestroy(true);
 					tempStar->SetisAttack(false);
@@ -1081,14 +1091,23 @@ void Stage::StarUpdate()
 				{
 					if (temp->GetisSucked() == false)
 					{
-						grainScatterEffect->Generate(temp->GetPos());
+						//grainScatterEffect->Generate(temp->GetPos());
+						//repairEffect->Generate(temp->GetPos());
 						stars.remove(temp);
 						break;
 					}
 				}
 				else
 				{
-					grainScatterEffect->Generate(temp->GetPos());
+					if (temp->suckedCurve->GetisEnd() == true)
+					{
+						repairEffect->Generate(temp->GetPos());
+					}
+					else
+					{
+						grainScatterEffect->Generate(temp->GetPos(), temp->isChangeColor);
+					}
+
 					stars.remove(temp);
 					if (starRevivals.size() > 0)
 					{
@@ -1104,7 +1123,7 @@ void Stage::StarUpdate()
 			}
 			else
 			{
-				grainScatterEffect->Generate(temp->GetPos());
+				grainScatterEffect->Generate(temp->GetPos(), temp->isChangeColor);
 				stars.remove(temp);
 				break;
 			}

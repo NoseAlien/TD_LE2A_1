@@ -11,7 +11,7 @@ private:
 public:
 	GrainScatterEffect();
 	~GrainScatterEffect();
-	void Generate(const Vector3& pos);
+	void Generate(const Vector3& pos, const bool& colorType);
 	void Update();
 	void Draw();
 };

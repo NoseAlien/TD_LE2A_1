@@ -51,6 +51,7 @@ void GrainMoveEffect::Generate(const Vector3& pos, const float& radius)
 		default:
 			break;
 		}
+
 		generateTimer = 0;
 	}
 }

@@ -304,8 +304,7 @@ void Player::EffectGenerate(const Vector3& pos)
 	}
 	if (isHeavyAttack == true)
 	{
-		viewProjection_.SetShakeValue(1.5, 40, 2);
-		//heavyAttackEffect->Generate({ pos.x,pos.y - 5 - radius,pos.z });
+		viewProjection_.SetShakeValue(2, 40, 2);
 		heavyAttackEffect->Generate({ pos.x,pos.y + 2 - radius,pos.z });
 	}
 }

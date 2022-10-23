@@ -82,6 +82,12 @@ private:
 
 public:
 
+	inline void AddShakeValue(const float& addShakeValue)
+	{
+		shakeValue += addShakeValue;
+	}
+	inline bool GetisShake() { return shakeVector.x != 0 && shakeVector.y != 0 && shakeVector.z != 0; }
+
 	inline void SetShakeValue(const float& shakeValue, const int& shakeTimer, const int& shakePerFrame = 1)
 	{
 		this->shakeValue = shakeValue;
