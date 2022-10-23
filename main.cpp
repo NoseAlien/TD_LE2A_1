@@ -61,7 +61,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	primitiveDrawer = PrimitiveDrawer::GetInstance();
 	primitiveDrawer->Initialize();
 
-
 #pragma endregion
 
 	// ゲームシーンの初期化
@@ -69,6 +68,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//gameScene->Initialize();
 	GameScene::audio = audio;
 	sceneManager->Initialize();
+
+	//uint32_t tex = TextureManager::Load("TD1_1.png");
+	//Sprite* spr = Sprite::Create(tex, { 960,540 });
 
 	// メインループ
 	while (true) {
@@ -94,6 +96,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		axisIndicator->Draw();
 		// プリミティブ描画のリセット
 		primitiveDrawer->Reset();
+
+		//Sprite::PreDraw(dxCommon->GetCommandList());
+		//spr->Draw2();
+		//Sprite::PostDraw();
 		// 描画終了
 		dxCommon->PostDraw();
 	}
@@ -105,6 +111,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの破棄
 	win->TerminateGameWindow();
+
+	//delete spr;
 
 	return 0;
 }

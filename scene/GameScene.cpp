@@ -195,17 +195,17 @@ void GameScene::Update()
 	slowMotion->Update();
 	sceneChange->Update();
 
-	debugText_->SetPos(20, 20);
-	debugText_->Printf("CurrentStage = %d", currentStage);
+	//debugText_->SetPos(20, 20);
+	//debugText_->Printf("CurrentStage = %d", currentStage);
 
-	debugText_->SetPos(20, 40);
-	debugText_->Printf("GroundHP = %d", ground->GetHP());
+	//debugText_->SetPos(20, 40);
+	//debugText_->Printf("GroundHP = %d", ground->GetHP());
 
-	debugText_->SetPos(20, 60);
-	debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
+	//debugText_->SetPos(20, 60);
+	//debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
 
-	debugText_->SetPos(20, 120);
-	debugText_->Printf("mousePos = %f,%f", input_->GetMousePosition().x, input_->GetMousePosition().y);
+	//debugText_->SetPos(20, 120);
+	//debugText_->Printf("mousePos = %f,%f", input_->GetMousePosition().x, input_->GetMousePosition().y);
 }
 void GameScene::Draw()
 {
@@ -215,7 +215,7 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
-	backGroundSprite->Draw();	// 背景の描画
+	backGroundSprite->Draw2();	// 背景の描画
 
 	if (gameState == isGame)
 	{
@@ -252,7 +252,7 @@ void GameScene::Draw()
 	else if (gameState == isSelect)
 	{
 		stageSelect->DrawSprite();
-		selectFrameSprite->Draw(); // セレクト画面のフレーム
+		selectFrameSprite->Draw2(); // セレクト画面のフレーム
 	}
 
 	// デバッグテキストの描画
@@ -374,42 +374,44 @@ void GameScene::CurrentStageInit()
 		break;
 	case 9:
 		ground->Init(200);
-		stages[currentStage]->GenerateBlock({ 20,20,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ 40,-10,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 30,21,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 50,-10,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateThorn({ 60,21.5,0 }, false);
-		stages[currentStage]->GenerateThorn({ 80,-10,0 }, true);
+		stages[currentStage]->GenerateThorn({ 70,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 90,-10,0 }, true);
 
-		stages[currentStage]->GenerateBlock({ 100,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 110,0,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateBlock({ 120,+2,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ 120,-2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 130,+2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 130,-2,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateBlock({ 140,-10,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 150,-10,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateThorn({ 160,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 170,21.5,0 }, false);
 
-		stages[currentStage]->GenerateBlock({ 180,0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 190,0,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateBlock({ 200,+2,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ 200,-2,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateThorn({ 200,-10,0 }, true);
+		stages[currentStage]->GenerateBlock({ 210,+0,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 210,-4,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateThorn({ 210,-10,0 }, true);
 
-		stages[currentStage]->GenerateBlock({ 220,-10,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 230,-10,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateThorn({ 240,21.5,0 }, false);
-		stages[currentStage]->GenerateThorn({ 245,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 250,21.5,0 }, false);
+		stages[currentStage]->GenerateThorn({ 255,21.5,0 }, false);
 
-		stages[currentStage]->GenerateBlock({ 265,+2,0 }, true, { 2,2,2 });
-		stages[currentStage]->GenerateBlock({ 265,-2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 275,+2,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 275,-2,0 }, true, { 2,2,2 });
 
-		stages[currentStage]->GenerateGoal({ 280,20,0 });
-		//stages[currentStage]->SetisEndurance(true);
-		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
-		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
+		stages[currentStage]->GenerateGoal({ 300,20,0 });
 		break;
 	case 10:	// デバッグ用のステージ
 		ground->Init(10000);
+		stages[currentStage]->GenerateBlock({ -10,-10,0 }, true, { 2,2,2 });
+
+		//stages[currentStage]->SetisEndurance(true);
+		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		//stages[currentStage]->GenerateBlock({ 20,0,0 }, false, { 20,2,2 });
 		break;
 

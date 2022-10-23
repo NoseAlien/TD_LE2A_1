@@ -293,7 +293,7 @@ void Ground::DrawSprite()
 {
 	if (isAlive == false) return;
 
-	faceSprite->Draw();
+	faceSprite->Draw2();
 }
 
 Ground* Ground::GetInstance()

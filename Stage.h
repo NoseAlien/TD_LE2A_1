@@ -79,8 +79,12 @@ private:
 	bool isShowClearTime;
 	static uint32_t clearStrTexture;
 	Sprite* clearStrSprite;
+	static uint32_t overStrTexture;
+	std::unique_ptr<Sprite> overStrSprite;
+
 
 	int clearScreenClock;
+	int overScreenClock;
 
 private:
 	// ‰‰oŠÖ˜A

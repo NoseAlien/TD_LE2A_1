@@ -7,6 +7,7 @@ using namespace MathUtility;
 using namespace std;
 
 Model* Star::starModel = nullptr;
+unique_ptr<Model> Star::powerUpModel = nullptr;
 
 Star::Star() :
 	gravity(2), collisionRadius(1),
@@ -29,6 +30,7 @@ Star::~Star()
 void Star::Load()
 {
 	starModel = Model::CreateFromOBJ("star", true);
+	powerUpModel.reset(Model::CreateFromOBJ("player_kotubu", true));
 }
 
 void Star::UnLoad()
@@ -285,7 +287,8 @@ void Star::Draw(const ViewProjection& viewProjection_)
 	}
 	else
 	{
-		starModel->Draw(*trans, viewProjection_, Player::redPixel);
+		//starModel->Draw(*trans, viewProjection_, Player::redPixel);
+		powerUpModel->Draw(*trans, viewProjection_);
 	}
 }
 

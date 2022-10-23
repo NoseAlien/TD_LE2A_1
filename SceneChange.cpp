@@ -70,7 +70,7 @@ void SceneChange::Update()
 
 void SceneChange::Draw()
 {
-	sprite->Draw();
+	sprite->Draw2();
 }
 
 void SceneChange::StartSceneChange()

@@ -4,6 +4,8 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4.h"
+#include "MathUtility.h"
+#include "TextureManager.h"
 #include <Windows.h>
 #include <d3d12.h>
 #include <string>
@@ -191,6 +193,30 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	void Draw2()
+	{
+		// ワールド行列の更新
+		matWorld_ = MathUtility::Matrix4Identity();
+		matWorld_.m[0][0] = 1;
+		matWorld_.m[1][1] = 1;
+		matWorld_ *= MathUtility::Matrix4RotationZ(rotation_);
+		matWorld_ *= MathUtility::Matrix4Translation(position_.x, position_.y, 0.0f);
+
+		// 定数バッファにデータ転送
+		constMap_->color = color_;
+		constMap_->mat = matWorld_ * sMatProjection_; // 行列の合成
+
+		// 頂点バッファの設定
+		sCommandList_->IASetVertexBuffers(0, 1, &vbView_);
+
+		// 定数バッファビューをセット
+		sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
+		// シェーダリソースビューをセット
+		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 1, textureHandle_);
+		// 描画コマンド
+		sCommandList_->DrawInstanced(4, 1, 0, 0);
+	}
+
 private: // メンバ変数
   // 頂点バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff_;
@@ -213,7 +239,9 @@ private: // メンバ変数
 	// アンカーポイント
 	Vector2 anchorPoint_ = { 0, 0 };
 	// ワールド行列
+public:
 	Matrix4 matWorld_{};
+private:
 	// 色
 	Vector4 color_ = { 1, 1, 1, 1 };
 	// 左右反転

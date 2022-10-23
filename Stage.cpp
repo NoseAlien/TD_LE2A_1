@@ -19,6 +19,7 @@ uint32_t Stage::clearStrTexture = 0;
 Model* Stage::lineModel = nullptr;
 uint32_t Stage::lineModelTexture;
 vector<uint32_t> Stage::stageNumberTextures = {};
+uint32_t Stage::overStrTexture;
 
 const float lerp(const float& start, const float& end, const double progress)
 {
@@ -56,6 +57,10 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 	clearStrSprite->SetAnchorPoint({ 0.5, 0.5 });
 	clearStrSprite->SetSize({ 0,0 });
 
+	overStrSprite.reset(Sprite::Create(overStrTexture, { 0,0 }));
+	overStrSprite->SetAnchorPoint({ 0.5f,0.5f });
+	overStrSprite->SetSize({ 0,0 });
+
 	for (int i = 0; i < 2; i++)
 	{
 		if (i == 0)
@@ -76,6 +81,7 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 
 	grainScatterEffect = move(make_unique<GrainScatterEffect>());
 	repairEffect = move(make_unique<RepairEffect>());
+
 
 	windPressureEffect = WindPressureEffect::GetInstance();
 }
@@ -118,6 +124,7 @@ void Stage::Load()
 	}
 	timeStrTexture = TextureManager::Load("SpriteTexture/TimeStr.png");
 	clearStrTexture = TextureManager::Load("SpriteTexture/clear.png");
+	overStrTexture = TextureManager::Load("SpriteTexture/gameover.png");
 	dotStrTexture = TextureManager::Load("SpriteTexture/Dot.png");
 
 	lineModel = Model::CreateFromOBJ("lineModel", true);
@@ -308,9 +315,20 @@ void Stage::Update()
 		}
 		if (player->GetDieEffectisEnd() == true)
 		{
-			stagePcrogress = End;
-			sceneChange->StartSceneChange();
-			player->SetDieEffectisEnd(false);
+			overScreenClock++;
+
+			float clearStrPosY = lerp(1700.0f, 400, pow((overScreenClock - 50) / 30.0, 0.2));
+
+			overStrSprite->SetPosition({ 960,clearStrPosY });
+			overStrSprite->SetSize({ 768,768 });
+
+			if (overScreenClock >= 160)
+			{
+				stagePcrogress = End;
+				sceneChange->StartSceneChange();
+				player->SetDieEffectisEnd(false);
+				overScreenClock = 0;
+			}
 		}
 	}
 
@@ -374,27 +392,31 @@ void Stage::DrawSprite()
 	{
 		for (int i = 0; i < 2; i++)
 		{
-			enduranceTimeSprites[i]->Draw();
+			enduranceTimeSprites[i]->Draw2();
 		}
 	}
 
 	// ステージ表示
 	if (isShowStageNumber == true)
 	{
-		stageNumberSprite->Draw();
+		stageNumberSprite->Draw2();
 	}
 
 	// クリア描画
 	if (gameClear)
 	{
-		clearStrSprite->Draw();
+		clearStrSprite->Draw2();
 		for (int i = 0; i < dightsNumber.size(); i++)
 		{
-			clearTimeSprites[i]->Draw();
+			clearTimeSprites[i]->Draw2();
 		}
-		dotStrSprite->Draw();
+		dotStrSprite->Draw2();
 
-		timeStrSprite->Draw();
+		timeStrSprite->Draw2();
+	}
+	if (gameOver)
+	{
+		overStrSprite->Draw2();
 	}
 }
 void Stage::DrawEffectFront()
@@ -404,7 +426,7 @@ void Stage::DrawEffectFront()
 	{
 		if (startTextIndex < 4)
 		{
-			startTextSprites[startTextIndex]->Draw();
+			startTextSprites[startTextIndex]->Draw2();
 		}
 	}
 
@@ -537,7 +559,7 @@ void Stage::ClearTimeUpdate()
 		float clearStrPosY = lerp(1700.0f, 400, pow((clearScreenClock - 50) / 30.0, 0.2));
 
 		clearStrSprite->SetPosition({ 960,clearStrPosY });
-		clearStrSprite->SetSize({ 1028,1028 });
+		clearStrSprite->SetSize({ 768,768 });
 
 		clearTimeLastDightPos.x = lerp(2400, 1856, pow((clearScreenClock - 100) / 30.0, 0.2));
 
@@ -1143,6 +1165,22 @@ void Stage::ThornUpdate()
 		{
 			player->SetisDamage(true);
 		}
+
+		for (const auto& tempBlock : blocks)
+		{
+			if (collision->SphereHitSphere(temp->GetPos(), 0.5, tempBlock->GetPos(), 1.9))
+			{
+				if (temp->GetPos().y < tempBlock->GetPos().y)
+				{
+					tempBlock->SetPos(
+						{
+							tempBlock->GetPos().x,
+							temp->GetPos().y + 4,
+							tempBlock->GetPos().z,
+						});
+				}
+			}
+		}
 	}
 
 	for (const auto& temp : thorns)
@@ -1154,6 +1192,11 @@ void Stage::ThornUpdate()
 // ブロック
 void Stage::BlockUpdate()
 {
+	if (blocks.size() <= 0)
+	{
+		player->SetSpeed(0.25);
+	}
+
 	SquareCollider playerCollider =
 	{
 		{ player->GetPos().x, player->GetPos().y - player->GetRadius() - player->GetAttackMoveSpeed()},
@@ -1241,25 +1284,6 @@ void Stage::BlockUpdate()
 			}
 		}
 
-		//if (player->GetisGround() == true)
-		//{
-		SquareCollider tempCollider1 =
-		{
-			{ player->GetPos().x, player->GetPos().y - player->GetRadius() },
-			{ player->GetRadius(), player->GetRadius() },
-		};
-		if (collision->SquareHitSquare(tempCollider1, blockCollider))
-		{
-			//player->SetisHitBlock(true);
-			player->SetSpeed(0);
-			break;
-		}
-		else
-		{
-			player->SetSpeed(0.25);
-		}
-		//}
-
 		// 地面
 		if (collision->SquareHitSquare(floorCollider, blockCollider))
 		{
@@ -1276,6 +1300,52 @@ void Stage::BlockUpdate()
 			temp->SetisHit(0);
 		}
 
+
+		for (const auto& temp2 : blocks)
+		{
+			if (temp == temp2) break;
+
+			SquareCollider blockCollider2 =
+			{
+				{ temp2->GetPos().x,temp2->GetPos().y },
+				{ temp2->GetScale().x,1.5f },
+			};
+
+			if (collision->SquareHitSquare(blockCollider, blockCollider2))
+			{
+				if (blockCollider.pos.y >= blockCollider2.pos.y)
+				{
+					temp->SetPos(
+						{
+							temp->GetPos().x,
+							temp2->GetPos().y + 1,
+							temp->GetPos().z,
+						});
+				}
+				else if (blockCollider.pos.y < blockCollider2.pos.y)
+				{
+					temp2->SetPos(
+						{
+							temp->GetPos().x,
+							temp2->GetPos().y + 1,
+							temp->GetPos().z,
+						});
+				}
+			}
+		}
+		if (collision->SphereHitSphere(player->GetPos(), 1.5, temp->GetPos(), 2) ||
+			collision->SphereHitSphere({ player->GetPos().x + 3,player->GetPos().y,player->GetPos().z }, 1, temp->GetPos(), 2))
+		{
+			if (temp->revival->isRevival == false)
+			{
+				player->SetSpeed(0);
+				break;
+			}
+		}
+		else
+		{
+			player->SetSpeed(0.25);
+		}
 	}
 
 	// 更新処理
@@ -1365,6 +1435,11 @@ void Stage::RaceUpdate()
 	{
 		lineTrans2->translation_.x = 276;
 		lineTrans2->UpdateMatrix();
+	}
+	if (player->GetPos().x >= 276)
+	{
+		lineTrans->translation_.x = 368;
+		lineTrans->UpdateMatrix();
 	}
 
 	if (player->GetPos().x >= goal->GetPos().x - goal->GetScale().x)
