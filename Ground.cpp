@@ -29,7 +29,7 @@ void Ground::Load()
 	//enemyTexture = TextureManager::Load("groundColor1x1.png");
 	enemyDangerTexture = TextureManager::Load("SpriteTexture/GroundCrack/groundDengerColor1x1.png");
 	//enemyModel = Model::Create();
-	enemyModel = Model::CreateFromOBJ("ground", true);
+	enemyModel = Model::CreateFromOBJ("ground", false);
 	trans = new WorldTransform();
 	trans->Initialize();
 

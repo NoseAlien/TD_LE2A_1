@@ -748,10 +748,12 @@ void Stage::PlayerUpdate()
 						if (temp->GetisChangeColor() == false)
 						{
 							ground->Damage(player->GetHaveStarNum() * 5);
+							viewProjection_.SetShakeValue(2, 20, 2);
 						}
 						else
 						{
 							ground->Damage(player->GetHaveStarNum() * 10);
+							viewProjection_.SetShakeValue(3, 30, 2);
 						}
 						temp->SetisDestroy(true);
 					}
@@ -970,15 +972,12 @@ void Stage::StarUpdate()
 						if (tempStar->GetisChangeColor() == false)
 						{
 							ground->Damage(player->GetStarAttackDamage());
-							viewProjection_.SetShakeValue(2.5, 20, 1.5);
-							//continue;
-
+							viewProjection_.SetShakeValue(2, 20, 2);
 						}
 						else
 						{
 							ground->Damage(player->GetStarAttackDamage() * 2);
-							viewProjection_.SetShakeValue(3, 20, 2);
-							//continue;
+							viewProjection_.SetShakeValue(3, 30, 2);
 						}
 
 					}
