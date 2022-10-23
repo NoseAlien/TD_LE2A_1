@@ -54,6 +54,7 @@ void StageSelect::Initialize()
 		stageSelectTrans.back()->Initialize();
 		stageSelectTrans.back()->translation_ = { (float)i * 25,-12,0 };
 		//stageSelectTrans.back()->scale_ = { 5,5,1 };
+		//stageSelectTrans.back()->scale_ = { 0.75f,0.75f,0.75f };
 		stageSelectTrans.back()->scale_ = { stageSelectSize,stageSelectSize,stageSelectSize };
 		stageSelectTrans.back()->rotation_ = { 0,DegreeToRad(180),0 };
 		stageSelectTrans.back()->UpdateMatrix();

@@ -14,9 +14,9 @@ using namespace MathUtility;
 ViewProjection viewProjection_{};
 
 Audio* GameScene::audio = nullptr;
-Model* GameScene::backCubeModel = nullptr;
 uint32_t GameScene::backGroundTexture = 0;
 uint32_t GameScene::selectFrameTexture = 0;
+uint32_t GameScene::backLightTexture = 0;
 
 GameScene::GameScene()
 {
@@ -25,8 +25,6 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	Particle::UnLoad();
-	// 今はデストラクター一回しか呼ばないためエラー起こらない
-	delete backCubeModel;
 }
 
 void GameScene::Load()
@@ -41,6 +39,7 @@ void GameScene::Load()
 
 	backGroundTexture = TextureManager::Load("SpriteTexture/backGround/rock.png");
 	selectFrameTexture = TextureManager::Load("SpriteTexture/backGround/select_screen.png");
+	backLightTexture = TextureManager::Load("SpriteTexture/backGround/light.png");
 }
 void GameScene::Initialize()
 {
@@ -69,7 +68,6 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(RaceStage, 10)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
 
-
 	stageSelect = move(make_unique<StageSelect>(stages.size()));
 
 	viewProjection_.fovAngleY = DegreeToRad(50);
@@ -87,27 +85,11 @@ void GameScene::Initialize()
 	currentStage = 0;
 	gameState = isSelect;
 
-	//for (int i = 0; i < 20; i++)
-	//{
-	//	GenerateBackCube(
-	//		{
-	//			(float)Random::Range(-100,100),
-	//			//0.0f,
-	//			(float)Random::Range(-50,50),
-	//			(float)Random::Range(50,100),
-	//		});
-	//}
+	BackGroundInit();
 }
 void GameScene::Update()
 {
-	//int lenght = 50;
-	//Vector2 p1 = { cosf(DegreeToRad(90)) * lenght,sinf(DegreeToRad(90)) * lenght };
-	//Vector2 p2 = { cosf(DegreeToRad(180)) * lenght,sinf(DegreeToRad(180)) * lenght };
-	//Vector2 p3 = { cosf(DegreeToRad(90)),sinf(DegreeToRad(90)) };
-	//Vector2 p4 = { cosf(DegreeToRad(90)),sinf(DegreeToRad(90)) };
-	//temp->SetTextureRect(p3, p2, p4, p1);
-
-	//BackGroundUpdate();
+	BackGroundUpdate();
 
 	if (gameState == isGame)
 	{
@@ -196,15 +178,10 @@ void GameScene::Update()
 
 	//debugText_->SetPos(20, 20);
 	//debugText_->Printf("CurrentStage = %d", currentStage);
-
-	debugText_->SetPos(20, 40);
-	debugText_->Printf("GroundHP = %d", ground->GetHP());
-
+	//debugText_->SetPos(20, 40);
+	//debugText_->Printf("GroundHP = %d", ground->GetHP());
 	//debugText_->SetPos(20, 60);
 	//debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
-
-	//debugText_->SetPos(20, 120);
-	//debugText_->Printf("mousePos = %f,%f", input_->GetMousePosition().x, input_->GetMousePosition().y);
 }
 void GameScene::Draw()
 {
@@ -215,6 +192,7 @@ void GameScene::Draw()
 	Sprite::PreDraw(commandList);
 
 	backGroundSprite->Draw2();	// 背景の描画
+	BackGroundDraw();
 
 	if (gameState == isGame)
 	{
@@ -494,51 +472,97 @@ void GameScene::SelectUpdate()
 	}
 }
 
-void GameScene::GenerateBackCube(const Vector3& pos)
+void GameScene::BackGroundInit()
 {
-	backCubeTrans.emplace_back(move(make_unique<WorldTransform>()));
-	backCubeTrans.back()->Initialize();
-	backCubeTrans.back()->translation_ = pos;
-	float scale = Random::RangeF(5, 10);
-	backCubeTrans.back()->scale_ = { scale,scale,scale };
-	backCubeTrans.back()->rotation_ = { 0,0,0 };
-	backCubeTrans.back()->rotation_ =
-	{
-		DegreeToRad(Random::Range(0, 360)),
-		DegreeToRad(Random::Range(0, 360)),
-		DegreeToRad(Random::Range(0, 360)),
-	};
-	backCubeMoveSpeed.emplace_back(Random::RangeF(0.01, 0.05));
-	backCubeMoveAngle.emplace_back(Random::RangeF(0.5, 1));
-	int sign = Random::Range(-1, 1) >= 0 ? 1 : -1;
-	backCubeAngleSign.emplace_back(sign);
+	backLights.clear();
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 522,262 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 252,394 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 472,594 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 194,942 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 690,776 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 840,430 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 1038,138 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 1102,464 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 1210,686 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 1278,278 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 1458,78 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 1616,422 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 1718,876 }, backLightTexture);
+
+	backLights.emplace_back(move(make_unique<BackLight>()));
+	backLights.back()->Generate({ 1772,172 }, backLightTexture);
 }
 void GameScene::BackGroundUpdate()
 {
-	// 更新
-	for (int i = 0; i < backCubeTrans.size(); i++)
+	for (int i = 0; i < backLights.size(); i++)
 	{
-		backCubeTrans[i]->translation_.x -= backCubeMoveSpeed[i];
-		backCubeTrans[i]->rotation_.x += backCubeAngleSign[i] * DegreeToRad(backCubeMoveAngle[i]);
-		backCubeTrans[i]->rotation_.y += backCubeAngleSign[i] * DegreeToRad(backCubeMoveAngle[i]);
-		backCubeTrans[i]->rotation_.z += backCubeAngleSign[i] * DegreeToRad(backCubeMoveAngle[i]);
-		backCubeTrans[i]->UpdateMatrix();
-	}
-	// 削除
-	for (int i = 0; i < backCubeTrans.size(); i++)
-	{
-		if (backCubeTrans[i]->translation_.x <= -120)
-		{
-			backCubeTrans[i]->translation_.x = 120;
-			//backCubeTrans.erase(backCubeTrans.begin() + i);
-			//break;
-		}
+		backLights[i]->Update();
 	}
 }
 void GameScene::BackGroundDraw()
 {
-	for (int i = 0; i < backCubeTrans.size(); i++)
+	for (int i = 0; i < backLights.size(); i++)
 	{
-		backCubeModel->Draw(*backCubeTrans[i].get(), viewProjection_);
+		backLights[i]->Draw();
 	}
+}
+
+void BackLight::Generate(const Vector2& pos, const uint32_t& tex)
+{
+	backLight.reset(Sprite::Create(tex, pos));
+	backLight->SetAnchorPoint({ 0.5f,0.5f });
+	alpha = Random::RangeF(0, 1);
+}
+void BackLight::Update()
+{
+	if (isReverse == false)
+	{
+		alpha -= 0.025;
+		if (alpha <= 0)
+		{
+			alpha = 0;
+			isReverse = true;
+		}
+	}
+	if (isReverse == true)
+	{
+		alpha += 0.025;
+		if (alpha >= 1)
+		{
+			alpha = 1;
+			isReverse = false;
+		}
+	}
+
+	backLight->SetColor({ 1,1,1,alpha });
+}
+void BackLight::Draw()
+{
+	backLight->Draw2();
 }

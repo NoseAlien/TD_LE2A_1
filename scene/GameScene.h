@@ -23,6 +23,17 @@ enum GameState
 	isSelect,
 };
 
+struct BackLight
+{
+	std::unique_ptr<Sprite> backLight;
+	float alpha = 1;
+	bool isReverse = false;
+
+	void Generate(const Vector2& pos, const uint32_t& tex);
+	void Update();
+	void Draw();
+};
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -69,7 +80,6 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
-
 	std::vector<std::unique_ptr<Stage>> stages;
 	std::unique_ptr<StageSelect> stageSelect;
 
@@ -88,20 +98,15 @@ private: // メンバ変数
 	static uint32_t selectFrameTexture;
 	std::unique_ptr<Sprite> selectFrameSprite;
 
-private:
-	// 背景関連
-	static Model* backCubeModel;
-	std::vector<std::unique_ptr<WorldTransform>> backCubeTrans;
-	std::vector<float> backCubeMoveSpeed;
-	std::vector<float> backCubeMoveAngle;
-	std::vector<int> backCubeAngleSign;
-	void GenerateBackCube(const Vector3& pos);
-	void BackGroundUpdate();
-	void BackGroundDraw();
+	static uint32_t backLightTexture;
+	std::vector<std::unique_ptr<BackLight>> backLights;
 
 private:
 	void CurrentStageInit();
 	void SelectUpdate();
+	void BackGroundInit();
+	void BackGroundUpdate();
+	void BackGroundDraw();
 };
 
 extern ViewProjection viewProjection_;
