@@ -299,12 +299,12 @@ void Player::EffectGenerate(const Vector3& pos)
 {
 	if (isWeakAttack == true)
 	{
-		viewProjection_.SetShakeValue(1, 20);
+		viewProjection_.SetShakeValue(0.5, 10);
 		weakAttackEffect->Generate({ pos.x,pos.y + 2 - radius,pos.z });
 	}
 	if (isHeavyAttack == true)
 	{
-		viewProjection_.SetShakeValue(2, 40, 2);
+		viewProjection_.SetShakeValue(1, 20);
 		heavyAttackEffect->Generate({ pos.x,pos.y + 2 - radius,pos.z });
 	}
 }

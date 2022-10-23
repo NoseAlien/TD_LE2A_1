@@ -72,7 +72,7 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	isAttack = 0;
 
 	// ¶¬‚ÌŒ©‚½–ÚŠÖ˜A
-	isGenerate = true;
+	isGenerate = false;
 	geneAddScaleEase.SetEaseTimer(60);
 	geneAddScaleEase.SetPowNum(5);
 

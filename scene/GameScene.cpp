@@ -406,7 +406,7 @@ void GameScene::CurrentStageInit()
 		break;
 	case 10:	// デバッグ用のステージ
 		ground->Init(10000);
-		stages[currentStage]->GenerateBlock({ -10,-10,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 20,-10,0 }, true, { 2,2,2 });
 
 		//stages[currentStage]->SetisEndurance(true);
 		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
