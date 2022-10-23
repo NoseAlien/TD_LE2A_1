@@ -227,8 +227,8 @@ void Stage::Init()
 	// ¯•œŠˆŠÖ˜A
 	starRevivals.clear();
 	starsIndex = 0;
-	//blockRevivals.clear();
-	//blocksIndex = 0;
+
+	overStrSprite->SetPosition({ 960,1500 });
 }
 
 void Stage::Update()
@@ -317,7 +317,7 @@ void Stage::Update()
 		{
 			overScreenClock++;
 
-			float clearStrPosY = lerp(1700.0f, 400, pow((overScreenClock - 50) / 30.0, 0.2));
+			float clearStrPosY = lerp(1500.0f, 400, pow((overScreenClock - 50) / 30.0, 0.2));
 
 			overStrSprite->SetPosition({ 960,clearStrPosY });
 			overStrSprite->SetSize({ 768,768 });

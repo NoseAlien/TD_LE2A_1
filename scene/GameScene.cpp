@@ -9,7 +9,6 @@
 #include "Collision.h"
 #include "Particle.h"
 #include "PrimitiveDrawer.h"
-
 using namespace std;
 using namespace MathUtility;
 ViewProjection viewProjection_{};

@@ -91,7 +91,7 @@ void Particle::UpdateSprite()
 	case 5:
 		sprite->SetPosition(tempPos);
 		sprite->SetSize({ 48,48 });
-		sprite->SetColor(color);
+		sprite->SetColor({ 1,1,1,1 });
 		if (vec.x < 0)
 		{
 			sprite->SetIsFlipX(true);
@@ -127,7 +127,7 @@ void Particle::Load()
 	starTexture = TextureManager::Load("SpriteTexture/Particle/starParticle.png");
 	healTexture = TextureManager::Load("SpriteTexture/Particle/heal.png");
 	repairTexture = TextureManager::Load("SpriteTexture/Particle/repair.png");
-	windPressureTexture = TextureManager::Load("SpriteTexture/Particle/temp.png");
+	windPressureTexture = TextureManager::Load("SpriteTexture/Particle/air.png");
 }
 
 void Particle::UnLoad()

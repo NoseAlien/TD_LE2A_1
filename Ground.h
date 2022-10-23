@@ -61,6 +61,13 @@ private:
 	int surprisedAnimeIndex;
 	int surprisedCount;	// 一回につきアニメションを回す回数
 
+	// 泣き関連
+	static std::vector<uint32_t> cryTexture;
+	bool isCry;
+	int cryAnimeTimer;
+	int cryAnimeMaxTimer;
+	int cryAnimeIndex;
+
 	// ひび表現関連
 	static std::vector<uint32_t> groundCrackTexture;
 

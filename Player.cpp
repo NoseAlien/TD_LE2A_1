@@ -397,7 +397,7 @@ void Player::AttackUpdate()
 		{
 			trans->rotation_ = { DegreeToRad(180),0,0 };
 
-			if (trans->translation_.y == 20)
+			if (trans->translation_.y == 20 && trans->scale_.x >= 2)
 			{
 				isAttack = true;
 				addScaleStep = 1;

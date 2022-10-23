@@ -9,12 +9,12 @@ uint32_t Ground::idleTexture = 0;
 vector<uint32_t> Ground::blinkTexture = {};
 vector<uint32_t> Ground::surprisedTexture = {};
 vector<uint32_t> Ground::groundCrackTexture = {};
+vector<uint32_t> Ground::cryTexture = {};
 
 Ground::Ground() :
 	collisionRadius(10)
 {
 }
-
 Ground::~Ground()
 {
 	delete trans;
@@ -52,6 +52,14 @@ void Ground::Load()
 		surprisedTexture.push_back(
 			TextureManager::Load(
 				"SpriteTexture/ground_face/ground_face_surprised/ground_face_surprised" + to_string(i) + ".png"));
+	}
+
+	// 泣き
+	for (int i = 1; i <= 2; i++)
+	{
+		cryTexture.push_back(
+			TextureManager::Load(
+				"SpriteTexture/ground_face/ground_face_cry/ground_face_cry" + to_string(i) + ".png"));
 	}
 
 	// ひび表現
@@ -101,6 +109,7 @@ void Ground::Init(const int& maxhp)
 	blinkAnimeTimer = 0;
 	blinkAnimeMaxTimer = 3;
 	blinkAnimeIndex = 0;
+	faceSprite->SetTextureHandle(idleTexture);
 
 	// 驚き関連
 	isSurprised = false;
@@ -108,7 +117,12 @@ void Ground::Init(const int& maxhp)
 	surprisedAnimeMaxTimer = 3;
 	surprisedAnimeIndex = 0;
 	surprisedCount = 0;
-	faceSprite->SetTextureHandle(idleTexture);
+
+	// 泣き関連
+	isCry = false;
+	cryAnimeTimer = 0;
+	cryAnimeMaxTimer = 3;
+	cryAnimeIndex = 0;
 }
 
 void Ground::Update()
@@ -187,7 +201,7 @@ void Ground::Update()
 	faceSprite->SetPosition(tempPos);
 
 	// まばたきの時
-	if (isBlink == true)
+	if (isBlink == true && isCry == false)
 	{
 		blinkAnimeTimer++;
 		if (blinkAnimeTimer > blinkAnimeMaxTimer)
@@ -210,6 +224,17 @@ void Ground::Update()
 	// 驚きの時
 	if (isSurprised == true)
 	{
+		// まばたき関連初期化
+		isBlink = false;
+		blinkAnimeTimer = 0;
+		blinkAnimeIndex = 0;
+		timer = 0;
+
+		// 泣き関連初期化
+		isCry = false;
+		cryAnimeTimer = 0;
+		cryAnimeIndex = 0;
+
 		surprisedAnimeTimer++;
 		if (surprisedAnimeTimer > surprisedAnimeMaxTimer)
 		{
@@ -228,6 +253,26 @@ void Ground::Update()
 				}
 			}
 			surprisedAnimeTimer = 0;
+		}
+	}
+
+	if (hp <= maxhp * 0.35)
+	{
+		isCry = true;
+		if (isCry == true)
+		{
+			cryAnimeTimer++;
+			if (cryAnimeTimer >= cryAnimeMaxTimer)
+			{
+				faceSprite->SetTextureHandle(cryTexture[cryAnimeIndex]);
+
+				cryAnimeIndex++;
+				if (cryAnimeIndex > 1)
+				{
+					cryAnimeIndex = 0;
+				}
+				cryAnimeTimer = 0;
+			}
 		}
 	}
 
