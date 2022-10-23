@@ -392,31 +392,31 @@ void Stage::DrawSprite()
 	{
 		for (int i = 0; i < 2; i++)
 		{
-			enduranceTimeSprites[i]->Draw();
+			enduranceTimeSprites[i]->Draw2();
 		}
 	}
 
 	// ステージ表示
 	if (isShowStageNumber == true)
 	{
-		stageNumberSprite->Draw();
+		stageNumberSprite->Draw2();
 	}
 
 	// クリア描画
 	if (gameClear)
 	{
-		clearStrSprite->Draw();
+		clearStrSprite->Draw2();
 		for (int i = 0; i < dightsNumber.size(); i++)
 		{
-			clearTimeSprites[i]->Draw();
+			clearTimeSprites[i]->Draw2();
 		}
-		dotStrSprite->Draw();
+		dotStrSprite->Draw2();
 
-		timeStrSprite->Draw();
+		timeStrSprite->Draw2();
 	}
 	if (gameOver)
 	{
-		overStrSprite->Draw();
+		overStrSprite->Draw2();
 	}
 }
 void Stage::DrawEffectFront()
@@ -426,7 +426,7 @@ void Stage::DrawEffectFront()
 	{
 		if (startTextIndex < 4)
 		{
-			startTextSprites[startTextIndex]->Draw();
+			startTextSprites[startTextIndex]->Draw2();
 		}
 	}
 

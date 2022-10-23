@@ -116,7 +116,7 @@ void Particle::DrawModel(const int& type)
 
 void Particle::DrawSprite()
 {
-	sprite->Draw();
+	sprite->Draw2();
 }
 
 void Particle::Load()

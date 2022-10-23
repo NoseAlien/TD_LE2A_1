@@ -280,7 +280,7 @@ void Player::DrawSpriteFront()
 
 	for (int i = 0; i < life; i++)
 	{
-		heartSprites[i]->Draw();
+		heartSprites[i]->Draw2();
 	}
 }
 void Player::DrawSpriteBack()

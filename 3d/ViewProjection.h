@@ -96,7 +96,7 @@ public:
 		{
 			if (shakeTimer % shakePerFrame == 0 || shakeTimer == shakeMaxTimer)
 			{
-				float shakeVecRad = Random::RangeF(0, 2 * 3.1415926);
+				float shakeVecRad = Random::RangeF(0, 2 * 3.14159f);
 
 				shakeVector =
 				{

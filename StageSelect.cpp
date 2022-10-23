@@ -129,7 +129,7 @@ void StageSelect::DrawSprite()
 {
 	for (int i = 0; i < stageNumberSprites.size(); i++)
 	{
-		stageNumberSprites[i]->Draw();
+		stageNumberSprites[i]->Draw2();
 	}
 }
 

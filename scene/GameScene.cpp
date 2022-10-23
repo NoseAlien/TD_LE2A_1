@@ -195,17 +195,17 @@ void GameScene::Update()
 	slowMotion->Update();
 	sceneChange->Update();
 
-	debugText_->SetPos(20, 20);
-	debugText_->Printf("CurrentStage = %d", currentStage);
+	//debugText_->SetPos(20, 20);
+	//debugText_->Printf("CurrentStage = %d", currentStage);
 
-	debugText_->SetPos(20, 40);
-	debugText_->Printf("GroundHP = %d", ground->GetHP());
+	//debugText_->SetPos(20, 40);
+	//debugText_->Printf("GroundHP = %d", ground->GetHP());
 
-	debugText_->SetPos(20, 60);
-	debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
+	//debugText_->SetPos(20, 60);
+	//debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
 
-	debugText_->SetPos(20, 120);
-	debugText_->Printf("mousePos = %f,%f", input_->GetMousePosition().x, input_->GetMousePosition().y);
+	//debugText_->SetPos(20, 120);
+	//debugText_->Printf("mousePos = %f,%f", input_->GetMousePosition().x, input_->GetMousePosition().y);
 }
 void GameScene::Draw()
 {
@@ -215,7 +215,7 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
-	backGroundSprite->Draw();	// 背景の描画
+	backGroundSprite->Draw2();	// 背景の描画
 
 	if (gameState == isGame)
 	{
@@ -252,7 +252,7 @@ void GameScene::Draw()
 	else if (gameState == isSelect)
 	{
 		stageSelect->DrawSprite();
-		selectFrameSprite->Draw(); // セレクト画面のフレーム
+		selectFrameSprite->Draw2(); // セレクト画面のフレーム
 	}
 
 	// デバッグテキストの描画
