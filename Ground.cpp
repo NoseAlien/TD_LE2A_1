@@ -63,7 +63,7 @@ void Ground::Load()
 	}
 
 	// ‚Ð‚Ñ•\Œ»
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 15; i++)
 	{
 		groundCrackTexture.push_back(
 			TextureManager::Load(
@@ -285,17 +285,37 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 
 	if (isDanger == true)
 	{
-		if (hp <= maxhp * 0.25)
+		if (hp <= maxhp * 0.125f)
 		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[5]);
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[15]);
 		}
-		else if (hp <= maxhp * 0.5)
+		else if (hp <= maxhp * 0.25f)
 		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[4]);
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[14]);
 		}
-		else if (hp <= maxhp * 0.75)
+		else if (hp <= maxhp * 0.375f)
 		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[3]);
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[13]);
+		}
+		else if (hp <= maxhp * 0.5f)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[12]);
+		}
+		else if (hp <= maxhp * 0.625f)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[11]);
+		}
+		else if (hp <= maxhp * 0.75f)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[10]);
+		}
+		else if (hp <= maxhp * 0.875f)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[9]);
+		}
+		else if (hp <= maxhp - 1)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[8]);
 		}
 		else
 		{
@@ -304,15 +324,35 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 	}
 	else
 	{
-		if (hp <= maxhp * 0.25)
+		if (hp <= maxhp * 0.125f)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[7]);
+		}
+		else if (hp <= maxhp * 0.25f)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[6]);
+		}
+		else if (hp <= maxhp * 0.375f)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[5]);
+		}
+		else if (hp <= maxhp * 0.5f)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[4]);
+		}
+		else if (hp <= maxhp * 0.625f)
+		{
+			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[3]);
+		}
+		else if (hp <= maxhp * 0.75f)
 		{
 			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[2]);
 		}
-		else if (hp <= maxhp * 0.5)
+		else if (hp <= maxhp * 0.875f)
 		{
 			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[1]);
 		}
-		else if (hp <= maxhp * 0.75)
+		else if (hp <= maxhp - 1)
 		{
 			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[0]);
 		}
@@ -321,6 +361,22 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 			enemyModel->Draw(*trans, viewProjection_);
 		}
 
+		//if (hp <= maxhp * 0.25)
+		//{
+		//	enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[2]);
+		//}
+		//else if (hp <= maxhp * 0.5)
+		//{
+		//	enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[1]);
+		//}
+		//else if (hp <= maxhp * 0.75)
+		//{
+		//	enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[0]);
+		//}
+		//else
+		//{
+		//	enemyModel->Draw(*trans, viewProjection_);
+		//}
 	}
 }
 

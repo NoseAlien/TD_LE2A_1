@@ -29,13 +29,13 @@ enum StageProgress
 	End,
 };
 
-struct RevivalObject
-{
-	bool isRevival = false;
-	int timer = 0;
-	int maxTimer = 180;
-	Vector3 pos;
-};
+//struct RevivalObject
+//{
+//	bool isRevival = false;
+//	int timer = 0;
+//	int maxTimer = 180;
+//	Vector3 pos;
+//};
 
 class Stage
 {
@@ -120,7 +120,7 @@ private:
 
 private:
 	std::list<std::unique_ptr<Star>> stars;
-	std::vector<std::unique_ptr<RevivalObject>> starRevivals;
+	//std::vector<std::unique_ptr<RevivalObject>> starRevivals;
 	uint32_t starsIndex;
 
 	std::list<std::unique_ptr<Thorn>> thorns;

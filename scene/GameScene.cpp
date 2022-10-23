@@ -197,8 +197,8 @@ void GameScene::Update()
 	//debugText_->SetPos(20, 20);
 	//debugText_->Printf("CurrentStage = %d", currentStage);
 
-	//debugText_->SetPos(20, 40);
-	//debugText_->Printf("GroundHP = %d", ground->GetHP());
+	debugText_->SetPos(20, 40);
+	debugText_->Printf("GroundHP = %d", ground->GetHP());
 
 	//debugText_->SetPos(20, 60);
 	//debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);

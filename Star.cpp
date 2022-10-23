@@ -72,9 +72,12 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	isAttack = 0;
 
 	// 生成の見た目関連
-	isGenerate = false;
+	isGenerate = true;
 	geneAddScaleEase.SetEaseTimer(60);
 	geneAddScaleEase.SetPowNum(5);
+
+	revival = move(make_unique<RevivalObj1>());
+
 }
 
 void Star::GenerateUpdate()
@@ -104,6 +107,54 @@ void Star::GenerateUpdate()
 
 void Star::Update()
 {
+	if (revival->isRevival == true)
+	{
+		revival->timer++;
+		if (revival->timer >= revival->maxTimer)
+		{
+			isGenerate = true;
+
+			isDestroy = false;
+
+			// アニメーション関連
+			animeIndex = 0;
+			fream = 0;
+			maxFream = 5;
+
+			//------
+			trans->translation_ = revival->pos;
+			trans->scale_ = { 0,0,0 };
+			trans->rotation_ = { 0,DegreeToRad(180),0 };
+			trans->UpdateMatrix();
+
+			if (generateType != 0)
+			{
+				gravity = 1;
+			}
+			else
+			{
+				gravity = 0;
+			}
+			collisionRadius = trans->scale_.x;
+			isNotGravity = false;
+			isAngleShake = false;
+			isDestroy = false;
+			isGround = false;
+			isAttack = 0;
+
+			changeColorTimer = 0;
+			isChangeColor = false;
+
+			suckedTimer = 0;
+			isSucked = false;
+			suckedCurve->ReSet();
+
+			revival->timer = 0;
+			revival->isRevival = false;
+
+		}
+	}
+
 	SlowMotion* slowMotion = SlowMotion::GetInstance();
 
 	GenerateUpdate();
@@ -259,7 +310,8 @@ void Star::SuckedUpdate()
 			suckedCurve->Update();
 			trans->translation_ = suckedCurve->InterPolation(BezierCurve::InterPolationType::EaseIn);
 
-			if (suckedCurve->GetisEnd() == true && isDestroy == false)
+			if (suckedCurve->GetisEnd() == true && isDestroy == false &&
+				revival->isRevival == false)
 			{
 				ground->AddHP(2);
 				isDestroy = true;
@@ -270,25 +322,27 @@ void Star::SuckedUpdate()
 
 void Star::Draw(const ViewProjection& viewProjection_)
 {
-	fream++;
-	if (fream > maxFream)
+	if (revival->isRevival == false)
 	{
-		animeIndex++;
-		if (animeIndex > 8)
+		fream++;
+		if (fream > maxFream)
 		{
-			animeIndex = 0;
+			animeIndex++;
+			if (animeIndex > 8)
+			{
+				animeIndex = 0;
+			}
+			fream = 0;
 		}
-		fream = 0;
-	}
 
-	if (isChangeColor == false)
-	{
-		starModel->Draw(*trans, viewProjection_, Player::playerTexAnime[animeIndex]);
-	}
-	else
-	{
-		//starModel->Draw(*trans, viewProjection_, Player::redPixel);
-		powerUpModel->Draw(*trans, viewProjection_);
+		if (isChangeColor == false)
+		{
+			starModel->Draw(*trans, viewProjection_, Player::playerTexAnime[animeIndex]);
+		}
+		else
+		{
+			powerUpModel->Draw(*trans, viewProjection_);
+		}
 	}
 }
 

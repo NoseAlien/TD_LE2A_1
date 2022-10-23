@@ -6,10 +6,22 @@
 #include "Easing.h"
 #include <memory>
 
+struct RevivalObj1
+{
+	bool isCanRevival = false;
+	bool isRevival = false;
+	int timer = 0;
+	int maxTimer = 180;
+	Vector3 pos;
+};
+
 class Star
 {
 private:
 	std::unique_ptr<GrainMoveEffect> grainMoveEffect;
+
+public:
+	std::unique_ptr<RevivalObj1> revival;
 
 private:
 	WorldTransform* trans = nullptr;
