@@ -90,7 +90,7 @@ void Particle::UpdateSprite()
 		break;
 	case 5:
 		sprite->SetPosition(tempPos);
-		sprite->SetSize({ 48,48 });
+		sprite->SetSize({ 96,96 });
 		sprite->SetColor({ 1,1,1,1 });
 		if (vec.x < 0)
 		{

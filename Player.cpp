@@ -99,7 +99,7 @@ void Player::Init()
 
 	collapseTrans->translation_ = { 0,20,0 };
 	collapseTrans->scale_ = { 4,4,4 };
-	collapseTrans->rotation_ = { 0,0,0 };
+	collapseTrans->rotation_ = { 0,DegreeToRad(180),0 };
 	collapseTrans->UpdateMatrix();
 
 	slowMotion = SlowMotion::GetInstance();
@@ -246,6 +246,8 @@ void Player::SelectSceneUpdate()
 
 	trans->UpdateMatrix();
 }
+
+static bool isCollapse = false;
 void Player::Draw(const ViewProjection& viewProjection_)
 {
 	fream++;
@@ -261,9 +263,9 @@ void Player::Draw(const ViewProjection& viewProjection_)
 
 	if (damageTimer % 10 < 5)
 	{
-		if (isGround == true)
+		if (isGround == true && isJump == false)
 		{
-			collapseTrans->translation_ = { trans->translation_.x,trans->translation_.y - 3,trans->translation_.z };
+			collapseTrans->translation_ = { trans->translation_.x,trans->translation_.y - 3.5f,trans->translation_.z };
 			collapseTrans->scale_ = trans->scale_ + 2;
 			collapseTrans->UpdateMatrix();
 			collapseModel->Draw(*collapseTrans, viewProjection_);
@@ -614,6 +616,11 @@ void Player::AttackUpdate()
 		//}
 	}
 
+	//if (isGround == true && isJumpAddScaleStep == 0)
+	//{
+	//	isCollapse = true;
+	//}
+
 	if (isGround == true)
 	{
 		if (input_->TriggerKey(DIK_SPACE))
@@ -637,7 +644,9 @@ void Player::AttackUpdate()
 		const float offset = 0.25f;
 		if (isJumpAddScaleStep == 1)
 		{
-			trans->translation_.y -= offset * slowMotion->GetSlowExrate();
+			//isCollapse = false;
+
+			//trans->translation_.y -= offset * slowMotion->GetSlowExrate();
 
 			trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
 			trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
@@ -647,7 +656,7 @@ void Player::AttackUpdate()
 				Vector3 tempTrans =
 				{
 					trans->translation_.x,
-					trans->translation_.y - 1,
+					trans->translation_.y - 2,
 					trans->translation_.z,
 				};
 
@@ -661,7 +670,7 @@ void Player::AttackUpdate()
 		{
 			isEngulfAttack = true;
 
-			trans->translation_.y += offset * slowMotion->GetSlowExrate();
+			//trans->translation_.y += offset * slowMotion->GetSlowExrate();
 
 			trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
 			trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
