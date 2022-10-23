@@ -17,7 +17,7 @@ Block::~Block()
 
 void Block::Load()
 {
-	blockModel = Model::CreateFromOBJ("block", true);
+	blockModel = Model::CreateFromOBJ("block", false);
 }
 
 void Block::UnLoad()

@@ -91,9 +91,10 @@ void Player::Init()
 	spawnTrans->translation_ =
 	{
 		trans->translation_.x,
-		23,
+		21,
 		trans->translation_.z,
 	};
+	spawnTrans->scale_ = { 1.6f,1.5f,1.6f };
 	spawnTrans->UpdateMatrix();
 
 	collapseTrans->translation_ = { 0,20,0 };
@@ -164,13 +165,23 @@ void Player::Update()
 	spawnTrans->translation_ =
 	{
 		trans->translation_.x,
-		23,
+		21,
 		trans->translation_.z,
 	};
 	spawnTrans->UpdateMatrix();
 }
 void Player::SelectSceneUpdate()
 {
+	//if (input_->PushKey(DIK_D))
+	//{
+	//	spawnTrans->rotation_.y += 0.01;
+	//}
+	//if (input_->PushKey(DIK_A))
+	//{
+	//	spawnTrans->rotation_.y -= 0.01;
+	//}
+	//spawnTrans->UpdateMatrix();
+
 	if (input_->TriggerKey(DIK_SPACE))
 	{
 		trans->rotation_ = { DegreeToRad(180),0,0 };

@@ -29,7 +29,6 @@ public:	// テクスチャー
 	int maxFream;
 	static uint32_t redPixel;		// テクスチャー
 
-
 private:
 	Input* input_ = nullptr;
 

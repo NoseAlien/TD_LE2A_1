@@ -31,8 +31,8 @@ StageSelect::~StageSelect()
 
 void StageSelect::Load()
 {
-	stageSelectModel = Model::CreateFromOBJ("select_screen", true);
-	stageTextModel = Model::CreateFromOBJ("select_stage", true);
+	stageSelectModel = Model::CreateFromOBJ("select_screen", false);
+	stageTextModel = Model::CreateFromOBJ("select_stage", false);
 }
 
 void StageSelect::UnLoad()
