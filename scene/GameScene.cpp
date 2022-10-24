@@ -531,10 +531,16 @@ void GameScene::BackGroundInit()
 
 	saturnSprite.reset(Sprite::Create(saturnTexture, { 570,720 }));
 	saturnSprite->SetAnchorPoint({ 0.5f,0.5f });
+	saturnCircleMove.lenght = 2;
+	saturnCircleMove.maxTimer = 20;
+	saturnCircleMove.moveAngle = Random::Range(0, 360);
 	//saturnMoveAngle = 0;
 
 	meteoriteSprite.reset(Sprite::Create(meteoriteTexture, { 1440,320 }));
 	meteoriteSprite->SetAnchorPoint({ 0.5f,0.5f });
+	meteoriteCircleMove.lenght = 2;
+	meteoriteCircleMove.maxTimer = 20;
+	meteoriteCircleMove.moveAngle = Random::Range(0, 360);
 
 	backLights.clear();
 
@@ -587,43 +593,9 @@ void GameScene::BackGroundUpdate()
 		backLights[i]->Update();
 	}
 
-	saturnCircleMove.lenght = 2;
-	saturnCircleMove.maxTimer = 20;
 	saturnSprite->SetPosition(saturnCircleMove.Move(saturnSprite->GetPosition()));
-	/*Vector2 tempSaturnPos;
-	static int timer = 0;
-	static int maxTimer = 20;
-	static float lenght = 2;
-	timer++;
-	if (timer == maxTimer / 2)
-	{
-		saturnMoveAngle += 9;
-		if (saturnMoveAngle > 360)
-		{
-			saturnMoveAngle = 0;
-		}
+	meteoriteSprite->SetPosition(meteoriteCircleMove.Move(meteoriteSprite->GetPosition()));
 
-		saturnSprite->SetPosition(
-			{
-				cosf(DegreeToRad(saturnMoveAngle)) * lenght + saturnSprite->GetPosition().x,
-				saturnSprite->GetPosition().y
-			});
-	}
-
-	if (timer >= maxTimer)
-	{
-		saturnMoveAngle += 9;
-		if (saturnMoveAngle > 360)
-		{
-			saturnMoveAngle = 0;
-		}
-		saturnSprite->SetPosition(
-			{
-				saturnSprite->GetPosition().x,
-				sinf(DegreeToRad(saturnMoveAngle)) * lenght + saturnSprite->GetPosition().y
-			});
-		timer = 0;
-	}*/
 }
 void GameScene::BackGroundDraw()
 {

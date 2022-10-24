@@ -158,6 +158,8 @@ private: // メンバ変数
 	// 背景の隕石
 	static uint32_t meteoriteTexture;
 	std::unique_ptr<Sprite> meteoriteSprite;
+	CircleMove meteoriteCircleMove;
+
 
 private:
 	//タイトル用
