@@ -91,11 +91,14 @@ private:
 	float maxSize = 2.5;
 
 	int isJumpAddScaleStep = 0;
+	bool isHitGround;
 
 private:
 	// ブロックの当たった関連
 	bool isHitBlock;
 	int hitedBlockStep;
+
+	bool isAttackBlock;	// 上から攻撃したら
 
 private:
 	// 自機のスポーンモデル関連
@@ -151,6 +154,7 @@ public:
 	inline bool GetisJump() { return isJump; }
 	inline int GetisJumpAddScaleStep() { return isJumpAddScaleStep; }
 	inline bool GetisHitBlock() { return isHitBlock; }
+	inline bool GetisAttackBlock() { return isAttackBlock; }
 
 	inline void HaveStarNumIncriment() { haveStarNum++; }
 
@@ -163,6 +167,10 @@ public:
 	inline void SetLife(const int& life) { this->life = life; }
 	inline void SetisHitBlock(const bool& isHitBlock) { this->isHitBlock = isHitBlock; }
 	inline void SetSpeed(const float& speed) { this->speed = speed; }
+	inline void SetisGround(const bool& isGround) { this->isGround = isGround; }
+	inline void SetAttackMoveSpeed(const float& attackMoveSpeed) { this->attackMoveSpeed = attackMoveSpeed; }
+	inline void SetisHitGround(const bool& isHitGround) { this->isHitGround = isHitGround; }
+	inline void SetisAttackBlock(const bool& isAttackBlock) { this->isAttackBlock = isAttackBlock; }
 
 public:
 	static Player* GetInstance();
