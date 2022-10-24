@@ -592,6 +592,12 @@ void GameScene::TitleInit()
 	titleLogoSprite.reset(Sprite::Create(titleLogoTexture, { 960,270 }));
 	titleLogoSprite->SetAnchorPoint({ 0.5f,0.5f });
 
+	saturnSprite.reset(Sprite::Create(saturnTexture, { 570,720 }));
+	saturnSprite->SetAnchorPoint({ 0.5f,0.5f });
+	saturnCircleMove.lenght = 2;
+	saturnCircleMove.maxTimer = 20;
+	saturnCircleMove.moveAngle = Random::Range(0, 360);
+
 	meteoriteSprite.reset(Sprite::Create(meteoriteTexture, { 1440,320 }));
 	meteoriteSprite->SetAnchorPoint({ 0.5f,0.5f });
 	meteoriteCircleMove.lenght = 2;
@@ -628,12 +634,6 @@ void GameScene::BackGroundInit()
 
 	backColorSprite.reset(Sprite::Create(backColorTexture, { 0,0 }));
 	backColorSprite->SetSize({ 1920,1080 });
-
-	saturnSprite.reset(Sprite::Create(saturnTexture, { 570,720 }));
-	saturnSprite->SetAnchorPoint({ 0.5f,0.5f });
-	saturnCircleMove.lenght = 2;
-	saturnCircleMove.maxTimer = 20;
-	saturnCircleMove.moveAngle = Random::Range(0, 360);
 
 	//meteoriteSprite.reset(Sprite::Create(meteoriteTexture, { 1440,320 }));
 	//meteoriteSprite->SetAnchorPoint({ 0.5f,0.5f });
