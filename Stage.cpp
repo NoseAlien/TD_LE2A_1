@@ -367,6 +367,10 @@ void Stage::Draw()
 {
 	lineModel->Draw(*lineTrans, viewProjection_);
 	lineModel->Draw(*lineTrans2, viewProjection_);
+	if (stageType == RaceStage)
+	{
+		lineModel->Draw(*goalLineTrans, viewProjection_);
+	}
 
 	if (isEndurance == true)
 	{
@@ -721,6 +725,11 @@ void Stage::GenerateGoal(const Vector3& pos)
 {
 	goal = move(make_unique<Goal>());
 	goal->Generate(pos);
+	goalLineTrans = move(make_unique<WorldTransform>());
+	goalLineTrans->Initialize();
+	goalLineTrans->translation_ = { pos.x,pos.y - 10,pos.z };
+	goalLineTrans->rotation_ = { 0,0,DegreeToRad(90) };
+	goalLineTrans->UpdateMatrix();
 }
 
 void Stage::PlayerGenerateStar(const Vector3& pos)

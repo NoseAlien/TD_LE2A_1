@@ -111,6 +111,8 @@ private:
 	std::unique_ptr<WorldTransform> lineTrans;
 	std::unique_ptr<WorldTransform> lineTrans2;
 
+	std::unique_ptr<WorldTransform> goalLineTrans;
+
 private:
 	// ‘Ï‹víŠÖ˜A
 	bool isEndurance;
