@@ -265,7 +265,7 @@ void Player::Draw(const ViewProjection& viewProjection_)
 	{
 		if (isGround == true && isJump == false)
 		{
-			collapseTrans->translation_ = { trans->translation_.x,trans->translation_.y - 3.5f,trans->translation_.z };
+			collapseTrans->translation_ = { trans->translation_.x,trans->translation_.y - 4,trans->translation_.z };
 			collapseTrans->scale_ = trans->scale_ + 2;
 			collapseTrans->UpdateMatrix();
 			collapseModel->Draw(*collapseTrans, viewProjection_);
