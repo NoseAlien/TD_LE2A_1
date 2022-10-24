@@ -866,7 +866,22 @@ void Stage::FloorUpdate()
 			if (collision->SquareHitSquare(tempCollider, groundCollider))
 			{
 				player->SetisReverse(true);
+				player->SetisHitGround(true);
 				ground->SetisHit(1);
+				if (player->GetisHeavyAttack() == true)
+				{
+					player->SetisGround(true);
+				}
+				//if (player->GetisWeakAttack() == true)
+				//{
+				//	player->SetPos(
+				//		{
+				//			player->GetPos().x,
+				//			ground->GetPos().y + ground->GetScale().y + player->GetRadius(),
+				//			player->GetPos().z
+				//		});
+				//}
+
 				break;
 			}
 		}
@@ -1242,23 +1257,40 @@ void Stage::BlockUpdate()
 				};
 				if (collision->SquareHitSquare(tempCollider, blockCollider))
 				{
-					player->SetisReverse(true);
-					temp->SetisHit(1);
+					if (player->GetisWeakAttack() == true &&
+						player->GetisReverse2() == false)
+					{
+						player->SetisReverse(true);
+						player->SetAttackMoveSpeed(0);
+						/*player->SetPos(
+												{
+													temp->GetPos().x,
+													temp->GetPos().y + 6.5f,
+													temp->GetPos().z,
+												});*/
+						temp->SetisHit(1);
+					}
+					if (player->GetisHeavyAttack() == true)
+					{
+						temp->SetisHit(1);
+					}
 					break;
 				}
 			}
 		}
-		if (temp->GetisHit() == 1)
+		if (temp->GetisHit() == 1/* && player->GetisReverse2() == false*/)
 		{
 			if (player->GetisWeakAttack() == true)
 			{
 				temp->Damage(player->GetWeakAttackDamage());
 				temp->SetisHit(2);
+				break;
 			}
 			if (player->GetisHeavyAttack() == true)
 			{
 				temp->Damage(player->GetHeavyAttackDamage());
 				temp->SetisHit(2);
+				break;
 			}
 		}
 		if (player->GetisJump() == true && player->GetisHitBlock() == false)

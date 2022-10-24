@@ -387,6 +387,9 @@ void Player::AttackUpdate()
 	{
 		if (input_->PushKey(DIK_SPACE))
 		{
+			attackMoveSpeed = 3;
+			isHitGround = false;
+			isAttackBlock = false;
 			if (trans->translation_.y == 20)
 			{
 				pushKeyFream++;
@@ -411,6 +414,7 @@ void Player::AttackUpdate()
 			if (trans->translation_.y == 20 && trans->scale_.x >= 2)
 			{
 				isAttack = true;
+				attackMoveSpeed = 3;
 				addScaleStep = 1;
 				if (pushKeyFream < maxPushKeyFream)
 				{
@@ -445,10 +449,10 @@ void Player::AttackUpdate()
 			}
 			else
 			{
+				//attackMoveSpeed = 3;
+
 				if (addScaleStep == 1)
 				{
-					stopTimer++;
-
 					trans->translation_.y -= 1;
 					trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
 					trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
@@ -489,7 +493,7 @@ void Player::AttackUpdate()
 			else
 			{
 				stopTimer++;
-				isGround = true;
+				//isGround = true;
 
 				if (addScaleStep == 1)
 				{
