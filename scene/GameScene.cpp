@@ -9,6 +9,8 @@
 #include "Collision.h"
 #include "Particle.h"
 #include "PrimitiveDrawer.h"
+#include <fstream>
+#include <sstream>
 using namespace std;
 using namespace MathUtility;
 ViewProjection viewProjection_{};
@@ -21,6 +23,48 @@ uint32_t GameScene::backColorTexture = 0;
 uint32_t GameScene::titleLogoTexture = 0;
 uint32_t GameScene::saturnTexture = 0;
 uint32_t GameScene::meteoriteTexture = 0;
+uint32_t GameScene::shootingStarTexture = 0;
+
+void GameScene::SaveData()
+{
+	ofstream file;
+	file.open("data.txt", ios::out);
+	for (int i = 0; i < stages.size(); i++)
+	{
+		file << stages[i]->fastClearTime << "\n";
+	}
+	file.close();
+}
+
+void GameScene::LoadData()
+{
+	ifstream file;
+	file.open("data.txt");
+	string line;
+	int index = 0;
+	while (getline(file, line))
+	{
+		// 1行分の文字列をストリームに変換して解析しやすくする
+		istringstream lineStream(line);
+		// 半角スペース区切りで行の先頭文字列を取得
+		//string key;
+		//getline(lineStream, key, ' ');
+
+		DWORD tempTime = 0;
+		lineStream >> tempTime;
+		stages[index]->fastClearTime = tempTime;
+		index++;
+		if (index > stages.size() - 1)
+		{
+			break;
+		}
+	}
+	file.close();
+}
+
+void GameScene::GenerateInit()
+{
+}
 
 GameScene::GameScene()
 {
@@ -28,6 +72,8 @@ GameScene::GameScene()
 }
 GameScene::~GameScene()
 {
+	SaveData();
+
 	Particle::UnLoad();
 }
 
@@ -48,6 +94,7 @@ void GameScene::Load()
 	titleLogoTexture = TextureManager::Load("SpriteTexture/title_logo.png");
 	saturnTexture = TextureManager::Load("SpriteTexture/backGround/saturn.png");
 	meteoriteTexture = TextureManager::Load("SpriteTexture/backGround/meteorite.png");
+	shootingStarTexture = TextureManager::Load("SpriteTexture/backGround/shootingStar.png");
 }
 void GameScene::Initialize()
 {
@@ -71,7 +118,8 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 8)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 9)));
 	stages.emplace_back(move(make_unique<Stage>(RaceStage, 10)));
-	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
+	//stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
+	LoadData();
 
 	stageSelect = move(make_unique<StageSelect>(stages.size()));
 
@@ -92,6 +140,8 @@ void GameScene::Initialize()
 
 	BackGroundInit();
 	TitleInit();
+
+	isGoToTitle = false;
 }
 void GameScene::Update()
 {
@@ -99,27 +149,33 @@ void GameScene::Update()
 
 	if (gameState == isGame)
 	{
-		if (input_->TriggerKey(DIK_RETURN))
-		{
-			pause = !pause;
-		}
+		//if (input_->TriggerKey(DIK_RETURN))
+		//{
+		//	pause = !pause;
+		//}
 
 		if (!pause)
 		{
 			stages[currentStage]->Update();
 		}
 
-		if (input_->TriggerKey(DIK_ESCAPE))
+		if (stages[currentStage]->GetGameClear() == false &&
+			stages[currentStage]->GetGameOver() == false)
 		{
-			gameState = isSelect;
-			player->Init();
+			if (input_->TriggerKey(DIK_ESCAPE))
+			{
+				//gameState = isSelect;
 
-			stageSelect->ResetObjPos();
-			viewProjection_.eye = { 0,0,-50 };
-			viewProjection_.target = { 0,0,0 };
-			viewProjection_.Initialize();
-			isSelectEnd = false;
-			SlowMotion::GetInstance()->Init();
+				sceneChange->StartSceneChange();
+				player->Init();
+
+				stageSelect->ResetObjPos();
+				viewProjection_.eye = { 0,0,-50 };
+				viewProjection_.target = { 0,0,0 };
+				viewProjection_.Initialize();
+				isSelectEnd = false;
+				SlowMotion::GetInstance()->Init();
+			}
 		}
 
 		// シーンチェンジの時
@@ -135,29 +191,44 @@ void GameScene::Update()
 			isSelectEnd = false;
 			sceneChange->SetisChange(false);
 
+			if (stages[currentStage]->GetGameClear() == false &&
+				stages[currentStage]->GetGameOver() == false)
+			{
+				gameState = isSelect;
+			}
+
 			if (stages[currentStage]->GetGameClear() == true)
 			{
 				currentStage += 1;
 				if (currentStage >= stages.size())
 				{
 					currentStage = stages.size() - 1;
-					gameState = isSelect;
+					//gameState = isGame;
 				}
 				stageSelect->SetCurrentStage(currentStage);
+				stageSelect->ResetObjPos();
 				CurrentStageInit();
 			}
 			if (stages[currentStage]->GetGameOver() == true)
 			{
 				gameState = isSelect;
 			}
+
 		}
 	}
 	else if (gameState == isSelect)
 	{
+		if (input_->TriggerKey(DIK_ESCAPE))
+		{
+			sceneChange->StartSceneChange();
+			isGoToTitle = true;
+		}
+
 		if (stageSelect->GetTextPos(currentStage).y >= 5 && isSelectEnd == true)
 		{
 			sceneChange->StartSceneChange();
 			isSelectEnd = false;
+			isGoToTitle = false;
 		}
 
 		player->SelectSceneUpdate();
@@ -168,10 +239,19 @@ void GameScene::Update()
 		// シーンチェンジの時
 		if (sceneChange->GetisChange() == true)
 		{
-			gameState = isGame;
-			CurrentStageInit();
-			sceneChange->SetisChange(false);
+			if (isGoToTitle == true)
+			{
+				TitleInit();
+				gameState = isTitle;
+				sceneChange->SetisChange(false);
 
+			}
+			else
+			{
+				gameState = isGame;
+				CurrentStageInit();
+				sceneChange->SetisChange(false);
+			}
 		}
 	}
 	else if (gameState == isTitle)
@@ -216,9 +296,13 @@ void GameScene::Draw()
 
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
-
-	backGroundSprite->Draw2();	// 背景の描画
 	backColorSprite->Draw2();
+	backGroundSprite->SetColor({ 1,1,1,0.5f });
+
+	if (gameState != isSelect)
+	{
+		backGroundSprite->Draw2();	// 背景の描画
+	}
 	BackGroundDraw();
 	if (gameState == isTitle)
 	{
@@ -245,6 +329,7 @@ void GameScene::Draw()
 	else if (gameState == isSelect)
 	{
 		stageSelect->Draw();	// セレクトボックスの描画
+		player->Draw(viewProjection_);	// 自機
 	}
 	Model::PostDraw();
 
@@ -276,17 +361,17 @@ void GameScene::Draw()
 	}
 	Sprite::PostDraw();
 	// 深度バッファクリア
-	dxCommon_->ClearDepthBuffer();
+	//dxCommon_->ClearDepthBuffer();
 
 	// ------------------------------------------------------------------ //
 
-	// フレームより前のモデルを描画
-	Model::PreDraw(commandList);
-	if (gameState == isSelect)
-	{
-		player->Draw(viewProjection_);	// 自機
-	}
-	Model::PostDraw();
+	//// フレームより前のモデルを描画
+	//Model::PreDraw(commandList);
+	//if (gameState == isSelect)
+	//{
+	//	
+	//}
+	//Model::PostDraw();
 
 	// シーンチェンジの描画
 	Sprite::PreDraw(commandList);
@@ -299,7 +384,6 @@ IScene* GameScene::GetNextScene()
 {
 	return nullptr;
 }
-
 void GameScene::CurrentStageInit()
 {
 	pause = false;
@@ -336,8 +420,8 @@ void GameScene::CurrentStageInit()
 		break;
 	case 3:
 		ground->Init(40);
-		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
-		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
+		stages[currentStage]->GenerateCannon({ 35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-35) });
+		stages[currentStage]->GenerateCannon({ -35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(35) });
 
 		break;
 	case 4:
@@ -412,15 +496,15 @@ void GameScene::CurrentStageInit()
 
 		stages[currentStage]->GenerateGoal({ 300,20,0 });
 		break;
-	case 10:	// デバッグ用のステージ
-		ground->Init(10000);
-		stages[currentStage]->GenerateBlock({ 20,-10,0 }, true, { 2,2,2 });
+		//case 10:	// デバッグ用のステージ
+		//	ground->Init(10000);
+		//	stages[currentStage]->GenerateBlock({ 20,-10,0 }, true, { 2,2,2 });
 
-		//stages[currentStage]->SetisEndurance(true);
-		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
-		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
-		//stages[currentStage]->GenerateBlock({ 20,0,0 }, false, { 20,2,2 });
-		break;
+		//	//stages[currentStage]->SetisEndurance(true);
+		//	//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		//	//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
+		//	//stages[currentStage]->GenerateBlock({ 20,0,0 }, false, { 20,2,2 });
+		//	break;
 
 	default:
 		break;
@@ -507,6 +591,22 @@ void GameScene::TitleInit()
 	titleLogoMoveAngle = 0;
 	titleLogoSprite.reset(Sprite::Create(titleLogoTexture, { 960,270 }));
 	titleLogoSprite->SetAnchorPoint({ 0.5f,0.5f });
+
+	meteoriteSprite.reset(Sprite::Create(meteoriteTexture, { 1440,320 }));
+	meteoriteSprite->SetAnchorPoint({ 0.5f,0.5f });
+	meteoriteCircleMove.lenght = 2;
+	meteoriteCircleMove.maxTimer = 20;
+	meteoriteCircleMove.moveAngle = Random::Range(0, 360);
+	meteoriteAngle = Random::Range(0, 360);
+	switch (Random::Range(0, 1))
+	{
+	case 0:
+		meteoriteAngleDir = -1;
+		break;
+	case 1:
+		meteoriteAngleDir = 1;
+		break;
+	}
 }
 void GameScene::TitleUpdate()
 {
@@ -534,13 +634,29 @@ void GameScene::BackGroundInit()
 	saturnCircleMove.lenght = 2;
 	saturnCircleMove.maxTimer = 20;
 	saturnCircleMove.moveAngle = Random::Range(0, 360);
-	//saturnMoveAngle = 0;
 
-	meteoriteSprite.reset(Sprite::Create(meteoriteTexture, { 1440,320 }));
-	meteoriteSprite->SetAnchorPoint({ 0.5f,0.5f });
-	meteoriteCircleMove.lenght = 2;
-	meteoriteCircleMove.maxTimer = 20;
-	meteoriteCircleMove.moveAngle = Random::Range(0, 360);
+	//meteoriteSprite.reset(Sprite::Create(meteoriteTexture, { 1440,320 }));
+	//meteoriteSprite->SetAnchorPoint({ 0.5f,0.5f });
+	//meteoriteCircleMove.lenght = 2;
+	//meteoriteCircleMove.maxTimer = 20;
+	//meteoriteCircleMove.moveAngle = Random::Range(0, 360);
+	//meteoriteAngle = Random::Range(0, 360);
+	//switch (Random::Range(0, 1))
+	//{
+	//case 0:
+	//	meteoriteAngleDir = -1;
+	//	break;
+	//case 1:
+	//	meteoriteAngleDir = 1;
+	//	break;
+	//}
+
+	shootingStarSprite.reset(Sprite::Create(shootingStarTexture, { -256,-256 }));
+	shootingStarSprite->SetAnchorPoint({ 0,0.5f });
+	resetTimer = 0;
+	resetMaxTimer = 120;
+	shootingStarPos = { -256,-256 };
+	shootingStarSubScaleSpeed = 2;
 
 	backLights.clear();
 
@@ -592,20 +708,96 @@ void GameScene::BackGroundUpdate()
 	{
 		backLights[i]->Update();
 	}
+	if (gameState == isTitle)
+	{
+		// 土星の処理
+		saturnSprite->SetPosition(saturnCircleMove.Move(saturnSprite->GetPosition()));
 
-	saturnSprite->SetPosition(saturnCircleMove.Move(saturnSprite->GetPosition()));
-	meteoriteSprite->SetPosition(meteoriteCircleMove.Move(meteoriteSprite->GetPosition()));
+		// 隕石の処理
+		meteoriteSprite->SetPosition(meteoriteCircleMove.Move(meteoriteSprite->GetPosition()));
+		meteoriteAngle += meteoriteAngleDir * 0.5f;
+		if (meteoriteAngle > 360 || meteoriteAngle < -360)
+		{
+			meteoriteAngle = 0;
+		}
+		meteoriteSprite->SetRotation(DegreeToRad(meteoriteAngle));
+	}
+	else if (gameState == isGame || gameState == isSelect)
+	{
+		// 土星の処理
+		if (saturnSprite->GetPosition().x < -295)
+		{
+			saturnSprite->SetPosition({ 2215,(float)Random::Range(360,720) });
+		}
 
+		saturnSprite->SetPosition(saturnCircleMove.Move(
+			{
+				saturnSprite->GetPosition().x - 0.05f,
+				saturnSprite->GetPosition().y }));
+
+		// 隕石の処理
+		if (meteoriteSprite->GetPosition().x < -150)
+		{
+			meteoriteSprite->SetPosition({ 2070,(float)Random::Range(150,600) });
+
+			switch (Random::Range(0, 1))
+			{
+			case 0:
+				meteoriteAngleDir = -1;
+				break;
+			case 1:
+				meteoriteAngleDir = 1;
+				break;
+			}
+		}
+
+		meteoriteSprite->SetPosition({ meteoriteSprite->GetPosition().x - 1,meteoriteSprite->GetPosition().y });
+		meteoriteAngle += meteoriteAngleDir * 0.5f;
+		if (meteoriteAngle > 360 || meteoriteAngle < -360)
+		{
+			meteoriteAngle = 0;
+		}
+		meteoriteSprite->SetRotation(DegreeToRad(meteoriteAngle));
+	}
+
+
+	// 流れ星の処理
+	resetTimer++;
+	if (resetTimer >= resetMaxTimer)
+	{
+		resetTimer = resetMaxTimer;
+
+		if (shootingStarPos.y >= 2048 || shootingStarSprite->GetSize().x <= 0)
+		{
+			shootingStarPos.x = Random::Range(480, 1920);
+			shootingStarPos.y = -128;
+			resetMaxTimer = Random::Range(120, 240);
+			resetTimer = 0;
+			shootingStarSprite->SetSize({ 256,256 });
+			shootingStarSubScaleSpeed = Random::Range(2, 5);
+		}
+
+		const int speed = 15;
+		shootingStarPos.x -= speed;
+		shootingStarPos.y += speed;
+		shootingStarSprite->SetPosition(shootingStarPos);
+		shootingStarSprite->SetSize(
+			{
+				shootingStarSprite->GetSize().x - shootingStarSubScaleSpeed,
+				shootingStarSprite->GetSize().y - shootingStarSubScaleSpeed
+			});
+	}
 }
 void GameScene::BackGroundDraw()
 {
-	meteoriteSprite->Draw2();
-	saturnSprite->Draw2();
-
 	for (int i = 0; i < backLights.size(); i++)
 	{
 		backLights[i]->Draw();
 	}
+
+	shootingStarSprite->Draw2();
+	meteoriteSprite->Draw2();
+	saturnSprite->Draw2();
 }
 
 void BackLight::Generate(const Vector2& pos, const uint32_t& tex)

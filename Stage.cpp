@@ -7,13 +7,13 @@
 #include "HitStop.h"
 #include "PrimitiveDrawer.h"
 #include "SceneChange.h"
-
 using namespace std;
 
 uint32_t Stage::thornTexture = 0;
 vector<uint32_t> Stage::startTextTextures = {};
 vector<uint32_t> Stage::numberSheet = {};
 uint32_t Stage::timeStrTexture = 0;
+uint32_t Stage::fastTimeStrTexture = 0;
 uint32_t Stage::dotStrTexture = 0;
 uint32_t Stage::clearStrTexture = 0;
 Model* Stage::lineModel = nullptr;
@@ -28,7 +28,8 @@ const float lerp(const float& start, const float& end, const double progress)
 }
 
 Stage::Stage(const int& stageType, const int& stageNumber) :
-	stageType(stageType), playerIsHitGoal(false), stagePcrogress(Start), clearTimeDights(6)
+	stageType(stageType), playerIsHitGoal(false), stagePcrogress(Start), clearTimeDights(6),
+	fastClearTime(100000)
 {
 	goal = nullptr;
 
@@ -43,15 +44,27 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 		clearTimeSprites[i] = Sprite::Create(numberSheet[i], { -128,-128 });
 		clearTimeSprites[i]->SetAnchorPoint({ 0.5,0.5 });
 		clearTimeSprites[i]->SetSize({ 64,64 });
+
+		fastClearTimeSprites[i] = Sprite::Create(numberSheet[i], { -128,-128 });
+		fastClearTimeSprites[i]->SetAnchorPoint({ 0.5,0.5 });
+		fastClearTimeSprites[i]->SetSize({ 64,64 });
 	}
 
 	timeStrSprite = Sprite::Create(timeStrTexture, { -128,-128 });
 	timeStrSprite->SetAnchorPoint({ 0.5, 0.5 });
 	timeStrSprite->SetSize({ 128,64 });
 
+	fastTimeStrSprite = Sprite::Create(fastTimeStrTexture, { -128,-128 });
+	fastTimeStrSprite->SetAnchorPoint({ 0.5, 0.5 });
+	fastTimeStrSprite->SetSize({ 256,64 });
+
 	dotStrSprite = Sprite::Create(dotStrTexture, { -128,-128 });
 	dotStrSprite->SetAnchorPoint({ 0.5, 0.5 });
 	dotStrSprite->SetSize({ 64,64 });
+
+	dotStrSprite2 = Sprite::Create(dotStrTexture, { -128,-128 });
+	dotStrSprite2->SetAnchorPoint({ 0.5, 0.5 });
+	dotStrSprite2->SetSize({ 64,64 });
 
 	clearStrSprite = Sprite::Create(clearStrTexture, { 960,270 });
 	clearStrSprite->SetAnchorPoint({ 0.5, 0.5 });
@@ -82,7 +95,6 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 	grainScatterEffect = move(make_unique<GrainScatterEffect>());
 	repairEffect = move(make_unique<RepairEffect>());
 
-
 	windPressureEffect = WindPressureEffect::GetInstance();
 }
 Stage::~Stage()
@@ -94,11 +106,14 @@ Stage::~Stage()
 	for (int i = 0; i < clearTimeDights; i++)
 	{
 		delete clearTimeSprites[i];
+		delete fastClearTimeSprites[i];
 	}
 
-	delete timeStrSprite;
 	delete clearStrSprite;
+	delete timeStrSprite;
+	delete fastTimeStrSprite;
 	delete dotStrSprite;
+	delete dotStrSprite2;
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -123,6 +138,7 @@ void Stage::Load()
 		numberSheet.emplace_back(TextureManager::Load(filepath.c_str()));
 	}
 	timeStrTexture = TextureManager::Load("SpriteTexture/TimeStr.png");
+	fastTimeStrTexture = TextureManager::Load("SpriteTexture/FastTImeStr.png");
 	clearStrTexture = TextureManager::Load("SpriteTexture/clear.png");
 	overStrTexture = TextureManager::Load("SpriteTexture/gameover.png");
 	dotStrTexture = TextureManager::Load("SpriteTexture/Dot.png");
@@ -191,6 +207,8 @@ void Stage::Init()
 	isShowClearTime = false;
 	clearTimeLastDightPos = { 2500,952 };
 	isMoveClearTime = false;
+
+	fastTimeLastDightPos = { 2500,952 };
 
 	isCameraMoveStep = false;
 	stagePcrogress = Start;
@@ -275,9 +293,14 @@ void Stage::Update()
 			if (stagePcrogress == Play)
 			{
 				stagePcrogress = Staging;
-				SlowMotion::GetInstance()->StartSlowMotion(0.05, 240);
+				SlowMotion::GetInstance()->StartSlowMotion(0.05, 280);
 				endTime = GetNowTime();
 				clearTime = endTime - startTime;
+				if (fastClearTime > clearTime)
+				{
+					fastClearTime = clearTime;
+				}
+
 				isMoveClearTime = true;
 				gameClear = true;
 			}
@@ -406,10 +429,13 @@ void Stage::DrawSprite()
 		for (int i = 0; i < dightsNumber.size(); i++)
 		{
 			clearTimeSprites[i]->Draw2();
+			fastClearTimeSprites[i]->Draw2();
 		}
 		dotStrSprite->Draw2();
+		dotStrSprite2->Draw2();
 
 		timeStrSprite->Draw2();
+		fastTimeStrSprite->Draw2();
 	}
 	if (gameOver)
 	{
@@ -553,14 +579,18 @@ void Stage::ClearTimeUpdate()
 		clearScreenClock++;
 
 		//float clearStrPosY = lerp(1700.0f, 270, pow((clearScreenClock - 50) / 30.0, 0.2));
-		float clearStrPosY = lerp(1700.0f, 400, pow((clearScreenClock - 50) / 30.0, 0.2));
+		float clearStrPosY = lerp(1700.0f, 270, pow((clearScreenClock - 50) / 30.0, 0.2));
 
 		clearStrSprite->SetPosition({ 960,clearStrPosY });
 		clearStrSprite->SetSize({ 768,768 });
 
-		clearTimeLastDightPos.x = lerp(2400, 1856, pow((clearScreenClock - 100) / 30.0, 0.2));
-
+		//clearTimeLastDightPos.x = lerp(2400, 1856, pow((clearScreenClock - 100) / 30.0, 0.2));
 		dightsNumber = GetDightsNumber(clearTime);
+
+		clearTimeLastDightPos.x = 960 + ((dightsNumber.size() + 1) * 48 + 128) / 2;
+		clearTimeLastDightPos.y = lerp(1700, 480, pow((clearScreenClock - 125) / 30.0, 0.2));
+
+		// クリアタイム
 		for (int i = 0; i < dightsNumber.size(); i++)
 		{
 			clearTimeSprites[i]->SetTextureHandle(numberSheet[dightsNumber[i]]);
@@ -582,6 +612,36 @@ void Stage::ClearTimeUpdate()
 			{
 				clearTimeLastDightPos.x - dightsNumber.size() * 48 - 128,
 				clearTimeLastDightPos.y
+			});
+
+		// 最速タイム
+		fastTimedightsNumber = GetDightsNumber(fastClearTime);
+
+		fastTimeLastDightPos.x = 960 + ((fastTimedightsNumber.size() + 1) * 48 + 128) / 2;
+		fastTimeLastDightPos.y = lerp(1700, 544, pow((clearScreenClock - 150) / 30.0, 0.2));
+
+		// 桁の座標調整
+		for (int i = 0; i < fastTimedightsNumber.size(); i++)
+		{
+			fastClearTimeSprites[i]->SetTextureHandle(numberSheet[fastTimedightsNumber[i]]);
+			fastClearTimeSprites[i]->SetPosition(
+				{
+					fastTimeLastDightPos.x - (fastTimedightsNumber.size() - (float)i) * 48,
+					fastTimeLastDightPos.y
+				});
+			if (i == fastTimedightsNumber.size() - 2)
+			{
+				dotStrSprite2->SetPosition(
+					{
+						fastTimeLastDightPos.x - (fastTimedightsNumber.size() - (float)i) * 48,
+						fastTimeLastDightPos.y
+					});
+			}
+		}
+		fastTimeStrSprite->SetPosition(
+			{
+				fastTimeLastDightPos.x - dightsNumber.size() * 48 - 192,
+				fastTimeLastDightPos.y
 			});
 	}
 	else

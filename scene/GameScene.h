@@ -159,13 +159,25 @@ private: // メンバ変数
 	static uint32_t meteoriteTexture;
 	std::unique_ptr<Sprite> meteoriteSprite;
 	CircleMove meteoriteCircleMove;
+	float meteoriteAngle;
+	int meteoriteAngleDir;
 
+	// 流れ星
+	static uint32_t shootingStarTexture;
+	std::unique_ptr<Sprite> shootingStarSprite;
+	Vector2 shootingStarPos;
+	int resetTimer;
+	int resetMaxTimer;
+	int shootingStarSubScaleSpeed;
 
 private:
 	//タイトル用
 	static uint32_t titleLogoTexture;
 	std::unique_ptr<Sprite> titleLogoSprite;
 	int titleLogoMoveAngle;
+
+private:
+	bool isGoToTitle;
 
 private:
 	void CurrentStageInit();
@@ -177,6 +189,11 @@ private:
 	void TitleInit();
 	void TitleUpdate();
 	void TitleDraw();
+
+public:
+	void GenerateInit();
+	void SaveData();
+	void LoadData();
 };
 
 extern ViewProjection viewProjection_;

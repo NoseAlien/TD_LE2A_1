@@ -60,11 +60,11 @@ private:
 	float startTextAngle;
 	float startTextAlpha;
 	bool isStartTextEnd;
-	Vector2 clearTimeLastDightPos;
 	bool isMoveClearTime;
 
 private:
 	// クリア時間関連
+	Vector2 clearTimeLastDightPos;
 	DWORD startTime;
 	DWORD endTime;
 	DWORD clearTime;
@@ -82,7 +82,18 @@ private:
 	static uint32_t overStrTexture;
 	std::unique_ptr<Sprite> overStrSprite;
 
+public:
+	//データ保存関連
+	Vector2 fastTimeLastDightPos;
+	DWORD fastClearTime;
+	Sprite* fastClearTimeSprites[6];
+	static uint32_t fastTimeStrTexture;
+	Sprite* fastTimeStrSprite;
+	int fastTimeDights;
+	std::vector<int> fastTimedightsNumber;
+	Sprite* dotStrSprite2;
 
+private:
 	int clearScreenClock;
 	int overScreenClock;
 

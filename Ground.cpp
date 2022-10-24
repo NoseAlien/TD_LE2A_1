@@ -124,7 +124,6 @@ void Ground::Init(const int& maxhp)
 	cryAnimeMaxTimer = 3;
 	cryAnimeIndex = 0;
 }
-
 void Ground::Update()
 {
 	if (isAlive == false) return;
@@ -278,7 +277,6 @@ void Ground::Update()
 
 	trans->UpdateMatrix();
 }
-
 void Ground::Draw(const ViewProjection& viewProjection_)
 {
 	if (isAlive == false) return;
@@ -384,12 +382,10 @@ void Ground::EffectUpdate()
 {
 	breakGroundEffect->Update();
 }
-
 void Ground::EffectDraw()
 {
 	breakGroundEffect->Draw();
 }
-
 void Ground::DrawSprite()
 {
 	if (isAlive == false) return;
@@ -402,10 +398,8 @@ Ground* Ground::GetInstance()
 	static Ground* floor = new Ground;
 	return floor;
 }
-
 void Ground::DestroyInstance()
 {
 	delete GetInstance();
 }
-
 Ground* ground = Ground::GetInstance();
