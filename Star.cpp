@@ -139,8 +139,10 @@ void Star::Update()
 			isNotGravity = false;
 			isAngleShake = false;
 			isDestroy = false;
-			isGround = false;
+			//isGround = false;
 			isAttack = 0;
+			//canHitTimer = 0;
+			//isCanHit = true;
 
 			changeColorTimer = 0;
 			isChangeColor = false;

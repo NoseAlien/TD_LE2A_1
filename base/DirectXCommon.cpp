@@ -138,7 +138,7 @@ void DirectXCommon::ClearRenderTarget() {
 		device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 
 	// 全画面クリア        Red   Green Blue  Alpha
-	float clearColor[] = { 0.12f, 0.12f, 0.37f, 0.0f }; // 青っぽい色
+	float clearColor[] = { 0.192f, 0.2f, 0.368f, 0.0f }; // 青っぽい色
 	commandList_->ClearRenderTargetView(rtvH, clearColor, 0, nullptr);
 }
 

@@ -17,6 +17,10 @@ Audio* GameScene::audio = nullptr;
 uint32_t GameScene::backGroundTexture = 0;
 uint32_t GameScene::selectFrameTexture = 0;
 uint32_t GameScene::backLightTexture = 0;
+uint32_t GameScene::backColorTexture = 0;
+uint32_t GameScene::titleLogoTexture = 0;
+uint32_t GameScene::saturnTexture = 0;
+uint32_t GameScene::meteoriteTexture = 0;
 
 GameScene::GameScene()
 {
@@ -40,6 +44,10 @@ void GameScene::Load()
 	backGroundTexture = TextureManager::Load("SpriteTexture/backGround/rock.png");
 	selectFrameTexture = TextureManager::Load("SpriteTexture/backGround/select_screen.png");
 	backLightTexture = TextureManager::Load("SpriteTexture/backGround/light.png");
+	backColorTexture = TextureManager::Load("SpriteTexture/backGround/backColor1x1.png");
+	titleLogoTexture = TextureManager::Load("SpriteTexture/title_logo.png");
+	saturnTexture = TextureManager::Load("SpriteTexture/backGround/saturn.png");
+	meteoriteTexture = TextureManager::Load("SpriteTexture/backGround/meteorite.png");
 }
 void GameScene::Initialize()
 {
@@ -51,9 +59,6 @@ void GameScene::Initialize()
 	hitstop->Init();
 	slowMotion = SlowMotion::GetInstance();
 	slowMotion->Init();
-
-	backGroundSprite.reset(Sprite::Create(backGroundTexture, { 0,0 }));
-	selectFrameSprite.reset(Sprite::Create(selectFrameTexture, { 0,0 }));
 
 	stages.clear();
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
@@ -83,9 +88,10 @@ void GameScene::Initialize()
 	stageSelect->Initialize();
 
 	currentStage = 0;
-	gameState = isSelect;
+	gameState = isTitle;
 
 	BackGroundInit();
+	TitleInit();
 }
 void GameScene::Update()
 {
@@ -148,11 +154,8 @@ void GameScene::Update()
 	}
 	else if (gameState == isSelect)
 	{
-
 		if (stageSelect->GetTextPos(currentStage).y >= 5 && isSelectEnd == true)
 		{
-			//player->SetPos({ 0,20,0 });
-
 			sceneChange->StartSceneChange();
 			isSelectEnd = false;
 		}
@@ -167,6 +170,29 @@ void GameScene::Update()
 		{
 			gameState = isGame;
 			CurrentStageInit();
+			sceneChange->SetisChange(false);
+
+		}
+	}
+	else if (gameState == isTitle)
+	{
+		TitleUpdate();
+
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			sceneChange->StartSceneChange();
+			//gameState = isSelect;
+			player->Init();
+
+			stageSelect->ResetObjPos();
+			viewProjection_.eye = { 0,0,-50 };
+			viewProjection_.target = { 0,0,0 };
+			viewProjection_.Initialize();
+			SlowMotion::GetInstance()->Init();
+		}
+		if (sceneChange->GetisChange() == true)
+		{
+			gameState = isSelect;
 			sceneChange->SetisChange(false);
 
 		}
@@ -192,9 +218,13 @@ void GameScene::Draw()
 	Sprite::PreDraw(commandList);
 
 	backGroundSprite->Draw2();	// 背景の描画
+	backColorSprite->Draw2();
 	BackGroundDraw();
-
-	if (gameState == isGame)
+	if (gameState == isTitle)
+	{
+		TitleDraw();
+	}
+	else if (gameState == isGame)
 	{
 		stages[currentStage]->DrawEffectBack();	// モデルの後ろに表示するエフェクトの描画
 	}
@@ -472,8 +502,40 @@ void GameScene::SelectUpdate()
 	}
 }
 
+void GameScene::TitleInit()
+{
+	titleLogoMoveAngle = 0;
+	titleLogoSprite.reset(Sprite::Create(titleLogoTexture, { 960,270 }));
+	titleLogoSprite->SetAnchorPoint({ 0.5f,0.5f });
+}
+void GameScene::TitleUpdate()
+{
+	titleLogoMoveAngle++;
+	if (titleLogoMoveAngle > 360) titleLogoMoveAngle = 0;
+	auto tempPos = titleLogoSprite->GetPosition();
+	tempPos.y += cosf(DegreeToRad(titleLogoMoveAngle));
+	titleLogoSprite->SetPosition(tempPos);
+}
+void GameScene::TitleDraw()
+{
+	titleLogoSprite->Draw2();
+}
+
 void GameScene::BackGroundInit()
 {
+	backGroundSprite.reset(Sprite::Create(backGroundTexture, { 0,0 }));
+	selectFrameSprite.reset(Sprite::Create(selectFrameTexture, { 0,0 }));
+
+	backColorSprite.reset(Sprite::Create(backColorTexture, { 0,0 }));
+	backColorSprite->SetSize({ 1920,1080 });
+
+	saturnSprite.reset(Sprite::Create(saturnTexture, { 570,720 }));
+	saturnSprite->SetAnchorPoint({ 0.5f,0.5f });
+	//saturnMoveAngle = 0;
+
+	meteoriteSprite.reset(Sprite::Create(meteoriteTexture, { 1440,320 }));
+	meteoriteSprite->SetAnchorPoint({ 0.5f,0.5f });
+
 	backLights.clear();
 
 	backLights.emplace_back(move(make_unique<BackLight>()));
@@ -524,9 +586,50 @@ void GameScene::BackGroundUpdate()
 	{
 		backLights[i]->Update();
 	}
+
+	saturnCircleMove.lenght = 2;
+	saturnCircleMove.maxTimer = 20;
+	saturnSprite->SetPosition(saturnCircleMove.Move(saturnSprite->GetPosition()));
+	/*Vector2 tempSaturnPos;
+	static int timer = 0;
+	static int maxTimer = 20;
+	static float lenght = 2;
+	timer++;
+	if (timer == maxTimer / 2)
+	{
+		saturnMoveAngle += 9;
+		if (saturnMoveAngle > 360)
+		{
+			saturnMoveAngle = 0;
+		}
+
+		saturnSprite->SetPosition(
+			{
+				cosf(DegreeToRad(saturnMoveAngle)) * lenght + saturnSprite->GetPosition().x,
+				saturnSprite->GetPosition().y
+			});
+	}
+
+	if (timer >= maxTimer)
+	{
+		saturnMoveAngle += 9;
+		if (saturnMoveAngle > 360)
+		{
+			saturnMoveAngle = 0;
+		}
+		saturnSprite->SetPosition(
+			{
+				saturnSprite->GetPosition().x,
+				sinf(DegreeToRad(saturnMoveAngle)) * lenght + saturnSprite->GetPosition().y
+			});
+		timer = 0;
+	}*/
 }
 void GameScene::BackGroundDraw()
 {
+	meteoriteSprite->Draw2();
+	saturnSprite->Draw2();
+
 	for (int i = 0; i < backLights.size(); i++)
 	{
 		backLights[i]->Draw();

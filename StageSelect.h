@@ -7,6 +7,9 @@
 class StageSelect
 {
 private:
+	static std::vector<uint32_t> stageSelectTextures;
+
+private:
 	static Model* stageSelectModel;
 	float stageSelectSize;
 	std::vector<std::unique_ptr<WorldTransform>> stageSelectTrans;
