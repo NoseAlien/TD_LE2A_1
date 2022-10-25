@@ -6,6 +6,7 @@
 #include "SceneChange.h"
 #include "Star.h"
 #include "WindPressureEffect.h"
+#include "DamageEffect.h"
 
 SceneManager::SceneManager()
 {
@@ -26,6 +27,7 @@ SceneManager::~SceneManager()
 	Cannon::UnLoad();
 	StageSelect::UnLoad();
 	WindPressureEffect::DestroyInstance();
+	DamageEffect::DestroyInstance();
 }
 
 

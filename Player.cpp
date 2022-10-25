@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "Ground.h"
 #include "WindPressureEffect.h"
+#include "SceneChange.h"
 #include <string>
 using namespace std;
 
@@ -162,12 +163,13 @@ void Player::Update()
 	}
 
 	trans->UpdateMatrix();
-	spawnTrans->translation_ =
-	{
-		trans->translation_.x,
-		21,
-		trans->translation_.z,
-	};
+	//spawnTrans->translation_ =
+	//{
+	//	trans->translation_.x,
+	//	21,
+	//	trans->translation_.z,
+	//};
+	spawnTrans->translation_.x = trans->translation_.x;
 	spawnTrans->UpdateMatrix();
 }
 void Player::SelectSceneUpdate()
@@ -181,6 +183,8 @@ void Player::SelectSceneUpdate()
 	//	spawnTrans->rotation_.y -= 0.01;
 	//}
 	//spawnTrans->UpdateMatrix();
+
+	if (sceneChange->GetisSceneChangeNow() == true) return;
 
 	if (input_->TriggerKey(DIK_SPACE))
 	{
@@ -466,6 +470,7 @@ void Player::AttackUpdate()
 				}
 				if (addScaleStep == 2)
 				{
+					spawnTrans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 					trans->scale_ += 0.05 * slowMotion->GetSlowExrate();
 					trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 
@@ -480,6 +485,7 @@ void Player::AttackUpdate()
 						stopTimer = 0;			// 止まるタイマー
 						trans->scale_ = { radius,radius,radius };
 						trans->rotation_ = { DegreeToRad(180),0,0 };
+						spawnTrans->rotation_.z = DegreeToRad(0);
 					}
 				}
 			}
@@ -508,6 +514,7 @@ void Player::AttackUpdate()
 				}
 				if (addScaleStep == 2)
 				{
+					//spawnTrans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 					trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
 					trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
 					trans->scale_.z -= addScaleValue / 2 * slowMotion->GetSlowExrate();
@@ -522,6 +529,7 @@ void Player::AttackUpdate()
 
 						stopTimer = 0;			// 止まるタイマー
 						trans->scale_ = { radius,radius,radius };
+						//spawnTrans->rotation_.z = DegreeToRad(0);
 					}
 				}
 			}

@@ -35,7 +35,6 @@ void GameScene::SaveData()
 	}
 	file.close();
 }
-
 void GameScene::LoadData()
 {
 	ifstream file;
@@ -61,11 +60,6 @@ void GameScene::LoadData()
 	}
 	file.close();
 }
-
-void GameScene::GenerateInit()
-{
-}
-
 GameScene::GameScene()
 {
 
@@ -203,7 +197,6 @@ void GameScene::Update()
 				if (currentStage >= stages.size())
 				{
 					currentStage = stages.size() - 1;
-					//gameState = isGame;
 				}
 				stageSelect->SetCurrentStage(currentStage);
 				stageSelect->ResetObjPos();
@@ -211,7 +204,15 @@ void GameScene::Update()
 			}
 			if (stages[currentStage]->GetGameOver() == true)
 			{
-				gameState = isSelect;
+				//currentStage += 1;
+				//if (currentStage >= stages.size())
+				//{
+				//	currentStage = stages.size() - 1;
+				//}
+				stageSelect->SetCurrentStage(currentStage);
+				stageSelect->ResetObjPos();
+				CurrentStageInit();
+				//gameState = isSelect;
 			}
 
 		}
@@ -395,7 +396,8 @@ void GameScene::CurrentStageInit()
 	switch (currentStage)
 	{
 	case 0:
-		ground->Init(10);
+		//ground->Init(10);
+		ground->Init(10000);
 		break;
 	case 1:
 		ground->Init(25);
@@ -435,9 +437,16 @@ void GameScene::CurrentStageInit()
 	case 5:
 		ground->Init(60);
 		stages[currentStage]->GenerateGoal({ 150,20,0 });
+
+
 		for (int i = 0; i < 9; i++)
 		{
 			stages[currentStage]->GenerateStar({ (float)(15 + i * 15),0,0 });
+		}
+
+		for (int i = 0; i < 15; i++)
+		{
+			stages[currentStage]->GenerateThorn({ 148,21.5f - float(i) * 3,0 }, false, { 0,0,DegreeToRad(-90) });
 		}
 
 		/*stages[currentStage]->GenerateBlock({ 20,0,0 }, true, { 2,2,2 });

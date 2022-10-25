@@ -191,7 +191,6 @@ private:
 	void TitleDraw();
 
 public:
-	void GenerateInit();
 	void SaveData();
 	void LoadData();
 };

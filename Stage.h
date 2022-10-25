@@ -10,6 +10,7 @@
 #include "GrainScatterEffect.h"
 #include "RepairEffect.h"
 #include "WindPressureEffect.h"
+#include "DamageEffect.h"
 #include <vector>
 #include <memory>
 
@@ -62,13 +63,14 @@ private:
 	bool isStartTextEnd;
 	bool isMoveClearTime;
 
-private:
+public:
 	// クリア時間関連
+	static std::vector<uint32_t> numberSheet;
+private:
 	Vector2 clearTimeLastDightPos;
 	DWORD startTime;
 	DWORD endTime;
 	DWORD clearTime;
-	static std::vector<uint32_t> numberSheet;
 	Sprite* clearTimeSprites[6];
 	static uint32_t timeStrTexture;
 	Sprite* timeStrSprite;
@@ -103,6 +105,8 @@ private:
 	Vector3 cameraMoveVec;
 	bool isPlayerDieEffectGenerate = false;
 	WindPressureEffect* windPressureEffect;
+	DamageEffect* damageEffect;
+
 
 private:
 	// ライン関連
@@ -154,6 +158,12 @@ private:
 	int stageType;
 
 private:
+	// 床がラインを超えた関連
+	bool isOverLine;
+	float goundeTempScaleY;
+	Easing overLineEase;
+
+private:
 	void PlayerGenerateStar(const Vector3& pos);
 	void CannonGenerateStar(const Vector3& pos, const Vector3& dieVec, const float& angle);
 	void BlockGenerateStar(const Vector3& pos, const int& num);
@@ -172,6 +182,7 @@ private:
 	void WaveUpdate();
 
 	void GameOverCameraUpdate();
+	void GroundOverLineUpdate();
 
 public:
 	Stage(const int& stageType, const int& stageNumber);
@@ -186,7 +197,8 @@ public:
 	void DrawEffectBack();
 
 	void GenerateStar(const Vector3& pos);
-	void GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale = { 0.25,0.5,0.25 });
+	void GenerateThorn(const Vector3& pos, const bool& isReverseVertical,
+		const Vector3& rot = { 0,0,0 }, const Vector3& scale = { 0.25,0.5,0.25 });
 	void GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale = { 2,2,2 });
 	void GenerateCannon(const Vector3& pos, const Vector3& rot);
 	void GenerateGoal(const Vector3& pos);

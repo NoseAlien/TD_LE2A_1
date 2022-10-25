@@ -194,10 +194,10 @@ void Ground::Update()
 	auto tempPos = WorldToScreen(
 		{
 			trans->translation_.x + 32,
-			trans->translation_.y + 6 * trans->scale_.y,
+			trans->translation_.y + 10 * trans->scale_.y,
 			trans->translation_.z,
 		}, viewProjection_);
-	faceSprite->SetPosition(tempPos);
+	faceSprite->SetPosition({ tempPos.x,tempPos.y + 96 });
 
 	// ‚Ü‚Î‚½‚«‚ÌŽž
 	if (isBlink == true && isCry == false)

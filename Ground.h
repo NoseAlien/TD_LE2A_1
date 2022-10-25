@@ -142,7 +142,7 @@ public:
 	inline void SetAddScaleCount(const int& addScaleCount) { this->addScaleCount = addScaleCount; }
 	inline void SetisSuctionStar(const bool& isSuctionStar) { this->isSuctionStar = isSuctionStar; }
 	inline void SetisHit(const int& isHit) { this->isHit = isHit; }
-
+	inline void SetScale(const Vector3& scale) { trans->scale_ = scale; }
 
 public:
 	static Ground* GetInstance();

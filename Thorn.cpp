@@ -32,6 +32,7 @@ void Thorn::Generate(const Vector3& pos, const Vector3& scale, const Vector3& ro
 	trans->rotation_ = rot;
 	trans->UpdateMatrix();
 	collisionRadius = 0.5;
+	isDestroy = false;
 }
 
 void Thorn::Update()
