@@ -149,7 +149,7 @@ void GameScene::Initialize()
 
 	isGoToTitle = false;
 
-	audio_->PlayWave(bgm, true);
+	//audio_->PlayWave(bgm, true);
 	//audio_->SetVolume(bgm, 0);
 }
 void GameScene::Update()
@@ -415,8 +415,8 @@ void GameScene::CurrentStageInit()
 	switch (currentStage)
 	{
 	case 0:
-		//ground->Init(10);
-		ground->Init(10000);
+		ground->Init(10);
+		//ground->Init(10000);
 		break;
 	case 1:
 		ground->Init(25);

@@ -20,6 +20,8 @@ Model* Stage::lineModel = nullptr;
 uint32_t Stage::lineModelTexture;
 vector<uint32_t> Stage::stageNumberTextures = {};
 uint32_t Stage::overStrTexture;
+uint32_t Stage::gameOverBGM;
+uint32_t Stage::gameClearBGM;
 
 const float lerp(const float& start, const float& end, const double progress)
 {
@@ -153,6 +155,9 @@ void Stage::Load()
 			TextureManager::Load(
 				"SpriteTexture/select_nuber/stage_number_" + to_string(i) + ".png"));
 	}
+
+	gameOverBGM = Audio::GetInstance()->LoadWave("bgm/gameover.wav");
+	gameClearBGM= Audio::GetInstance()->LoadWave("bgm/clear.wav");
 }
 void Stage::UnLoad()
 {
@@ -296,6 +301,7 @@ void Stage::Update()
 		{
 			if (stagePcrogress == Play)
 			{
+				Audio::GetInstance()->PlayWave(gameClearBGM);
 				stagePcrogress = Staging;
 				SlowMotion::GetInstance()->StartSlowMotion(0.05, 280);
 				endTime = GetNowTime();
@@ -323,6 +329,11 @@ void Stage::Update()
 		{
 			if (stagePcrogress == Play)
 			{
+				Audio::GetInstance()->PlayWave(gameOverBGM);
+				if (Audio::GetInstance()->IsPlaying(GameScene::bgm) == true)
+				{
+					Audio::GetInstance()->StopWave(GameScene::bgm);
+				}
 				stagePcrogress = Staging;
 				if (player->GetLife() <= 0 || playerIsHitGoal == true)
 				{

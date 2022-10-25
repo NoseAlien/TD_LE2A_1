@@ -40,6 +40,11 @@ enum StageProgress
 
 class Stage
 {
+private:
+	// SE関連
+	static uint32_t gameClearBGM;
+	static uint32_t gameOverBGM;
+
 public:
 	// ゲーム開始時のステージ表示
 	static std::vector<uint32_t> stageNumberTextures;
