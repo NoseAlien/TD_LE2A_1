@@ -26,6 +26,9 @@ uint32_t GameScene::meteoriteTexture = 0;
 uint32_t GameScene::shootingStarTexture = 0;
 uint32_t GameScene::preesSpaceStrTerxture = 0;
 uint32_t GameScene::escStrTerxture = 0;
+uint32_t GameScene::leverTexture1;
+uint32_t GameScene::leverTexture2;
+
 uint32_t GameScene::bgm = 0;
 
 void GameScene::SaveData()
@@ -94,6 +97,8 @@ void GameScene::Load()
 	shootingStarTexture = TextureManager::Load("SpriteTexture/backGround/shootingStar.png");
 	preesSpaceStrTerxture = TextureManager::Load("SpriteTexture/prees_space.png");
 	escStrTerxture = TextureManager::Load("SpriteTexture/esc.png");
+	leverTexture1 = TextureManager::Load("SpriteTexture/backGround/lever_1.png");
+	leverTexture2 = TextureManager::Load("SpriteTexture/backGround/lever_2.png");
 
 	bgm = Audio::GetInstance()->LoadWave("bgm/bgm.mp3");
 }
@@ -361,6 +366,8 @@ void GameScene::Draw()
 	{
 		stageSelect->DrawSprite();
 		selectFrameSprite->Draw2(); // セレクト画面のフレーム
+		leverSprite2->Draw2();
+		leverSprite1->Draw2();
 	}
 	if (gameState != isTitle)
 	{
@@ -679,7 +686,15 @@ void GameScene::BackGroundInit()
 
 	escStrSprite.reset(Sprite::Create(escStrTerxture, { 1872,64 }));
 	escStrSprite->SetAnchorPoint({ 1,0 });
-	//escStrSprite->SetSize({ 76,42 });
+
+	leverAngle = 0;
+	leverTargetAngle = 0;
+	leverSprite1.reset(Sprite::Create(leverTexture1, { 1498,890 }));
+	leverSprite1->SetAnchorPoint({ 0.5f,0.5f });
+	//leverSprite2.reset(Sprite::Create(leverTexture2, { 1498,810 }));
+	//leverSprite2->SetAnchorPoint({ 0.5f,0.5f });
+	leverSprite2.reset(Sprite::Create(leverTexture2, { 1498,890 }));
+	leverSprite2->SetAnchorPoint({ 0.5f,1 });
 
 	backLights.clear();
 
@@ -805,7 +820,6 @@ void GameScene::BackGroundUpdate()
 		meteoriteSprite->SetRotation(DegreeToRad(meteoriteAngle));
 	}
 
-
 	// 流れ星の処理
 	resetTimer++;
 	if (resetTimer >= resetMaxTimer)
@@ -831,6 +845,62 @@ void GameScene::BackGroundUpdate()
 				shootingStarSprite->GetSize().x - shootingStarSubScaleSpeed,
 				shootingStarSprite->GetSize().y - shootingStarSubScaleSpeed
 			});
+	}
+
+	// レバーの処理
+	if (gameState == isSelect)
+	{
+		const int angleSpeed = 10;
+		if (input_->PushKey(DIK_RIGHT))
+		{
+			leverTargetAngle = +60;
+
+			leverAngle += angleSpeed;
+			if (leverAngle >= leverTargetAngle)
+			{
+				leverAngle = leverTargetAngle;
+			}
+		}
+		else if (input_->PushKey(DIK_LEFT))
+		{
+			leverTargetAngle = -60;
+
+			leverAngle -= angleSpeed;
+			if (leverAngle <= leverTargetAngle)
+			{
+				leverAngle = leverTargetAngle;
+			}
+		}
+		if (!input_->PushKey(DIK_LEFT) && !input_->PushKey(DIK_RIGHT))
+		{
+			if (leverTargetAngle > 0)
+			{
+				leverAngle-= angleSpeed;
+				if (leverAngle <= 0)
+				{
+					leverTargetAngle = 0;
+					leverAngle = 0;
+				}
+			}
+			if (leverTargetAngle < 0)
+			{
+				leverAngle+= angleSpeed;
+				if (leverAngle >= 0)
+				{
+					leverTargetAngle = 0;
+					leverAngle = 0;
+				}
+			}
+
+		}
+		//leverSprite2->SetPosition(
+		//	{
+		//		cosf(DegreeToRad(leverAngle) * 40) + 1498,
+		//		sinf(DegreeToRad(leverAngle) * 40) + 810,
+		//	});
+
+		leverSprite2->SetRotation(DegreeToRad(leverAngle));
+
 	}
 }
 void GameScene::BackGroundDraw()

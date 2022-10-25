@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #include "DirectXCommon.h"
 #include "DebugText.h"
 #include "Input.h"
@@ -140,8 +139,6 @@ private: // メンバ変数
 	// 背景関連
 	static uint32_t backGroundTexture;
 	std::unique_ptr<Sprite> backGroundSprite;
-	static uint32_t selectFrameTexture;
-	std::unique_ptr<Sprite> selectFrameSprite;
 
 	static uint32_t preesSpaceStrTerxture;
 	std::unique_ptr<Sprite> preesSpaceStrSprite;
@@ -177,6 +174,17 @@ private: // メンバ変数
 	int resetTimer;
 	int resetMaxTimer;
 	int shootingStarSubScaleSpeed;
+
+	// セレクト画面関連
+	static uint32_t selectFrameTexture;
+	std::unique_ptr<Sprite> selectFrameSprite;
+
+	int leverAngle;
+	int leverTargetAngle;
+	static uint32_t leverTexture1;
+	std::unique_ptr<Sprite> leverSprite1;
+	static uint32_t leverTexture2;
+	std::unique_ptr<Sprite> leverSprite2;
 
 private:
 	//タイトル用
