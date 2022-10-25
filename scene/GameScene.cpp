@@ -181,16 +181,10 @@ void GameScene::Update()
 		{
 			if (input_->TriggerKey(DIK_ESCAPE))
 			{
-				//gameState = isSelect;
-
 				sceneChange->StartSceneChange();
-				player->Init();
+				//player->Init();
 
 				stageSelect->ResetObjPos();
-				viewProjection_.eye = { 0,0,-50 };
-				viewProjection_.target = { 0,0,0 };
-				viewProjection_.Initialize();
-				isSelectEnd = false;
 				SlowMotion::GetInstance()->Init();
 			}
 		}
@@ -227,15 +221,9 @@ void GameScene::Update()
 			}
 			if (stages[currentStage]->GetGameOver() == true)
 			{
-				//currentStage += 1;
-				//if (currentStage >= stages.size())
-				//{
-				//	currentStage = stages.size() - 1;
-				//}
 				stageSelect->SetCurrentStage(currentStage);
 				stageSelect->ResetObjPos();
 				CurrentStageInit();
-				//gameState = isSelect;
 			}
 
 		}
@@ -425,8 +413,8 @@ void GameScene::CurrentStageInit()
 	switch (currentStage)
 	{
 	case 0:
-		ground->Init(10);
-		//ground->Init(10000);
+		//ground->Init(10);
+		ground->Init(10000);
 		break;
 	case 1:
 		ground->Init(25);
@@ -912,7 +900,7 @@ void GameScene::BackGroundUpdate()
 
 	if (gameState == isTitle || gameState == isSelect)
 	{
-		if (input_->TriggerKey(DIK_SPACE))
+		if (input_->TriggerKey(DIK_SPACE) && sceneChange->GetisSceneChangeNow() == false)
 		{
 			audio_->PlayWave(spaceSE);
 		}

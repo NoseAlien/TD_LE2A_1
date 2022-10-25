@@ -52,7 +52,7 @@ void DamageParticle::Generate(const Vector3& pos, std::vector<int> dightsNumber)
 	isDestroy = false;
 	alpha = 1;
 
-	const int size = 512;
+	const int size = 768;
 	if (dightsSize == 1)
 	{
 		damegeSprite[0].reset(Sprite::Create(
@@ -82,12 +82,12 @@ void DamageParticle::Update()
 		{
 			ease.Update();
 		}
-		damegeSprite[i]->SetSize(ease.Out({ 512,512 }, { 64,64 }));
+		damegeSprite[i]->SetSize(ease.Out({ 768,768 }, { 64,64 }));
 		if (damegeSprite[i]->GetSize().x <= 70)
 		{
 			if (i == 0)
 			{
-				alpha -= 0.05;
+				alpha -= 0.025;
 			}
 			damegeSprite[i]->SetColor({ 1,1,1,alpha });
 			if (damegeSprite[i]->GetColor().w <= 0)
