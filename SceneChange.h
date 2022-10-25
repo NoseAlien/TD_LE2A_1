@@ -19,6 +19,7 @@ private:
 private:
 	// イージング関連
 	Easing ease;
+	Easing bgmEase;
 
 public:
 	void Load();

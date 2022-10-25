@@ -24,6 +24,9 @@ uint32_t GameScene::titleLogoTexture = 0;
 uint32_t GameScene::saturnTexture = 0;
 uint32_t GameScene::meteoriteTexture = 0;
 uint32_t GameScene::shootingStarTexture = 0;
+uint32_t GameScene::preesSpaceStrTerxture = 0;
+uint32_t GameScene::escStrTerxture = 0;
+uint32_t GameScene::bgm = 0;
 
 void GameScene::SaveData()
 {
@@ -89,7 +92,16 @@ void GameScene::Load()
 	saturnTexture = TextureManager::Load("SpriteTexture/backGround/saturn.png");
 	meteoriteTexture = TextureManager::Load("SpriteTexture/backGround/meteorite.png");
 	shootingStarTexture = TextureManager::Load("SpriteTexture/backGround/shootingStar.png");
+	preesSpaceStrTerxture = TextureManager::Load("SpriteTexture/prees_space.png");
+	escStrTerxture = TextureManager::Load("SpriteTexture/esc.png");
+
+	bgm = Audio::GetInstance()->LoadWave("bgm/bgm.mp3");
 }
+void GameScene::UnLoad()
+{
+	//Audio::GetInstance()->Unload(*bgm);
+}
+
 void GameScene::Initialize()
 {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -136,6 +148,9 @@ void GameScene::Initialize()
 	TitleInit();
 
 	isGoToTitle = false;
+
+	audio_->PlayWave(bgm, true);
+	//audio_->SetVolume(bgm, 0);
 }
 void GameScene::Update()
 {
@@ -346,6 +361,10 @@ void GameScene::Draw()
 	{
 		stageSelect->DrawSprite();
 		selectFrameSprite->Draw2(); // セレクト画面のフレーム
+	}
+	if (gameState != isTitle)
+	{
+		escStrSprite->Draw2();
 	}
 
 	// デバッグテキストの描画
@@ -644,28 +663,23 @@ void GameScene::BackGroundInit()
 	backColorSprite.reset(Sprite::Create(backColorTexture, { 0,0 }));
 	backColorSprite->SetSize({ 1920,1080 });
 
-	//meteoriteSprite.reset(Sprite::Create(meteoriteTexture, { 1440,320 }));
-	//meteoriteSprite->SetAnchorPoint({ 0.5f,0.5f });
-	//meteoriteCircleMove.lenght = 2;
-	//meteoriteCircleMove.maxTimer = 20;
-	//meteoriteCircleMove.moveAngle = Random::Range(0, 360);
-	//meteoriteAngle = Random::Range(0, 360);
-	//switch (Random::Range(0, 1))
-	//{
-	//case 0:
-	//	meteoriteAngleDir = -1;
-	//	break;
-	//case 1:
-	//	meteoriteAngleDir = 1;
-	//	break;
-	//}
-
 	shootingStarSprite.reset(Sprite::Create(shootingStarTexture, { -256,-256 }));
 	shootingStarSprite->SetAnchorPoint({ 0,0.5f });
 	resetTimer = 0;
 	resetMaxTimer = 120;
 	shootingStarPos = { -256,-256 };
 	shootingStarSubScaleSpeed = 2;
+
+	preesSpaceStrSprite.reset(Sprite::Create(preesSpaceStrTerxture, { 960,824 }));
+	preesSpaceStrSprite->SetAnchorPoint({ 0.5f,0.5f });
+	preesSpaceStrSprite->SetSize({ 410,74 });
+	preesSpaceStrEase.SetPowNum(3);
+	preesSpaceStrEase.SetEaseTimer(60);
+	preesSpaceStrSubAlpha = 0;
+
+	escStrSprite.reset(Sprite::Create(escStrTerxture, { 1872,64 }));
+	escStrSprite->SetAnchorPoint({ 1,0 });
+	//escStrSprite->SetSize({ 76,42 });
 
 	backLights.clear();
 
@@ -730,6 +744,28 @@ void GameScene::BackGroundUpdate()
 			meteoriteAngle = 0;
 		}
 		meteoriteSprite->SetRotation(DegreeToRad(meteoriteAngle));
+
+		// PreesSapce
+		preesSpaceStrEase.Update();
+		if (preesSpaceStrSubAlpha == false)
+		{
+			preesSpaceStrSprite->SetColor({ 1,1,1,preesSpaceStrEase.In(1,0) });
+			if (preesSpaceStrEase.GetisEnd() == true)
+			{
+				preesSpaceStrEase.ReSet();
+				preesSpaceStrSubAlpha = true;
+			}
+		}
+		else
+		{
+			preesSpaceStrSprite->SetColor({ 1,1,1,preesSpaceStrEase.Out(0,1) });
+			if (preesSpaceStrEase.GetisEnd() == true)
+			{
+				preesSpaceStrEase.ReSet();
+				preesSpaceStrSubAlpha = false;
+			}
+
+		}
 	}
 	else if (gameState == isGame || gameState == isSelect)
 	{
@@ -807,6 +843,11 @@ void GameScene::BackGroundDraw()
 	shootingStarSprite->Draw2();
 	meteoriteSprite->Draw2();
 	saturnSprite->Draw2();
+
+	if (gameState == isTitle)
+	{
+		preesSpaceStrSprite->Draw2();
+	}
 }
 
 void BackLight::Generate(const Vector2& pos, const uint32_t& tex)

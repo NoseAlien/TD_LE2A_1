@@ -113,6 +113,7 @@ public: // メンバ関数
 	void Draw();
 
 	static void Load();
+	static void UnLoad();
 	IScene* GetNextScene();
 
 private: // メンバ変数
@@ -141,6 +142,13 @@ private: // メンバ変数
 	std::unique_ptr<Sprite> backGroundSprite;
 	static uint32_t selectFrameTexture;
 	std::unique_ptr<Sprite> selectFrameSprite;
+
+	static uint32_t preesSpaceStrTerxture;
+	std::unique_ptr<Sprite> preesSpaceStrSprite;
+	Easing preesSpaceStrEase;
+	bool preesSpaceStrSubAlpha;
+	static uint32_t escStrTerxture;
+	std::unique_ptr<Sprite> escStrSprite;
 
 	// 背景の星
 	static uint32_t backLightTexture;
@@ -178,6 +186,10 @@ private:
 
 private:
 	bool isGoToTitle;
+
+public:
+	// BGMやSE関連
+	static uint32_t bgm;
 
 private:
 	void CurrentStageInit();
