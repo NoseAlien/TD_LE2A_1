@@ -52,11 +52,12 @@ void DamageParticle::Generate(const Vector3& pos, std::vector<int> dightsNumber)
 	isDestroy = false;
 	alpha = 1;
 
+	const int size = 512;
 	if (dightsSize == 1)
 	{
 		damegeSprite[0].reset(Sprite::Create(
 			Stage::numberSheet[dightsNumber[0]], { 128 + tempPos.x,tempPos.y - 64 }));
-		damegeSprite[0]->SetSize({ 0,0 });
+		damegeSprite[0]->SetSize({ size,size });
 		damegeSprite[0]->SetAnchorPoint({ 0.5f,0.5f });
 	}
 	if (dightsSize == 2)
@@ -65,13 +66,13 @@ void DamageParticle::Generate(const Vector3& pos, std::vector<int> dightsNumber)
 		{
 			damegeSprite[i].reset(Sprite::Create(
 				Stage::numberSheet[dightsNumber[i]], { 128 + tempPos.x - 24 + i * 48,tempPos.y - 64 }));
-			damegeSprite[i]->SetSize({ 0,0 });
+			damegeSprite[i]->SetSize({ size,size });
 			damegeSprite[i]->SetAnchorPoint({ 0.5f,0.5f });
 		}
 	}
 
 	ease.SetPowNum(5);
-	ease.SetEaseTimer(30);
+	ease.SetEaseTimer(60);
 }
 void DamageParticle::Update()
 {
@@ -81,8 +82,8 @@ void DamageParticle::Update()
 		{
 			ease.Update();
 		}
-		damegeSprite[i]->SetSize(ease.Out({ 0,0 }, { 70,70 }));
-		if (damegeSprite[i]->GetSize().x >= 64)
+		damegeSprite[i]->SetSize(ease.Out({ 512,512 }, { 64,64 }));
+		if (damegeSprite[i]->GetSize().x <= 70)
 		{
 			if (i == 0)
 			{

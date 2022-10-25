@@ -26,9 +26,9 @@ void Ground::Load()
 	damageSE = audio->LoadWave("se/floor_damage.wav");
 	largeDamageSE = audio->LoadWave("se/floor_damage_L.wav");
 	defeatSE = audio->LoadWave("se/floor_break.wav");
-	//enemyTexture = TextureManager::Load("groundColor1x1.png");
+	recoverySE = audio->LoadWave("se/groundRecovery.wav");
+
 	enemyDangerTexture = TextureManager::Load("SpriteTexture/GroundCrack/groundDengerColor1x1.png");
-	//enemyModel = Model::Create();
 	enemyModel = Model::CreateFromOBJ("ground", false);
 	trans = new WorldTransform();
 	trans->Initialize();
@@ -399,6 +399,19 @@ void Ground::DrawSprite()
 	if (isAlive == false) return;
 
 	faceSprite->Draw2();
+}
+
+void Ground::SetThickness(const int& num)
+{
+	trans->scale_.y += 1.2f / 15 * num;
+	auto tempPos = WorldToScreen(
+		{
+			trans->translation_.x + 32,
+			trans->translation_.y + 10 * trans->scale_.y,
+			trans->translation_.z,
+		}, viewProjection_);
+	faceSprite->SetPosition({ tempPos.x,tempPos.y + 96 });
+	trans->UpdateMatrix();
 }
 
 Ground* Ground::GetInstance()

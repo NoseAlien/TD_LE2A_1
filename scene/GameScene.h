@@ -198,6 +198,8 @@ private:
 public:
 	// BGMやSE関連
 	static uint32_t bgm;
+	static uint32_t picopicoSE;
+	static uint32_t spaceSE;
 
 private:
 	void CurrentStageInit();

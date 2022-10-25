@@ -30,6 +30,8 @@ uint32_t GameScene::leverTexture1;
 uint32_t GameScene::leverTexture2;
 
 uint32_t GameScene::bgm = 0;
+uint32_t GameScene::picopicoSE = 0;
+uint32_t GameScene::spaceSE = 0;
 
 void GameScene::SaveData()
 {
@@ -100,7 +102,9 @@ void GameScene::Load()
 	leverTexture1 = TextureManager::Load("SpriteTexture/backGround/lever_1.png");
 	leverTexture2 = TextureManager::Load("SpriteTexture/backGround/lever_2.png");
 
-	bgm = Audio::GetInstance()->LoadWave("bgm/bgm.mp3");
+	bgm = Audio::GetInstance()->LoadWave("bgm/bgm.wav");
+	picopicoSE = Audio::GetInstance()->LoadWave("se/picopico.wav");
+	spaceSE = Audio::GetInstance()->LoadWave("se/picopico2.wav");
 }
 void GameScene::UnLoad()
 {
@@ -155,7 +159,6 @@ void GameScene::Initialize()
 	isGoToTitle = false;
 
 	//audio_->PlayWave(bgm, true);
-	//audio_->SetVolume(bgm, 0);
 }
 void GameScene::Update()
 {
@@ -848,8 +851,13 @@ void GameScene::BackGroundUpdate()
 	}
 
 	// レバーの処理
-	if (gameState == isSelect)
+	if (gameState == isSelect && sceneChange->GetisSceneChangeNow() == false)
 	{
+		if (input_->TriggerKey(DIK_RIGHT) || input_->TriggerKey(DIK_LEFT))
+		{
+			audio_->PlayWave(picopicoSE);
+		}
+
 		const int angleSpeed = 10;
 		if (input_->PushKey(DIK_RIGHT))
 		{
@@ -875,7 +883,7 @@ void GameScene::BackGroundUpdate()
 		{
 			if (leverTargetAngle > 0)
 			{
-				leverAngle-= angleSpeed;
+				leverAngle -= angleSpeed;
 				if (leverAngle <= 0)
 				{
 					leverTargetAngle = 0;
@@ -884,7 +892,7 @@ void GameScene::BackGroundUpdate()
 			}
 			if (leverTargetAngle < 0)
 			{
-				leverAngle+= angleSpeed;
+				leverAngle += angleSpeed;
 				if (leverAngle >= 0)
 				{
 					leverTargetAngle = 0;
@@ -900,7 +908,14 @@ void GameScene::BackGroundUpdate()
 		//	});
 
 		leverSprite2->SetRotation(DegreeToRad(leverAngle));
+	}
 
+	if (gameState == isTitle || gameState == isSelect)
+	{
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			audio_->PlayWave(spaceSE);
+		}
 	}
 }
 void GameScene::BackGroundDraw()

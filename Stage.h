@@ -44,6 +44,7 @@ private:
 	// SE関連
 	static uint32_t gameClearBGM;
 	static uint32_t gameOverBGM;
+	static uint32_t grainDiedSE;
 
 public:
 	// ゲーム開始時のステージ表示
