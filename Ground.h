@@ -12,9 +12,11 @@ public:
 	static Audio* audio;
 
 private:
+	// SE関連
 	uint32_t damageSE;
 	uint32_t largeDamageSE;
 	uint32_t defeatSE;
+	uint32_t recoverySE;
 
 	static Model* enemyModel;			// モデル
 	WorldTransform* trans = nullptr;	// トランスフォーム
@@ -84,11 +86,7 @@ public:
 	void DrawSprite();
 	void EffectUpdate();
 	void EffectDraw();
-	inline void SetThickness(const int& num)
-	{
-		trans->scale_.y += 1.2f / 15 * num;
-		trans->UpdateMatrix();
-	}
+	void SetThickness(const int& num);
 
 	inline void Damage(const int subhp)
 	{
@@ -110,6 +108,7 @@ public:
 		{
 			hp += addhp;
 			trans->scale_.y += 1.2f / 15;
+			audio->PlayWave(recoverySE);
 		}
 	}
 

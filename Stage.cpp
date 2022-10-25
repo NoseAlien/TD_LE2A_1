@@ -22,6 +22,7 @@ vector<uint32_t> Stage::stageNumberTextures = {};
 uint32_t Stage::overStrTexture;
 uint32_t Stage::gameOverBGM;
 uint32_t Stage::gameClearBGM;
+uint32_t Stage::grainDiedSE;
 
 const float lerp(const float& start, const float& end, const double progress)
 {
@@ -157,7 +158,8 @@ void Stage::Load()
 	}
 
 	gameOverBGM = Audio::GetInstance()->LoadWave("bgm/gameover.wav");
-	gameClearBGM= Audio::GetInstance()->LoadWave("bgm/clear.wav");
+	gameClearBGM = Audio::GetInstance()->LoadWave("bgm/clear.wav");
+	grainDiedSE = Audio::GetInstance()->LoadWave("se/bonn.wav");
 }
 void Stage::UnLoad()
 {
@@ -1182,6 +1184,7 @@ void Stage::StarUpdate()
 						else
 						{
 							grainScatterEffect->Generate(temp->GetPos(), temp->isChangeColor);
+							//Audio::GetInstance()->PlayWave(grainDiedSE);
 						}
 					}
 
@@ -1200,6 +1203,7 @@ void Stage::StarUpdate()
 			// レースステージの時
 			else
 			{
+				//Audio::GetInstance()->PlayWave(grainDiedSE);
 				grainScatterEffect->Generate(temp->GetPos(), temp->isChangeColor);
 				stars.remove(temp);
 				break;
