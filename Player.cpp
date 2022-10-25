@@ -96,6 +96,7 @@ void Player::Init()
 		trans->translation_.z,
 	};
 	spawnTrans->scale_ = { 1.6f,1.5f,1.6f };
+	spawnTrans->rotation_ = { 0,0,0 };
 	spawnTrans->UpdateMatrix();
 
 	collapseTrans->translation_ = { 0,20,0 };
@@ -113,6 +114,8 @@ void Player::Init()
 	isEngulfAttack = false;
 
 	//speed = 0;
+
+	addScaleStep = 0;
 
 	attackMoveSpeed = 3;
 	haveStarNum = 0;
@@ -140,6 +143,8 @@ void Player::Init()
 }
 void Player::Update()
 {
+	if (sceneChange->GetisSceneChangeNow() == true) return;
+
 	if (!input_->ReleasedKey(DIK_SPACE))
 	{
 		tempTimer++;
@@ -174,16 +179,6 @@ void Player::Update()
 }
 void Player::SelectSceneUpdate()
 {
-	//if (input_->PushKey(DIK_D))
-	//{
-	//	spawnTrans->rotation_.y += 0.01;
-	//}
-	//if (input_->PushKey(DIK_A))
-	//{
-	//	spawnTrans->rotation_.y -= 0.01;
-	//}
-	//spawnTrans->UpdateMatrix();
-
 	if (sceneChange->GetisSceneChangeNow() == true) return;
 
 	if (input_->TriggerKey(DIK_SPACE))
@@ -394,7 +389,7 @@ void Player::AttackUpdate()
 			attackMoveSpeed = 3;
 			isHitGround = false;
 			isAttackBlock = false;
-			if (trans->translation_.y == 20)
+			if (trans->translation_.y >= 19 && trans->translation_.y <= 20)
 			{
 				pushKeyFream++;
 				if (trans->scale_.x >= 3)
@@ -408,6 +403,7 @@ void Player::AttackUpdate()
 					trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 				}
 				isReverse = false;
+				trans->translation_.y = 20;
 			}
 		}
 
@@ -415,7 +411,7 @@ void Player::AttackUpdate()
 		{
 			trans->rotation_ = { DegreeToRad(180),0,0 };
 
-			if (trans->translation_.y == 20 && trans->scale_.x >= 2)
+			if (trans->translation_.y >= 20 && trans->scale_.x >= 2)
 			{
 				isAttack = true;
 				attackMoveSpeed = 3;
@@ -425,19 +421,17 @@ void Player::AttackUpdate()
 					isWeakAttack = true;
 					maxSize = 1;
 					trans->scale_ = { 2,2,2 };
-					//speed *= 0.5;
 				}
 				else
 				{
-					//speed = 0;
 					isHeavyAttack = true;
 					maxSize = 2;
 					weakAttackEffect->Generate(trans->translation_ - Vector3{ 0,2 - radius,0 });
 					viewProjection_.SetShakeValue(0.5, 10);
 					trans->scale_ = { 3,3,3 };
 				}
+				audio->PlayWave(jumpSE);
 			}
-			audio->PlayWave(jumpSE);
 		}
 	}
 
@@ -453,8 +447,6 @@ void Player::AttackUpdate()
 			}
 			else
 			{
-				//attackMoveSpeed = 3;
-
 				if (addScaleStep == 1)
 				{
 					trans->translation_.y -= 1;
@@ -499,7 +491,6 @@ void Player::AttackUpdate()
 			else
 			{
 				stopTimer++;
-				//isGround = true;
 
 				if (addScaleStep == 1)
 				{
@@ -514,7 +505,6 @@ void Player::AttackUpdate()
 				}
 				if (addScaleStep == 2)
 				{
-					//spawnTrans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 					trans->scale_.x -= addScaleValue * slowMotion->GetSlowExrate();
 					trans->scale_.y += addScaleValue / maxSize * slowMotion->GetSlowExrate();
 					trans->scale_.z -= addScaleValue / 2 * slowMotion->GetSlowExrate();
@@ -534,103 +524,7 @@ void Player::AttackUpdate()
 				}
 			}
 		}
-
-		/*if (isAttack == false)
-		{
-			if (input_->PushKey(DIK_SPACE))
-			{
-				pushKeyFream++;
-			}
-
-			if (input_->ReleasedKey(DIK_SPACE))
-			{
-				isAttack = true;
-				addScaleStep = 1;
-				if (pushKeyFream < maxPushKeyFream)
-				{
-					isWeakAttack = true;
-					maxSize = 2.5;
-				}
-				else if (pushKeyFream >= maxPushKeyFream)
-				{
-					isHeavyAttack = true;
-					maxSize = 4;
-					viewProjection_.SetShakeValue(0.5, 10);
-				}
-
-				audio->PlayWave(jumpSE);
-			}
-		}*/
-
-		//if (isAttack == true)
-		//{
-		//	pushKeyFream = 0;
-		// 
-		//	if (isReverse == false)
-		//	{
-		//		trans->translation_.y -= attackMoveSpeed * slowMotion->GetSlowExrate();
-		//	}
-		//	else
-		//	{
-		//		if (addScaleStep == 1)
-		//		{
-		//			trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
-		//			trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
-		//			trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
-		//			if (trans->scale_.y <= 0)
-		//			{
-		//				trans->translation_.y = 20;
-		//				trans->scale_ = { 0,0,0 };
-		//				addScaleStep = 2;
-		//			}
-		//		}
-		//		else if (addScaleStep == 2)
-		//		{
-		//			stopTimer++;
-		//
-		//			if (stopTimer >= 1)
-		//			{
-		//				//trans->translation_.y += attackMoveSpeed * slowMotion->GetSlowExrate();
-		//				trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
-		//				trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
-		//				trans->scale_.z += 0.05 * slowMotion->GetSlowExrate();
-		//
-		//				if (trans->scale_.x >= 1)
-		//				{
-		//					isReverse = false;		// ”½“]ƒtƒ‰ƒO
-		//					isWeakAttack = false;	// ŽãUŒ‚
-		//					isHeavyAttack = false;	// ‹­UŒ‚
-		//					isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
-		//					isAttack = false;		// UŒ‚ƒtƒ‰ƒO
-		//
-		//					stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
-		//					trans->scale_ = { 1,1,1 };
-		//				}
-		//			}
-		//		}
-		//	}
-
-		//// ‚Ü‚í‚è‚ÌƒIƒuƒWƒFƒNƒg‚ð‰ó‚·ˆ—
-		//if (stopTimer >= 2 && isWeakAttack == true)
-		//{
-		//	if (input_->TriggerKey(DIK_SPACE))
-		//	{
-		//		isEngulfAttack = true;
-		//	}
-		//}
-		//if (stopTimer >= 4 && isHeavyAttack == true)
-		//{
-		//	if (input_->TriggerKey(DIK_SPACE))
-		//	{
-		//		isEngulfAttack = true;
-		//	}
-		//}
 	}
-
-	//if (isGround == true && isJumpAddScaleStep == 0)
-	//{
-	//	isCollapse = true;
-	//}
 
 	if (isGround == true)
 	{
@@ -649,6 +543,8 @@ void Player::AttackUpdate()
 				trans->scale_ = { radius,radius,radius };
 
 				isJumpAddScaleStep = 1;
+				audio->PlayWave(jumpSE);
+
 			}
 		}
 
@@ -728,25 +624,16 @@ void Player::HitBlockUpdate()
 	{
 		if (hitedBlockStep == 0)
 		{
-			//trans->translation_.y -= 1;
-			//trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
-			//trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
-			//trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
-			//if (trans->scale_.y <= 0)
-			//{
 			trans->translation_.y = 20;
 			trans->scale_ = { 0,0,0 };
 			hitedBlockStep = 1;
 			isJumpAddScaleStep = 0;
 			isGround = false;
 			isJump = false;
-			//}
 		}
 		if (hitedBlockStep == 1)
 		{
 			trans->scale_ += 0.05 * slowMotion->GetSlowExrate();
-			//trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
-			//trans->scale_.z += 0.05 * slowMotion->GetSlowExrate();
 			trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 
 			if (trans->scale_.x >= radius)
@@ -765,43 +652,6 @@ void Player::HitBlockUpdate()
 				isHitBlock = false;
 			}
 		}
-
-		//if (hitedBlockStep == 0)
-		//{
-		//	trans->translation_.y -= 1;
-		//	trans->scale_.x += addScaleValue * slowMotion->GetSlowExrate();
-		//	trans->scale_.y -= addScaleValue / maxSize * slowMotion->GetSlowExrate();
-		//	trans->scale_.z += addScaleValue / 2 * slowMotion->GetSlowExrate();
-		//	if (trans->scale_.y <= 0)
-		//	{
-		//		trans->translation_.y = 20;
-		//		trans->scale_ = { 0,0,0 };
-		//		hitedBlockStep = 1;
-		//	}
-		//}
-		//else if (hitedBlockStep == 1)
-		//{
-		//	trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
-		//	trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
-		//	trans->scale_.z += 0.05 * slowMotion->GetSlowExrate();
-		//	trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
-
-		//	if (trans->scale_.x >= radius)
-		//	{
-		//		isReverse = false;		// ”½“]ƒtƒ‰ƒO
-		//		isWeakAttack = false;	// ŽãUŒ‚
-		//		isHeavyAttack = false;	// ‹­UŒ‚
-		//		isEngulfAttack = false;	// Šª‚«ž‚ÝUŒ‚
-		//		isAttack = false;		// UŒ‚ƒtƒ‰ƒO
-
-		//		stopTimer = 0;			// Ž~‚Ü‚éƒ^ƒCƒ}[
-		//		trans->scale_ = { radius,radius,radius };
-		//		trans->rotation_ = { DegreeToRad(180),0,0 };
-
-		//		hitedBlockStep = 0;
-		//		isHitBlock = false;
-		//	}
-		//}
 	}
 }
 

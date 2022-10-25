@@ -860,31 +860,31 @@ void Stage::PlayerUpdate()
 				player->GetPos(), tmepRadius, temp->GetPos(), temp->GetRadius() &&
 				player->GetisEngulfAttack() == false))
 			{
-				if (player->GetisGround() == false)
+				//if (player->GetisGround() == false)
+				//{
+				if (temp->GetisCanHit() == true && temp->GetisDestroy() == false &&
+					temp->GetisAttack() == false && temp->GetisGround() == true)
 				{
-					if (temp->GetisCanHit() == true && temp->GetisDestroy() == false &&
-						temp->GetisAttack() == false && temp->GetisGround() == true)
+					player->HaveStarNumIncriment();
+
+					if (temp->GetisChangeColor() == false)
 					{
-						player->HaveStarNumIncriment();
+						ground->Damage(player->GetHaveStarNum() * 5);
+						damageEffect->Generate(
+							player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 5));
 
-						if (temp->GetisChangeColor() == false)
-						{
-							ground->Damage(player->GetHaveStarNum() * 5);
-							damageEffect->Generate(
-								player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 5));
-
-							viewProjection_.SetShakeValue(2, 20, 2);
-						}
-						else
-						{
-							ground->Damage(player->GetHaveStarNum() * 10);
-							damageEffect->Generate(
-								player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 10));
-							viewProjection_.SetShakeValue(3, 30, 2);
-						}
-						temp->SetisDestroy(true);
+						viewProjection_.SetShakeValue(2, 20, 2);
 					}
+					else
+					{
+						ground->Damage(player->GetHaveStarNum() * 10);
+						damageEffect->Generate(
+							player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 10));
+						viewProjection_.SetShakeValue(3, 30, 2);
+					}
+					temp->SetisDestroy(true);
 				}
+				//}
 			}
 		}
 	}
@@ -977,10 +977,6 @@ void Stage::FloorUpdate()
 			}
 		}
 	}
-	//if (ground->GetisHit() == 2)
-	//{
-	//	player->SetisGround(true);
-	//}
 
 	if (player->GetPos().y >= 20)
 	{
