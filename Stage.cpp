@@ -696,16 +696,18 @@ void Stage::GameOverCameraUpdate()
 	}
 }
 
-
 void Stage::GroundOverLineUpdate()
 {
 	if (isOverLine)
 	{
 		overLineEase.Update();
 		ground->SetScale({ 1,overLineEase.In(goundeTempScaleY, 5),1 });
+		if (ground->GetScale().y / 10 > 4.95f && overLineEase.GetisEnd() == false)
+		{
+			viewProjection_.SetShakeValue(5, 10, 3);
+		}
 	}
 }
-
 
 void Stage::GenerateStar(const Vector3& pos)
 {

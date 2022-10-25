@@ -86,7 +86,7 @@ void DamageParticle::Update()
 		{
 			if (i == 0)
 			{
-				alpha -= 0.1;
+				alpha -= 0.05;
 			}
 			damegeSprite[i]->SetColor({ 1,1,1,alpha });
 			if (damegeSprite[i]->GetColor().w <= 0)
