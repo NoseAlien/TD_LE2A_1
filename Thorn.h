@@ -11,6 +11,7 @@ private:
 	uint32_t thornTexture = 0;			// テクスチャー
 
 	float collisionRadius;
+	bool isDestroy;
 
 public:
 	Thorn();
@@ -22,9 +23,12 @@ public:
 	void Draw(const ViewProjection& viewProjection_);
 
 	inline void SetPos(const Vector3& pos) { trans->translation_ = pos; }
+	inline void SetisDestroy(const bool& isDestroy) { this->isDestroy = isDestroy; }
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
 	inline float GetRadius() { return collisionRadius; }
+	inline bool GetisDestroy() { return isDestroy; }
+
 };
 

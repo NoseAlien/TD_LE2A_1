@@ -14,6 +14,7 @@ void BezierCurve::ReSet()
 	timer = 0;
 	timeRate = 0;
 	ease.ReSet();
+	points.clear();
 	isEnd = false;
 }
 

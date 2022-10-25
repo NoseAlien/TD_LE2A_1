@@ -19,6 +19,7 @@ void SceneChange::Initialize()
 	isSceneChangeOut = false;
 	sprite->SetPosition({ 0, -1080 });
 	ease.ReSet();
+	bgmEase.ReSet();
 }
 
 void SceneChange::Update()
@@ -29,6 +30,8 @@ void SceneChange::Update()
 		{
 			ease.SetEaseTimer(60);
 			ease.SetPowNum(5);
+			bgmEase.SetEaseTimer(60);
+			bgmEase.SetPowNum(5);
 			isGenerate = false;
 			isSceneChangeIn = true;
 		}
@@ -36,7 +39,10 @@ void SceneChange::Update()
 		if (isSceneChangeIn == true)
 		{
 			ease.Update();
+			bgmEase.Update();
 			sprite->SetPosition(ease.Out({ 0, -1080 }, { 0,0 }));
+			Audio::GetInstance()->SetVolume(GameScene::bgm, bgmEase.Out(1, 0));
+			//Audio::GetInstance()->SetVolume(GameScene::bgm, 0);
 
 			if (ease.GetisEnd() == true)
 			{
@@ -44,13 +50,16 @@ void SceneChange::Update()
 				isSceneChangeOut = true;
 				isChange = true;
 				ease.ReSet();
+				bgmEase.ReSet();
 			}
 		}
 
 		if (isSceneChangeOut == true)
 		{
 			ease.Update();
+			bgmEase.Update();
 			sprite->SetPosition(ease.In({ 0,0 }, { 0,1080 }));
+			Audio::GetInstance()->SetVolume(GameScene::bgm, bgmEase.In(0, 1));
 
 			if (ease.GetisEnd() == true)
 			{
@@ -59,6 +68,7 @@ void SceneChange::Update()
 				//isSceneChangeOut = true;
 				//isChange = true;
 				ease.ReSet();
+				bgmEase.ReSet();
 			}
 		}
 	}

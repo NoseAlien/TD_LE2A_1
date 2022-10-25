@@ -97,10 +97,18 @@ void Ground::Init(const int& maxhp)
 	auto tempPos = WorldToScreen(
 		{
 			trans->translation_.x + 32,
-			trans->translation_.y + 6 * trans->scale_.y,
+			trans->translation_.y + 10 * trans->scale_.y,
 			trans->translation_.z,
 		}, viewProjection_);
-	faceSprite->SetPosition(tempPos);
+	faceSprite->SetPosition({ tempPos.x,tempPos.y + 96 });
+
+	//auto tempPos = WorldToScreen(
+	//	{
+	//		trans->translation_.x + 32,
+	//		trans->translation_.y + 10 * trans->scale_.y,
+	//		trans->translation_.z,
+	//	}, viewProjection_);
+	//faceSprite->SetPosition(tempPos);
 
 	// ‚Ü‚Î‚½‚«ŠÖ˜A
 	timer = 0;
@@ -194,10 +202,10 @@ void Ground::Update()
 	auto tempPos = WorldToScreen(
 		{
 			trans->translation_.x + 32,
-			trans->translation_.y + 6 * trans->scale_.y,
+			trans->translation_.y + 10 * trans->scale_.y,
 			trans->translation_.z,
 		}, viewProjection_);
-	faceSprite->SetPosition(tempPos);
+	faceSprite->SetPosition({ tempPos.x,tempPos.y + 96 });
 
 	// ‚Ü‚Î‚½‚«‚ÌŽž
 	if (isBlink == true && isCry == false)

@@ -77,7 +77,7 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	geneAddScaleEase.SetPowNum(5);
 
 	revival = move(make_unique<RevivalObj1>());
-
+	suckedCurve->ReSet();
 }
 
 void Star::GenerateUpdate()
@@ -278,14 +278,14 @@ void Star::SuckedUpdate()
 					Vector3 p1 =
 					{
 						trans->translation_.x - 10,
-						(targetPos.y - trans->translation_.y) / 3,
+						(targetPos.y - trans->translation_.y) / 3 /*+ ground->GetScale().y / 10*/,
 						-10,
 					};
 
 					Vector3 p2 =
 					{
-						(targetPos.x - trans->translation_.x) / 2,
-						(targetPos.y - trans->translation_.y) / 2,
+						(targetPos.x - trans->translation_.x) / 2 /*+ ground->GetScale().y / 10*/,
+						(targetPos.y - trans->translation_.y) / 2 /*+ ground->GetScale().y / 10*/,
 						-15,
 					};
 

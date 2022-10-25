@@ -95,6 +95,7 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 	grainScatterEffect = move(make_unique<GrainScatterEffect>());
 	repairEffect = move(make_unique<RepairEffect>());
 
+	damageEffect = DamageEffect::GetInstance();
 	windPressureEffect = WindPressureEffect::GetInstance();
 }
 Stage::~Stage()
@@ -160,6 +161,7 @@ void Stage::UnLoad()
 
 void Stage::Init()
 {
+	damageEffect->Clear();
 	windPressureEffect->Clear();
 
 	// ライン関連
@@ -211,7 +213,6 @@ void Stage::Init()
 	fastTimeLastDightPos = { 2500,952 };
 
 	isCameraMoveStep = false;
-	stagePcrogress = Start;
 	cameraMoveVec = { 0,0,0 };
 
 	isPlayerDieEffectGenerate = false;
@@ -244,16 +245,19 @@ void Stage::Init()
 
 	// 星復活関連
 	overStrSprite->SetPosition({ 960,1500 });
+
+	// 床がラインを超えた関連
+	isOverLine = false;
+	overLineEase.SetPowNum(5);
+	overLineEase.SetEaseTimer(60);
+	goundeTempScaleY = 0;
+	overLineEase.ReSet();
 }
 
 void Stage::Update()
 {
 	//if (gameClear == true || gameOver == true) return;
 	//if (stagePcrogress == End) return;
-
-	//static float sizeExrate = 0;
-	//static float rotAngel = 0;
-	//static float alpha = 1;
 
 	if (sceneChange->GetisSceneChangeNow() == false)
 	{
@@ -300,7 +304,6 @@ void Stage::Update()
 				{
 					fastClearTime = clearTime;
 				}
-
 				isMoveClearTime = true;
 				gameClear = true;
 			}
@@ -320,20 +323,34 @@ void Stage::Update()
 		{
 			if (stagePcrogress == Play)
 			{
-				player->SetLife(0);
 				stagePcrogress = Staging;
-				isCameraMoveStep = true;
+				if (player->GetLife() <= 0 || playerIsHitGoal == true)
+				{
+					player->SetLife(0);
+					isCameraMoveStep = true;
+				}
+				if (ground->GetPos().y + ground->GetScale().y >= 0 && isOverLine == false)
+				{
+					isOverLine = true;
+					//overLineEase.SetPowNum(5);
+					//overLineEase.SetEaseTimer(60);
+					goundeTempScaleY = ground->GetScale().y / 10;
+				}
 				endTime = GetNowTime();
 				clearTime = endTime - startTime;
+				gameOver = true;
 			}
-			gameOver = true;
+			//if (player->GetLife() <= 0 || playerIsHitGoal == true)
+			//{
+			//}
 		}
 		if (stageType == RaceStage && !isCameraMoveStep)
 		{
 			viewProjection_.eyePos = { player->GetPos().x,0,-50 };
 			viewProjection_.targetPos = { player->GetPos().x ,0,0 };
 		}
-		if (player->GetDieEffectisEnd() == true)
+		if (player->GetDieEffectisEnd() == true ||
+			overLineEase.GetisEnd() == true)
 		{
 			overScreenClock++;
 
@@ -353,12 +370,14 @@ void Stage::Update()
 	}
 
 	GameOverCameraUpdate();
+	GroundOverLineUpdate();
 	ClearTimeUpdate();
 
 	viewProjection_.ShakeUpdate();
 	viewProjection_.UpdateMatrix();
 	player->EffectUpdate();
 	ground->EffectUpdate();
+	damageEffect->Update();
 	windPressureEffect->Update();
 	grainScatterEffect->Update();
 	repairEffect->Update();
@@ -367,10 +386,10 @@ void Stage::Draw()
 {
 	lineModel->Draw(*lineTrans, viewProjection_);
 	lineModel->Draw(*lineTrans2, viewProjection_);
-	if (stageType == RaceStage)
-	{
-		lineModel->Draw(*goalLineTrans, viewProjection_);
-	}
+	//if (stageType == RaceStage)
+	//{
+	//	lineModel->Draw(*goalLineTrans, viewProjection_);
+	//}
 
 	if (isEndurance == true)
 	{
@@ -400,10 +419,10 @@ void Stage::Draw()
 		temp->Draw(viewProjection_);
 	}
 
-	if (goal != nullptr)
-	{
-		goal->Draw(viewProjection_);
-	}
+	//if (goal != nullptr)
+	//{
+	//	goal->Draw(viewProjection_);
+	//}
 
 	ground->EffectDraw();
 }
@@ -461,6 +480,7 @@ void Stage::DrawEffectFront()
 	repairEffect->Draw();
 	windPressureEffect->Draw();
 	player->DrawSpriteFront();
+	damageEffect->Draw();
 }
 void Stage::DrawEffectBack()
 {
@@ -508,45 +528,51 @@ void Stage::CountDownUpdate()
 
 	// カウント
 	const float fream = 30;
+	//if (startTextIndex < 3)
+	//{
+	//	startTextTimer++;
+	//	if (startTextTimer >= startTextMaxTimer)
+	//	{
+	//		startTextExrate = 0;
+	//		startTextAlpha = 1;
+	//		startTextAngle = -180;
+	//		startTextTimer = 0;
+	//		startTextIndex++;
+	//	}
+
+	//	// 拡大率
+	//	if (startTextExrate >= 1)
+	//	{
+	//		startTextExrate += 0.005;
+	//	}
+	//	else if (startTextExrate >= 0)
+	//	{
+	//		startTextExrate += 1 / fream;
+	//	}
+	//	startTextSprites[startTextIndex]->SetSize({ 448 * startTextExrate,448 * startTextExrate });
+
+	//	// 角度
+	//	if (startTextAngle >= 0)
+	//	{
+	//		startTextAngle += 0.25;
+	//	}
+	//	else if (startTextAngle >= -180)
+	//	{
+	//		startTextAngle += 180 / fream;
+	//	}
+	//	startTextSprites[startTextIndex]->SetRotation(DegreeToRad(startTextAngle));
+
+	//	// アルファ
+	//	startTextAlpha -= 1 / (float)startTextMaxTimer;
+	//	startTextSprites[startTextIndex]->SetColor({ 1,1,1,startTextAlpha });
+	//}
+	//else 
 	if (startTextIndex < 3)
 	{
-		startTextTimer++;
-		if (startTextTimer >= startTextMaxTimer)
-		{
-			startTextExrate = 0;
-			startTextAlpha = 1;
-			startTextAngle = -180;
-			startTextTimer = 0;
-			startTextIndex++;
-		}
-
-		// 拡大率
-		if (startTextExrate >= 1)
-		{
-			startTextExrate += 0.005;
-		}
-		else if (startTextExrate >= 0)
-		{
-			startTextExrate += 1 / fream;
-		}
-		startTextSprites[startTextIndex]->SetSize({ 448 * startTextExrate,448 * startTextExrate });
-
-		// 角度
-		if (startTextAngle >= 0)
-		{
-			startTextAngle += 0.25;
-		}
-		else if (startTextAngle >= -180)
-		{
-			startTextAngle += 180 / fream;
-		}
-		startTextSprites[startTextIndex]->SetRotation(DegreeToRad(startTextAngle));
-
-		// アルファ
-		startTextAlpha -= 1 / (float)startTextMaxTimer;
-		startTextSprites[startTextIndex]->SetColor({ 1,1,1,startTextAlpha });
+		startTextIndex = 3;
 	}
-	else if (startTextIndex == 3)
+
+	if (startTextIndex == 3)
 	{
 		stagePcrogress = Play;
 		// 拡大率
@@ -670,6 +696,19 @@ void Stage::GameOverCameraUpdate()
 	}
 }
 
+void Stage::GroundOverLineUpdate()
+{
+	if (isOverLine)
+	{
+		overLineEase.Update();
+		ground->SetScale({ 1,overLineEase.In(goundeTempScaleY, 5),1 });
+		if (ground->GetScale().y / 10 > 4.95f && overLineEase.GetisEnd() == false)
+		{
+			viewProjection_.SetShakeValue(5, 10, 3);
+		}
+	}
+}
+
 void Stage::GenerateStar(const Vector3& pos)
 {
 	stars.emplace_back(move(make_unique<Star>()));
@@ -686,12 +725,13 @@ void Stage::GenerateStar(const Vector3& pos)
 	stars.back()->revival->isCanRevival = true;
 	stars.back()->revival->pos = stars.back()->GetPos();
 }
-void Stage::GenerateThorn(const Vector3& pos, const bool& isReverseVertical, const Vector3& scale)
+void Stage::GenerateThorn(const Vector3& pos, const bool& isReverseVertical,
+	const Vector3& rot, const Vector3& scale)
 {
 	if (isReverseVertical == false)
 	{
 		thorns.emplace_back(move(make_unique<Thorn>()));
-		thorns.back()->Generate(pos, scale);
+		thorns.back()->Generate(pos, scale, rot);
 	}
 	else
 	{
@@ -817,11 +857,16 @@ void Stage::PlayerUpdate()
 						if (temp->GetisChangeColor() == false)
 						{
 							ground->Damage(player->GetHaveStarNum() * 5);
+							damageEffect->Generate(
+								player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 5));
+
 							viewProjection_.SetShakeValue(2, 20, 2);
 						}
 						else
 						{
 							ground->Damage(player->GetHaveStarNum() * 10);
+							damageEffect->Generate(
+								player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 10));
 							viewProjection_.SetShakeValue(3, 30, 2);
 						}
 						temp->SetisDestroy(true);
@@ -832,8 +877,6 @@ void Stage::PlayerUpdate()
 	}
 
 	player->Update();
-
-	//auto text = DebugText::GetInstance();
 }
 
 // 床
@@ -909,11 +952,13 @@ void Stage::FloorUpdate()
 			if (player->GetisHeavyAttack())
 			{
 				PlayerGenerateStar(player->GetPos());
+				damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetHeavyAttackDamage()));
 				ground->LargeDamage(player->GetHeavyAttackDamage());
 				ground->SetisHit(2);
 			}
 			else if (player->GetisWeakAttack())
 			{
+				damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetWeakAttackDamage()));
 				ground->Damage(player->GetWeakAttackDamage());
 				ground->SetisHit(2);
 			}
@@ -1056,11 +1101,15 @@ void Stage::StarUpdate()
 						if (tempStar->GetisChangeColor() == false)
 						{
 							ground->Damage(player->GetStarAttackDamage());
+							damageEffect->Generate(
+								tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage()));
 							viewProjection_.SetShakeValue(2, 20, 2);
 						}
 						else
 						{
 							ground->Damage(player->GetStarAttackDamage() * 2);
+							damageEffect->Generate(
+								tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage() * 2));
 							viewProjection_.SetShakeValue(3, 30, 2);
 						}
 
@@ -1174,12 +1223,19 @@ void Stage::ThornUpdate()
 		{
 			if (collision->SquareHitSquare(thornCollider, floorCollider))
 			{
-				temp->SetPos(
-					{
-						temp->GetPos().x,
-						ground->GetPos().y + ground->GetScale().y + 1.5f,
-						temp->GetPos().z,
-					});
+				if (stageType != RaceStage)
+				{
+					temp->SetPos(
+						{
+							temp->GetPos().x,
+							ground->GetPos().y + ground->GetScale().y + 1.5f,
+							temp->GetPos().z,
+						});
+				}
+				else
+				{
+					temp->SetisDestroy(true);
+				}
 			}
 		}
 
@@ -1208,6 +1264,15 @@ void Stage::ThornUpdate()
 	for (const auto& temp : thorns)
 	{
 		temp->Update();
+	}
+
+	for (const auto& temp : thorns)
+	{
+		if (temp->GetisDestroy() == true)
+		{
+			thorns.remove(temp);
+			break;
+		}
 	}
 }
 
