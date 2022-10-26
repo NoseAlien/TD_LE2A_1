@@ -41,16 +41,6 @@ void Cannon::Generate(const Vector3& pos, const Vector3& rot, const float& dirVe
 
 void Cannon::Update()
 {
-	if (isAddScale == false)//isShot == false)
-	{
-		shotTimer++;
-		if (shotTimer >= maxShotTimer)
-		{
-			shotTimer = 0;
-			isAddScale = true;
-		}
-	}
-
 	if (isAddScale == true)
 	{
 		if (isReverseAddScale == 0)

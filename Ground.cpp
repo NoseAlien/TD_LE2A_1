@@ -283,6 +283,11 @@ void Ground::Update()
 		}
 	}
 
+	if (trans->scale_.y <= 0.5)
+	{
+		trans->scale_.y = 0.5;
+	}
+
 	trans->UpdateMatrix();
 }
 void Ground::Draw(const ViewProjection& viewProjection_)

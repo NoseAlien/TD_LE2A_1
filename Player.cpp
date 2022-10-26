@@ -221,9 +221,9 @@ void Player::SelectSceneUpdate()
 			}
 			else if (addScaleStep == 2)
 			{
-				trans->scale_.x += 0.05 * slowMotion->GetSlowExrate();
-				trans->scale_.y += 0.05 * slowMotion->GetSlowExrate();
-				trans->scale_.z -= 0.05 * slowMotion->GetSlowExrate();
+				trans->scale_.x += 0.1 * slowMotion->GetSlowExrate();
+				trans->scale_.y += 0.1 * slowMotion->GetSlowExrate();
+				trans->scale_.z += 0.1 * slowMotion->GetSlowExrate();
 				trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 
 				if (trans->scale_.x >= radius)
@@ -237,7 +237,6 @@ void Player::SelectSceneUpdate()
 					stopTimer = 0;			// 止まるタイマー
 					trans->scale_ = { radius,radius,radius };
 					trans->rotation_ = { DegreeToRad(180),0,0 };
-
 				}
 			}
 		}
@@ -339,8 +338,8 @@ void Player::MoveUpdate()
 {
 	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
 	//if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
-	//if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
-	//if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
+	if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
+	if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
 	//if (trans->translation_.x >= 39.5)
 	//{
 	//	trans->translation_.x = 39.5;
@@ -363,7 +362,7 @@ void Player::MoveUpdate()
 	// 移動処理
 	if (isAlive == true)
 	{
-		trans->translation_.x += speed * slowMotion->GetSlowExrate();
+		//trans->translation_.x += speed * slowMotion->GetSlowExrate();
 
 		if (stageType != RaceStage)
 		{
@@ -462,7 +461,7 @@ void Player::AttackUpdate()
 				if (addScaleStep == 2)
 				{
 					spawnTrans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
-					trans->scale_ += 0.05 * slowMotion->GetSlowExrate();
+					trans->scale_ += 0.1 * slowMotion->GetSlowExrate();
 					trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 
 					if (trans->scale_.x >= radius)
