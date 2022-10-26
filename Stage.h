@@ -42,6 +42,11 @@ enum StageProgress
 class Stage
 {
 private:
+	// エンドレスのカウント
+	bool isEndlessCountDown;
+	int endlessCountDownIndex;
+
+private:
 	// ルール関連
 	static std::vector<uint32_t> ruleTex;
 	std::unique_ptr<Sprite> ruleSprite;

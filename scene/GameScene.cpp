@@ -449,7 +449,8 @@ void GameScene::CurrentStageInit()
 
 	case 3:	 // ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->SetEndurancePrameter(30, 10, 100);
+		//stages[currentStage]->SetEndurancePrameter(30, 10, 100);
+		stages[currentStage]->SetEndurancePrameter(5, 10, 100);
 		ground->Init(5000);
 		player->SetMoveType(true);
 
@@ -736,8 +737,8 @@ void GameScene::BackGroundInit()
 	preesSpaceStrEase.SetEaseTimer(60);
 	preesSpaceStrSubAlpha = 0;
 
-	escStrSprite.reset(Sprite::Create(escStrTerxture, { 1872,64 }));
-	escStrSprite->SetAnchorPoint({ 1,0 });
+	escStrSprite.reset(Sprite::Create(escStrTerxture, { 64,1048 }));
+	escStrSprite->SetAnchorPoint({ 0,1 });
 
 	leverAngle = 0;
 	leverTargetAngle = 0;

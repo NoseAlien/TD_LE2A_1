@@ -81,17 +81,10 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 
 	for (int i = 0; i < 2; i++)
 	{
-		if (i == 0)
-		{
-			enduranceTimeSprites[i] = Sprite::Create(numberSheet[3], { 1820,64 });
-		}
-		else if (i == 1)
-		{
-			enduranceTimeSprites[i] = Sprite::Create(numberSheet[0], { 1844,64 });
-		}
-		enduranceTimeSprites[i]->SetPosition({ (float)(1844 - ((1 - i) * 24)),64 });
+		enduranceTimeSprites[i] = Sprite::Create(numberSheet[i], { 1820,64 });
+		enduranceTimeSprites[i]->SetPosition({ (float)(1792 - ((1 - i) * 96)),128 });
 		enduranceTimeSprites[i]->SetAnchorPoint({ 0.5, 0.5 });
-		enduranceTimeSprites[i]->SetSize({ 32,32 });
+		enduranceTimeSprites[i]->SetSize({ 128,128 });
 	}
 
 	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber - 1], { 960,270 }));
@@ -181,6 +174,11 @@ void Stage::UnLoad()
 void Stage::Init()
 {
 	//ruleSprite->SetSize({ 0,0 });
+
+	// エンドレス関連のカウント
+	isEndlessCountDown = false;
+	endlessCountDownIndex = 0;
+
 
 	damageEffect->Clear();
 	windPressureEffect->Clear();
@@ -396,21 +394,21 @@ void Stage::Update()
 				}
 				//endTime = GetNowTime();
 				//clearTime = endTime - startTime;
-				if (isEndurance == true)
-				{
-					endTime = GetNowTime();
-					clearTime = endTime - startTime;
-					if (fastClearTime > clearTime)
-					{
-						fastClearTime = clearTime;
-					}
-					isMoveClearTime = true;
-					gameClear = true;
-				}
-				else
-				{
-					gameOver = true;
-				}
+				//if (isEndurance == true)
+				//{
+				//	endTime = GetNowTime();
+				//	clearTime = endTime - startTime;
+				//	if (fastClearTime > clearTime)
+				//	{
+				//		fastClearTime = clearTime;
+				//	}
+				//	isMoveClearTime = true;
+				//	gameClear = true;
+				//}
+				//else
+				//{
+				//}
+				gameOver = true;
 			}
 			//if (player->GetLife() <= 0 || playerIsHitGoal == true)
 			//{
@@ -575,20 +573,12 @@ void Stage::DrawSprite()
 		for (int i = 0; i < dightsNumber.size(); i++)
 		{
 			clearTimeSprites[i]->Draw2();
+			fastClearTimeSprites[i]->Draw2();
 		}
 		dotStrSprite->Draw2();
+		dotStrSprite2->Draw2();
 		timeStrSprite->Draw2();
-
-
-		if (isEndurance == false)
-		{
-			for (int i = 0; i < dightsNumber.size(); i++)
-			{
-				fastClearTimeSprites[i]->Draw2();
-			}
-			dotStrSprite2->Draw2();
-			fastTimeStrSprite->Draw2();
-		}
+		fastTimeStrSprite->Draw2();
 	}
 
 	if (gameOver)
@@ -601,10 +591,12 @@ void Stage::DrawEffectFront()
 	// カウントダウン
 	if (isShowStageNumber == false)
 	{
-		if (startTextIndex < 4)
-		{
-			startTextSprites[startTextIndex]->Draw2();
-		}
+		startTextSprites[3]->Draw2();
+	}
+	if (enduranceTimeDightsNumber.back() - 1 < 3 &&
+		enduranceTimeDightsNumber.back() - 1 >= 0)
+	{
+		startTextSprites[enduranceTimeDightsNumber.back() - 1]->Draw2();
 	}
 
 	grainScatterEffect->Draw();
@@ -670,45 +662,6 @@ void Stage::CountDownUpdate()
 
 	// カウント
 	const float fream = 30;
-	//if (startTextIndex < 3)
-	//{
-	//	startTextTimer++;
-	//	if (startTextTimer >= startTextMaxTimer)
-	//	{
-	//		startTextExrate = 0;
-	//		startTextAlpha = 1;
-	//		startTextAngle = -180;
-	//		startTextTimer = 0;
-	//		startTextIndex++;
-	//	}
-
-	//	// 拡大率
-	//	if (startTextExrate >= 1)
-	//	{
-	//		startTextExrate += 0.005;
-	//	}
-	//	else if (startTextExrate >= 0)
-	//	{
-	//		startTextExrate += 1 / fream;
-	//	}
-	//	startTextSprites[startTextIndex]->SetSize({ 448 * startTextExrate,448 * startTextExrate });
-
-	//	// 角度
-	//	if (startTextAngle >= 0)
-	//	{
-	//		startTextAngle += 0.25;
-	//	}
-	//	else if (startTextAngle >= -180)
-	//	{
-	//		startTextAngle += 180 / fream;
-	//	}
-	//	startTextSprites[startTextIndex]->SetRotation(DegreeToRad(startTextAngle));
-
-	//	// アルファ
-	//	startTextAlpha -= 1 / (float)startTextMaxTimer;
-	//	startTextSprites[startTextIndex]->SetColor({ 1,1,1,startTextAlpha });
-	//}
-	//else 
 	if (startTextIndex < 3)
 	{
 		startTextIndex = 3;
@@ -1730,18 +1683,93 @@ void Stage::RaceUpdate()
 // 耐久戦
 void Stage::EnduranceUpdate()
 {
+	// カウント
+	//const float fream = 30;
+	//if (endlessCountDownIndex < 2 && isEndlessCountDown == true)
+	//{
+	//	startTextTimer++;
+	//	if (startTextTimer >= startTextMaxTimer)
+	//	{
+	//		startTextExrate = 0;
+	//		startTextAlpha = 1;
+	//		startTextAngle = -180;
+	//		startTextTimer = 0;
+	//		endlessCountDownIndex++;
+	//	}
+
+	//	// 拡大率
+	//	if (startTextExrate >= 1)
+	//	{
+	//		startTextExrate += 0.005;
+	//	}
+	//	else if (startTextExrate >= 0)
+	//	{
+	//		startTextExrate += 1 / fream;
+	//	}
+	//	startTextSprites[endlessCountDownIndex]->SetSize({ 448 * startTextExrate,448 * startTextExrate });
+
+	//	// 角度
+	//	if (startTextAngle >= 0)
+	//	{
+	//		startTextAngle += 0.25;
+	//	}
+	//	else if (startTextAngle >= -180)
+	//	{
+	//		startTextAngle += 180 / fream;
+	//	}
+	//	startTextSprites[endlessCountDownIndex]->SetRotation(DegreeToRad(startTextAngle));
+
+	//	// アルファ
+	//	startTextAlpha -= 1 / (float)startTextMaxTimer;
+	//	startTextSprites[endlessCountDownIndex]->SetColor({ 1,1,1,startTextAlpha });
+	//}
+	//if (endlessCountDownIndex >= 3)
+	//{
+	//	isEndlessCountDown = false;
+	//}
+
+	//static DWORD preTimer = 0;
+
+	//if (startTextExrate == 0)
+	//{
+	//	preTimer = GetNowTime() / 100;
+	//}
+
+	if (enduranceTimeDightsNumber.back() - 1 < 3 &&
+		enduranceTimeDightsNumber.back() - 1 >= 0)
+	{
+		// 拡大率
+		if (startTextExrate >= 1)
+		{
+			startTextExrate += 0.005;
+		}
+		else if (startTextExrate >= 0)
+		{
+			startTextExrate += 1;
+		}
+
+		startTextSprites[enduranceTimeDightsNumber.back() - 1]->SetSize({ 448 * startTextExrate,448 * startTextExrate });
+	}
+
+
+	// 時間
 	if (isGetTime == 0)
 	{
 		isGetTime = 1;
 		enduranceStartTime = GetNowTime() / 100;
 	}
-	if (isGetTime == 1)
+	if (isGetTime == 1 && gameOver == false)
 	{
 		enduranceNowTime = GetNowTime() / 100;
 		enduranceEndTime = enduranceNowTime - enduranceStartTime;
 		if (enduranceEndTime == enduranceTime)
 		{
 			isGetTime = 2;
+		}
+
+		if (enduranceEndTime <= 3)
+		{
+			isEndlessCountDown = true;
 		}
 	}
 
