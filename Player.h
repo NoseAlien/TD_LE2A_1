@@ -42,6 +42,12 @@ private:
 	uint32_t jumpSE = 0;
 	uint32_t damageSE = 0;
 
+private:
+	// –îˆó
+	static uint32_t arrowTexture;
+	std::unique_ptr<Sprite> leftArrow;
+	std::unique_ptr<Sprite> rightArrow;
+
 	SlowMotion* slowMotion;
 
 private:

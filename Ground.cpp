@@ -10,6 +10,7 @@ vector<uint32_t> Ground::blinkTexture = {};
 vector<uint32_t> Ground::surprisedTexture = {};
 vector<uint32_t> Ground::groundCrackTexture = {};
 vector<uint32_t> Ground::cryTexture = {};
+uint32_t Ground::ironTexture = 0;
 
 uint32_t Ground::gaugeFlameTex = 0;
 uint32_t Ground::backColorTex = 0;
@@ -46,6 +47,7 @@ void Ground::Load()
 	defeatSE = audio->LoadWave("se/floor_break.wav");
 	recoverySE = audio->LoadWave("se/groundRecovery.wav");
 
+	ironTexture = TextureManager::Load("SpriteTexture/GroundCrack/ground_iron.png");
 	enemyDangerTexture = TextureManager::Load("SpriteTexture/GroundCrack/groundDengerColor1x1.png");
 	enemyModel = Model::CreateFromOBJ("ground", false);
 	trans = new WorldTransform();
@@ -91,6 +93,9 @@ void Ground::Load()
 
 void Ground::Init(const int& maxhp)
 {
+	// 鉄テクスチャー使用するかどうか
+	isIron = false;
+
 	// ゲージ関連
 	backColorSprite->SetSize({ 1023,53 });
 	frontColorSprite->SetSize({ 1023,53 });
@@ -324,100 +329,90 @@ void Ground::Draw(const ViewProjection& viewProjection_)
 {
 	if (isAlive == false) return;
 
-	if (isDanger == true)
+	if (isIron == true)
 	{
-		if (hp <= maxhp * 0.125f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[15]);
-		}
-		else if (hp <= maxhp * 0.25f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[14]);
-		}
-		else if (hp <= maxhp * 0.375f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[13]);
-		}
-		else if (hp <= maxhp * 0.5f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[12]);
-		}
-		else if (hp <= maxhp * 0.625f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[11]);
-		}
-		else if (hp <= maxhp * 0.75f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[10]);
-		}
-		else if (hp <= maxhp * 0.875f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[9]);
-		}
-		else if (hp <= maxhp - 1)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[8]);
-		}
-		else
-		{
-			enemyModel->Draw(*trans, viewProjection_, enemyDangerTexture);
-		}
+		enemyModel->Draw(*trans, viewProjection_, ironTexture);
 	}
 	else
 	{
-		if (hp <= maxhp * 0.125f)
+		if (isDanger == true)
 		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[7]);
-		}
-		else if (hp <= maxhp * 0.25f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[6]);
-		}
-		else if (hp <= maxhp * 0.375f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[5]);
-		}
-		else if (hp <= maxhp * 0.5f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[4]);
-		}
-		else if (hp <= maxhp * 0.625f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[3]);
-		}
-		else if (hp <= maxhp * 0.75f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[2]);
-		}
-		else if (hp <= maxhp * 0.875f)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[1]);
-		}
-		else if (hp <= maxhp - 1)
-		{
-			enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[0]);
+			if (hp <= maxhp * 0.125f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[15]);
+			}
+			else if (hp <= maxhp * 0.25f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[14]);
+			}
+			else if (hp <= maxhp * 0.375f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[13]);
+			}
+			else if (hp <= maxhp * 0.5f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[12]);
+			}
+			else if (hp <= maxhp * 0.625f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[11]);
+			}
+			else if (hp <= maxhp * 0.75f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[10]);
+			}
+			else if (hp <= maxhp * 0.875f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[9]);
+			}
+			else if (hp <= maxhp - 1)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[8]);
+			}
+			else
+			{
+				enemyModel->Draw(*trans, viewProjection_, enemyDangerTexture);
+			}
 		}
 		else
 		{
-			enemyModel->Draw(*trans, viewProjection_);
+			if (hp <= maxhp * 0.125f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[7]);
+			}
+			else if (hp <= maxhp * 0.25f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[6]);
+			}
+			else if (hp <= maxhp * 0.375f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[5]);
+			}
+			else if (hp <= maxhp * 0.5f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[4]);
+			}
+			else if (hp <= maxhp * 0.625f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[3]);
+			}
+			else if (hp <= maxhp * 0.75f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[2]);
+			}
+			else if (hp <= maxhp * 0.875f)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[1]);
+			}
+			else if (hp <= maxhp - 1)
+			{
+				enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[0]);
+			}
+			else
+			{
+				enemyModel->Draw(*trans, viewProjection_);
+			}
 		}
-
-		//if (hp <= maxhp * 0.25)
-		//{
-		//	enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[2]);
-		//}
-		//else if (hp <= maxhp * 0.5)
-		//{
-		//	enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[1]);
-		//}
-		//else if (hp <= maxhp * 0.75)
-		//{
-		//	enemyModel->Draw(*trans, viewProjection_, groundCrackTexture[0]);
-		//}
-		//else
-		//{
-		//	enemyModel->Draw(*trans, viewProjection_);
-		//}
 	}
 }
 
@@ -435,9 +430,12 @@ void Ground::DrawSprite()
 
 	faceSprite->Draw2();
 
-	backColorSprite->Draw2();
-	frontColorSprite->Draw2();
-	gaugeFlameSprite->Draw2();
+	if (isIron == false)
+	{
+		backColorSprite->Draw2();
+		frontColorSprite->Draw2();
+		gaugeFlameSprite->Draw2();
+	}
 }
 
 void Ground::SetThickness(const int& num)

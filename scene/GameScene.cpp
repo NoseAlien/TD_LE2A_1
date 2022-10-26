@@ -29,6 +29,8 @@ uint32_t GameScene::escStrTerxture = 0;
 uint32_t GameScene::leverTexture1 = 0;
 uint32_t GameScene::leverTexture2 = 0;
 uint32_t GameScene::ufoTexture = 0;
+uint32_t GameScene::buttonTexture1 = 0;
+uint32_t GameScene::buttonTexture2 = 0;
 
 uint32_t GameScene::bgm = 0;
 uint32_t GameScene::bgmPlaying = 0;
@@ -105,10 +107,13 @@ void GameScene::Load()
 	leverTexture1 = TextureManager::Load("SpriteTexture/backGround/lever_1.png");
 	leverTexture2 = TextureManager::Load("SpriteTexture/backGround/lever_2.png");
 	ufoTexture = TextureManager::Load("SpriteTexture/backGround/UFO.png");
+	buttonTexture1 = TextureManager::Load("SpriteTexture/backGround/button_1.png");
+	buttonTexture2 = TextureManager::Load("SpriteTexture/backGround/button_2.png");
 
 	bgm = Audio::GetInstance()->LoadWave("bgm/bgm.wav");
 	picopicoSE = Audio::GetInstance()->LoadWave("se/picopico.wav");
 	spaceSE = Audio::GetInstance()->LoadWave("se/picopico2.wav");
+
 }
 void GameScene::UnLoad()
 {
@@ -131,7 +136,8 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 2)));	// 星３
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 3)));	// 星４
 
-	stages.emplace_back(move(make_unique<Stage>(CannonStage, 4)));	// ボーナス
+	//stages.emplace_back(move(make_unique<Stage>(CannonStage, 4)));	// ボーナス
+	stages.emplace_back(move(make_unique<Stage>(BaseStage, 4)));	// ボーナス
 
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 5)));	// 砲台
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 6)));	// 砲台ライン
@@ -210,7 +216,6 @@ void GameScene::Update()
 			//gameState = isSelect;
 
 			player->Init();
-			stageSelect->ResetObjPos();
 			viewProjection_.eye = { 0,0,-50 };
 			viewProjection_.target = { 0,0,0 };
 			viewProjection_.UpdateMatrix();
@@ -220,11 +225,21 @@ void GameScene::Update()
 			if (stages[currentStage]->GetGameClear() == false &&
 				stages[currentStage]->GetGameOver() == false)
 			{
+				stageSelect->ResetObjPos();
 				gameState = isSelect;
 			}
 
 			if (stages[currentStage]->GetGameClear() == true)
 			{
+				if (currentStage == 12)
+				{
+					gameState = isSelect;
+				}
+				else
+				{
+					CurrentStageInit();
+				}
+
 				currentStage += 1;
 				if (currentStage >= stages.size())
 				{
@@ -232,7 +247,6 @@ void GameScene::Update()
 				}
 				stageSelect->SetCurrentStage(currentStage);
 				stageSelect->ResetObjPos();
-				CurrentStageInit();
 			}
 			if (stages[currentStage]->GetGameOver() == true)
 			{
@@ -374,6 +388,8 @@ void GameScene::Draw()
 		selectFrameSprite->Draw2(); // セレクト画面のフレーム
 		leverSprite2->Draw2();
 		leverSprite1->Draw2();
+		buttonSprite1->Draw();
+		buttonSprite2->Draw();
 	}
 	if (gameState != isTitle)
 	{
@@ -443,23 +459,38 @@ void GameScene::CurrentStageInit()
 		ground->Init(65);
 		for (int i = 0; i < 4; i++)
 		{
-			stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 });
+			if (i == 0 || i == 3)
+			{
+				stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 }, true);
+			}
+			else
+			{
+				stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 });
+			}
 		}
 		break;
 
 	case 3:	 // ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		//stages[currentStage]->SetEndurancePrameter(30, 10, 100);
-		stages[currentStage]->SetEndurancePrameter(5, 10, 100);
+		stages[currentStage]->SetEndurancePrameter(30, 10, 100);
+		//stages[currentStage]->SetEndurancePrameter(5, 10, 100);
 		ground->Init(5000);
+		ground->SetisIron(true);
 		player->SetMoveType(true);
 
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 4; i++)
 		{
-			stages[currentStage]->GenerateStar({ (float)(-30 + i * 15),0,0 });
+			if (i == 0 || i == 3)
+			{
+				stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 }, true);
+			}
+			else
+			{
+				stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 });
+			}
 		}
-		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
-		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
+		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 
 	case 4:	// 砲台
@@ -494,11 +525,12 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->SetisEndurance(true);
 		stages[currentStage]->SetEndurancePrameter(60, 20, 200);
 		ground->Init(5000);
+		ground->SetisIron(true);
 		player->SetMoveType(true);
 
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 4; i++)
 		{
-			stages[currentStage]->GenerateStar({ (float)(-30 + i * 15),0,0 });
+			stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 });
 		}
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
@@ -529,11 +561,13 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->SetisEndurance(true);
 		stages[currentStage]->SetEndurancePrameter(90, 30, 300);
 		ground->Init(5000);
+		ground->SetisIron(true);
 		player->SetMoveType(true);
 
-		for (int i = 0; i < 5; i++)
+		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
+		for (int i = 0; i < 4; i++)
 		{
-			stages[currentStage]->GenerateStar({ (float)(-30 + i * 15),0,0 });
+			stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 });
 		}
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
@@ -541,7 +575,7 @@ void GameScene::CurrentStageInit()
 
 	case 12:
 		ground->Init(65);
-		stages[currentStage]->GenerateBlock({ 30,21,0 }, true, { 2,2,2 });
+		stages[currentStage]->GenerateBlock({ 30,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ 50,-10,0 }, true, { 2,2,2 });
 
 		stages[currentStage]->GenerateThorn({ 70,21.5,0 }, false);
@@ -744,10 +778,12 @@ void GameScene::BackGroundInit()
 	leverTargetAngle = 0;
 	leverSprite1.reset(Sprite::Create(leverTexture1, { 1498,890 }));
 	leverSprite1->SetAnchorPoint({ 0.5f,0.5f });
-	//leverSprite2.reset(Sprite::Create(leverTexture2, { 1498,810 }));
-	//leverSprite2->SetAnchorPoint({ 0.5f,0.5f });
 	leverSprite2.reset(Sprite::Create(leverTexture2, { 1498,890 }));
 	leverSprite2->SetAnchorPoint({ 0.5f,1 });
+	buttonSprite1.reset(Sprite::Create(buttonTexture1, { 420,850 }));
+	buttonSprite1->SetAnchorPoint({ 0.5f,0.5f });
+	buttonSprite2.reset(Sprite::Create(buttonTexture2, { 420,890 }));
+	buttonSprite2->SetAnchorPoint({ 0.5f,0.5f });
 
 	backLights.clear();
 
@@ -1015,6 +1051,42 @@ void GameScene::BackGroundUpdate()
 			ufoSprite->GetPosition().x + ufoMoveDir * 5,
 			ufoSprite->GetPosition().y + sin(DegreeToRad(ufoMoveAngle)),
 		});
+
+	static int isButtonPush = false;
+	static int isButtonReverce = false;
+
+	// ボタン
+	if (gameState == isSelect)
+	{
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			isButtonPush = true;
+		}
+
+		if (isButtonPush == true)
+		{
+			const int speed = 6;
+			if (isButtonReverce == false)
+			{
+				buttonSprite1->SetPosition({ buttonSprite1->GetPosition().x,buttonSprite1->GetPosition().y + speed });
+
+				if (buttonSprite1->GetPosition().y >= 890)
+				{
+					isButtonReverce = true;
+				}
+			}
+			if (isButtonReverce == true)
+			{
+				buttonSprite1->SetPosition({ buttonSprite1->GetPosition().x,buttonSprite1->GetPosition().y - speed });
+
+				if (buttonSprite1->GetPosition().y <= 850)
+				{
+					buttonSprite1->SetPosition({ buttonSprite1->GetPosition().x,850 });
+					//isButtonReverce = true;
+				}
+			}
+		}
+	}
 }
 void GameScene::BackGroundDraw()
 {

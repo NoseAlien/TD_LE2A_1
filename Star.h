@@ -17,6 +17,7 @@ struct RevivalObj1
 
 class Star
 {
+
 private:
 	std::unique_ptr<GrainMoveEffect> grainMoveEffect;
 
@@ -50,6 +51,8 @@ private:
 	// F•Ï‚í‚éŠÖ˜A
 	int changeColorTimer;
 	int changeColorMaxTimer;
+	bool alwaysChangeColor;
+
 public:
 	bool isChangeColor;
 
@@ -106,6 +109,7 @@ public:
 	inline void SetisAttack(const bool& isAttack) { this->isAttack = isAttack; }
 	inline void SetDir(const int& dir) { this->dir = dir; }
 	inline void SetisGenerate(const bool& isGenerate) { this->isGenerate = isGenerate; }
+	inline void SetAlwaysChangeColor(const bool& alwaysChangeColor) { this->alwaysChangeColor = alwaysChangeColor; }
 	//inline void SetisSucked(const bool& isSucked) { this->isSucked = isSucked; }
 
 	inline Vector3 GetPos() { return trans->translation_; }
