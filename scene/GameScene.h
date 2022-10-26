@@ -195,6 +195,11 @@ private: // メンバ変数
 	static uint32_t leverTexture2;
 	std::unique_ptr<Sprite> leverSprite2;
 
+	static uint32_t buttonTexture1;
+	std::unique_ptr<Sprite> buttonSprite1;
+	static uint32_t buttonTexture2;
+	std::unique_ptr<Sprite> buttonSprite2;
+
 private:
 	//タイトル用
 	static uint32_t titleLogoTexture;

@@ -29,6 +29,8 @@ uint32_t GameScene::escStrTerxture = 0;
 uint32_t GameScene::leverTexture1 = 0;
 uint32_t GameScene::leverTexture2 = 0;
 uint32_t GameScene::ufoTexture = 0;
+uint32_t GameScene::buttonTexture1 = 0;
+uint32_t GameScene::buttonTexture2 = 0;
 
 uint32_t GameScene::bgm = 0;
 uint32_t GameScene::bgmPlaying = 0;
@@ -105,10 +107,13 @@ void GameScene::Load()
 	leverTexture1 = TextureManager::Load("SpriteTexture/backGround/lever_1.png");
 	leverTexture2 = TextureManager::Load("SpriteTexture/backGround/lever_2.png");
 	ufoTexture = TextureManager::Load("SpriteTexture/backGround/UFO.png");
+	buttonTexture1 = TextureManager::Load("SpriteTexture/backGround/button_1.png");
+	buttonTexture2 = TextureManager::Load("SpriteTexture/backGround/button_2.png");
 
 	bgm = Audio::GetInstance()->LoadWave("bgm/bgm.wav");
 	picopicoSE = Audio::GetInstance()->LoadWave("se/picopico.wav");
 	spaceSE = Audio::GetInstance()->LoadWave("se/picopico2.wav");
+
 }
 void GameScene::UnLoad()
 {
@@ -374,6 +379,8 @@ void GameScene::Draw()
 		selectFrameSprite->Draw2(); // セレクト画面のフレーム
 		leverSprite2->Draw2();
 		leverSprite1->Draw2();
+		buttonSprite1->Draw();
+		buttonSprite2->Draw();
 	}
 	if (gameState != isTitle)
 	{
@@ -744,10 +751,12 @@ void GameScene::BackGroundInit()
 	leverTargetAngle = 0;
 	leverSprite1.reset(Sprite::Create(leverTexture1, { 1498,890 }));
 	leverSprite1->SetAnchorPoint({ 0.5f,0.5f });
-	//leverSprite2.reset(Sprite::Create(leverTexture2, { 1498,810 }));
-	//leverSprite2->SetAnchorPoint({ 0.5f,0.5f });
 	leverSprite2.reset(Sprite::Create(leverTexture2, { 1498,890 }));
 	leverSprite2->SetAnchorPoint({ 0.5f,1 });
+	buttonSprite1.reset(Sprite::Create(buttonTexture1, { 420,850 }));
+	buttonSprite1->SetAnchorPoint({ 0.5f,0.5f });
+	buttonSprite2.reset(Sprite::Create(buttonTexture2, { 420,890 }));
+	buttonSprite2->SetAnchorPoint({ 0.5f,0.5f });
 
 	backLights.clear();
 
@@ -1015,6 +1024,43 @@ void GameScene::BackGroundUpdate()
 			ufoSprite->GetPosition().x + ufoMoveDir * 5,
 			ufoSprite->GetPosition().y + sin(DegreeToRad(ufoMoveAngle)),
 		});
+
+	static int isButtonPush = false;
+	static int isButtonReverce = false;
+
+	// ボタン
+	if (gameState == isSelect)
+	{
+
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			isButtonPush = true;
+		}
+
+		if (isButtonPush == true)
+		{
+			const int speed = 6;
+			if (isButtonReverce == false)
+			{
+				buttonSprite1->SetPosition({ buttonSprite1->GetPosition().x,buttonSprite1->GetPosition().y + speed });
+
+				if (buttonSprite1->GetPosition().y >= 890)
+				{
+					isButtonReverce = true;
+				}
+			}
+			if (isButtonReverce == true)
+			{
+				buttonSprite1->SetPosition({ buttonSprite1->GetPosition().x,buttonSprite1->GetPosition().y - speed });
+
+				if (buttonSprite1->GetPosition().y <= 850)
+				{
+					buttonSprite1->SetPosition({ buttonSprite1->GetPosition().x,850 });
+					//isButtonReverce = true;
+				}
+			}
+		}
+	}
 }
 void GameScene::BackGroundDraw()
 {
