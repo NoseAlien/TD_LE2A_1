@@ -404,11 +404,14 @@ void Stage::Update()
 				}
 				stagePcrogress = Staging;
 				SlowMotion::GetInstance()->StartSlowMotion(0.05, 280);
-				endTime = GetNowTime();
-				clearTime = endTime - startTime;
-				if (fastClearTime > clearTime)
+				if (isEndurance == false)
 				{
-					fastClearTime = clearTime;
+					endTime = GetNowTime();
+					clearTime = endTime - startTime;
+					if (fastClearTime > clearTime)
+					{
+						fastClearTime = clearTime;
+					}
 				}
 				isMoveClearTime = true;
 				gameClear = true;
@@ -628,15 +631,18 @@ void Stage::DrawSprite()
 	if (gameClear)
 	{
 		clearStrSprite->Draw2();
-		for (int i = 0; i < dightsNumber.size(); i++)
+		if (isEndurance == false)
 		{
-			clearTimeSprites[i]->Draw2();
-			fastClearTimeSprites[i]->Draw2();
+			for (int i = 0; i < dightsNumber.size(); i++)
+			{
+				clearTimeSprites[i]->Draw2();
+				fastClearTimeSprites[i]->Draw2();
+			}
+			dotStrSprite->Draw2();
+			dotStrSprite2->Draw2();
+			timeStrSprite->Draw2();
+			fastTimeStrSprite->Draw2();
 		}
-		dotStrSprite->Draw2();
-		dotStrSprite2->Draw2();
-		timeStrSprite->Draw2();
-		fastTimeStrSprite->Draw2();
 	}
 
 	if (gameOver)
@@ -985,11 +991,11 @@ void Stage::PlayerUpdate()
 			float tmepRadius = 0;
 			if (player->GetisWeakAttack() == true)
 			{
-				tmepRadius = 2;
+				tmepRadius = 3;
 			}
 			if (player->GetisHeavyAttack() == true)
 			{
-				tmepRadius = 3;
+				tmepRadius = 4;
 			}
 
 			if (collision->SphereHitSphere(
