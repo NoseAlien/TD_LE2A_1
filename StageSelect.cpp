@@ -85,10 +85,30 @@ void StageSelect::Update()
 	if (input->TriggerKey(DIK_RIGHT))
 	{
 		currentStage++;
+		quickSelectFrame = 30;
 	}
 	if (input->TriggerKey(DIK_LEFT))
 	{
 		currentStage--;
+		quickSelectFrame = 30;
+	}
+
+	if (input->PushKey(DIK_RIGHT) != input->PushKey(DIK_LEFT))
+	{
+		quickSelectFrame--;
+		if (quickSelectFrame <= 0)
+		{
+			if (input->PushKey(DIK_RIGHT))
+			{
+				currentStage++;
+				quickSelectFrame = 6;
+			}
+			if (input->PushKey(DIK_LEFT))
+			{
+				currentStage--;
+				quickSelectFrame = 6;
+			}
+		}
 	}
 
 	currentStage = min(max(currentStage, 0), stageSize - 1);

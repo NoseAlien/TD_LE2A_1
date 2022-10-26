@@ -78,6 +78,7 @@ static int tempTimer = 0; // ゲーム開始と同時に攻撃しないため
 void Player::Init()
 {
 	moveType = false;
+	pushKeyFream = 0;
 
 	// アニメーション関連
 	animeIndex = 0;
