@@ -21,6 +21,8 @@ uint32_t Stage::lineModelTexture;
 vector<uint32_t> Stage::stageNumberTextures = {};
 vector<uint32_t> Stage::ruleTex = {};
 vector<uint32_t> Stage::ruleStrTex = {};
+uint32_t Stage::tutorial1Tex = 0;
+uint32_t Stage::tutorial2Tex = 0;
 
 uint32_t Stage::overStrTexture;
 uint32_t Stage::gameOverBGM;
@@ -103,6 +105,16 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 	ruleSprite->SetAnchorPoint({ 0.5f,0.5f });
 	ruleStrSprite.reset(Sprite::Create(ruleStrTex[0], { 214,178 }));
 	ruleStrSprite->SetAnchorPoint({ 0.5f,0.5f });
+
+	//tutorial1Sprite.reset(Sprite::Create(tutorial1Tex, { 1814,654 }));
+	tutorial1Sprite.reset(Sprite::Create(tutorial1Tex, { 1838,622 }));
+	tutorial1Sprite->SetAnchorPoint({ 1,1 });
+	//tutorial1Sprite->SetSize({ 0,0 });
+
+	tutorial2Sprite.reset(Sprite::Create(tutorial2Tex, { 2200,600 }));
+	tutorial2Sprite->SetAnchorPoint({ 0.5f,0.5f });
+	tutorial2Sprite->SetSize({ 172,166 });
+
 }
 Stage::~Stage()
 {
@@ -166,6 +178,8 @@ void Stage::Load()
 				"SpriteTexture/select_nuber/stage_number_" + to_string(i) + ".png"));
 	}
 
+	tutorial1Tex = TextureManager::Load("SpriteTexture/tutorial_1.png");
+	tutorial2Tex = TextureManager::Load("SpriteTexture/tutorial_2.png");
 
 	gameOverBGM = Audio::GetInstance()->LoadWave("bgm/gameover.wav");
 	gameClearBGM = Audio::GetInstance()->LoadWave("bgm/clear.wav");
@@ -178,6 +192,16 @@ void Stage::UnLoad()
 
 void Stage::Init()
 {
+	// 説明関連
+	tutorial1Sprite->SetSize({ 0,0 });
+	tutorial2Sprite->SetPosition({ 2200,600 });
+	tutorialMoveEase.ReSet();
+	tutorialMoveEase.SetEaseTimer(60);
+	tutorialMoveEase.SetPowNum(5);
+	tutorialScaleEase.ReSet();
+	tutorialScaleEase.SetEaseTimer(60);
+	tutorialScaleEase.SetPowNum(5);
+
 	// エンドレス関連のカウント
 	isEndlessCountDown = false;
 	endlessCountDownIndex = 0;
@@ -334,6 +358,18 @@ void Stage::Update()
 			ruleStrEase.Update();
 			ruleStrSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 300,45 }));
 		}
+
+		if (tutorialMoveEase.GetisEnd() == false)
+		{
+			tutorialMoveEase.Update();
+			tutorial2Sprite->SetPosition(tutorialMoveEase.Out({ 2200,600 }, { 1880, 600 }));
+		}
+		if (tutorialMoveEase.GetisEnd() == true && tutorialScaleEase.GetisEnd() == false)
+		{
+			tutorialScaleEase.Update();
+			tutorial1Sprite->SetSize(tutorialScaleEase.Out({ 0,0 }, { 190,150 }));
+		}
+
 
 		StarUpdate();
 		BlockUpdate();
@@ -583,6 +619,10 @@ void Stage::DrawSprite()
 	// ルール
 	ruleStrSprite->Draw2();
 	ruleSprite->Draw2();
+
+	// 説明
+	tutorial2Sprite->Draw();
+	tutorial1Sprite->Draw();
 
 	// クリア描画
 	if (gameClear)
