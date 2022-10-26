@@ -473,7 +473,11 @@ void Stage::Draw()
 	//	lineModel->Draw(*enduranceLineTrans, viewProjection_, lineModelTexture);
 	//}
 
-	player->Draw(viewProjection_);
+	if (!isPlayerDieEffectGenerate)
+	{
+		player->Draw(viewProjection_);
+	}
+
 	ground->Draw(viewProjection_);
 
 	for (const auto& temp : stars)

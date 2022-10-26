@@ -48,6 +48,8 @@ void Block::Generate(const Vector3& pos, const Vector3& scale, const bool& haveS
 	isGenerate = false;
 	geneAddScaleEase.SetEaseTimer(60);
 	geneAddScaleEase.SetPowNum(5);
+	geneAddRotEase.SetEaseTimer(60);
+	geneAddRotEase.SetPowNum(5);
 
 	revival = move(make_unique<RevivalObj>());
 }
@@ -59,6 +61,8 @@ void Block::GenerateUpdate()
 	{
 		geneAddScaleEase.Update();
 		trans->scale_ = geneAddScaleEase.Out({ 0,0,0 }, { 2,2,2 });
+		geneAddRotEase.Update();
+		trans->rotation_ = geneAddRotEase.Out({ -8,DegreeToRad(180),0 }, { 0,DegreeToRad(180),0 });
 		//trans->rotation_.z = Random::RangeF(-0.15f, 0.15f);
 		if (trans->scale_.x >= 2)
 		{
@@ -66,6 +70,7 @@ void Block::GenerateUpdate()
 			trans->rotation_ = { 0,DegreeToRad(180),0 };
 			isGenerate = false;
 			geneAddScaleEase.ReSet();
+			geneAddRotEase.ReSet();
 		}
 	}
 }
