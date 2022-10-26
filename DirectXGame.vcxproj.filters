@@ -162,6 +162,9 @@
     <ClCompile Include="DamageEffect.cpp">
       <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="BreakBlockEffect.cpp">
+      <Filter>ソース ファイル\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3d\ViewProjection.h">
@@ -339,6 +342,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DamageEffect.h">
+      <Filter>ヘッダー ファイル\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="BreakBlockEffect.h">
       <Filter>ヘッダー ファイル\Effect</Filter>
     </ClInclude>
   </ItemGroup>

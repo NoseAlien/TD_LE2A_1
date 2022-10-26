@@ -101,6 +101,7 @@
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="BezierCurve.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BreakBlockEffect.cpp" />
     <ClCompile Include="BreakGroundEffect.cpp" />
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="BezierCurve.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="BreakBlockEffect.h" />
     <ClInclude Include="BreakGroundEffect.h" />
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="Collision.h" />
