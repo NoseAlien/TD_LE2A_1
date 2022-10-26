@@ -2,6 +2,7 @@
 using namespace std;
 
 Model* Block::blockModel = nullptr;
+uint32_t Block::blockBreakTexture = 0;
 
 Block::Block() :
 	maxhp(2)
@@ -18,6 +19,7 @@ Block::~Block()
 void Block::Load()
 {
 	blockModel = Model::CreateFromOBJ("block", false);
+	blockBreakTexture = TextureManager::Load("block/block_break.png");
 }
 
 void Block::UnLoad()
@@ -105,7 +107,14 @@ void Block::Draw(const ViewProjection& viewProjection_)
 {
 	if (revival->isRevival == false)
 	{
-		blockModel->Draw(*trans, viewProjection_);
+		if (hp == 1)
+		{
+			blockModel->Draw(*trans, viewProjection_, blockBreakTexture);
+		}
+		else if (hp == 2)
+		{
+			blockModel->Draw(*trans, viewProjection_);
+		}
 	}
 }
 

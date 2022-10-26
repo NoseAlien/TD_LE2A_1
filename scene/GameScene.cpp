@@ -315,13 +315,13 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 	backColorSprite->Draw2();
-	backGroundSprite->SetColor({ 1,1,1,0.5f });
 
+	BackGroundDraw();
 	if (gameState != isSelect)
 	{
+		backGroundSprite->SetColor({ 1,1,1,0.5f });
 		backGroundSprite->Draw2();	// 背景の描画
 	}
-	BackGroundDraw();
 	if (gameState == isTitle)
 	{
 		TitleDraw();

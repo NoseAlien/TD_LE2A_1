@@ -17,7 +17,7 @@ class Block
 private:
 	static Model* blockModel;		// ƒ‚ƒfƒ‹
 	WorldTransform* trans = nullptr;
-	uint32_t blockTexture;
+	static uint32_t blockBreakTexture;
 
 	int hp;
 	int maxhp;
