@@ -143,7 +143,7 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 10)));	// ブロック＊４
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 11)));	// ブロック砲台
 
-	stages.emplace_back(move(make_unique<Stage>(BaseStage, 12)));	// ボーナス
+	stages.emplace_back(move(make_unique<Stage>(CannonStage, 12)));	// ボーナス
 	stages.emplace_back(move(make_unique<Stage>(RaceStage, 13)));	// レース
 	//stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
 	LoadData();
@@ -197,8 +197,7 @@ void GameScene::Update()
 			if (input_->TriggerKey(DIK_ESCAPE))
 			{
 				sceneChange->StartSceneChange();
-				//player->Init();
-
+				player->Init();
 				stageSelect->ResetObjPos();
 				SlowMotion::GetInstance()->Init();
 			}

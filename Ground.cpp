@@ -36,7 +36,7 @@ void Ground::Load()
 	gaugeFlameSprite->SetAnchorPoint({ 0.5f,0.5f });
 	backColorSprite.reset(Sprite::Create(backColorTex, { 960 - 512,980 }));
 	backColorSprite->SetAnchorPoint({ 0,0.5f });
-	backColorSprite->SetSize({ 1023,71 });
+	backColorSprite->SetSize({ 1023,53 });
 	frontColorSprite.reset(Sprite::Create(frontColorTex, { 960 - 512,980 }));
 	frontColorSprite->SetAnchorPoint({ 0,0.5f });
 	frontColorSprite->SetSize({ 1023,53 });
@@ -91,6 +91,10 @@ void Ground::Load()
 
 void Ground::Init(const int& maxhp)
 {
+	// ƒQ[ƒWŠÖ˜A
+	backColorSprite->SetSize({ 1023,53 });
+	frontColorSprite->SetSize({ 1023,53 });
+
 	trans->translation_ = { 0,-22.5,0 };
 	//trans->scale_ = { 46,10,5 };
 	trans->scale_ = { 1,1,1 };
