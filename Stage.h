@@ -9,6 +9,7 @@
 #include "Vector2.h"
 #include "GrainScatterEffect.h"
 #include "RepairEffect.h"
+#include "BreakBlockEffect.h"
 #include "WindPressureEffect.h"
 #include "DamageEffect.h"
 #include <vector>
@@ -147,6 +148,7 @@ private:
 	//エフェクト
 	std::unique_ptr<GrainScatterEffect> grainScatterEffect;
 	std::unique_ptr<RepairEffect> repairEffect;
+	std::unique_ptr<BreakBlockEffect> breakBlockEffect;
 
 private:
 	std::list<std::unique_ptr<Star>> stars;

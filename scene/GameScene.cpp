@@ -87,6 +87,7 @@ void GameScene::Load()
 	Stage::Load();
 	Player::audio = audio;
 	Ground::audio = audio;
+	Block::audio = audio;
 	player->Load();
 	ground->Load();
 	Particle::Load();
@@ -441,7 +442,7 @@ void GameScene::CurrentStageInit()
 		//stages[currentStage]->GenerateThorn({ -25,21.5,0 }, false);
 		break;
 	case 2:
-		ground->Init(35);
+		ground->Init(65);
 		for (int i = 0; i < 4; i++)
 		{
 			stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 });
@@ -452,7 +453,7 @@ void GameScene::CurrentStageInit()
 		//stages[currentStage]->GenerateThorn({ 0,-10,0 }, true);
 		break;
 	case 3:
-		ground->Init(40);
+		ground->Init(75);
 		stages[currentStage]->GenerateCannon({ 35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-35) });
 		stages[currentStage]->GenerateCannon({ -35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(35) });
 
@@ -466,7 +467,11 @@ void GameScene::CurrentStageInit()
 		//stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		break;
 	case 5:
+//<<<<<<< HEAD
 		ground->Init(40);
+//=======
+		//ground->Init(55);
+//>>>>>>> origin/master
 		stages[currentStage]->GenerateGoal({ 150,20,0 });
 
 		for (int i = 0; i < 9; i++)
@@ -487,7 +492,7 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		break;
 	case 7:
-		ground->Init(80);
+		ground->Init(90);
 		stages[currentStage]->GenerateBlock({ +20,+2,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ +20,-2,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ -20,+2,0 }, true, { 2,2,2 });
@@ -496,14 +501,14 @@ void GameScene::CurrentStageInit()
 		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 	case 8:
-		ground->Init(40);
+		ground->Init(80);
 		stages[currentStage]->GenerateBlock({ +15,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ -15,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 	case 9:
-		ground->Init(200);
+		ground->Init(65);
 		stages[currentStage]->GenerateBlock({ 30,21,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ 50,-10,0 }, true, { 2,2,2 });
 

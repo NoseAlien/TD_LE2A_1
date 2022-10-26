@@ -2,6 +2,7 @@
 #include "WorldTransform.h"
 #include "Model.h"
 #include "Easing.h"
+#include "Audio.h"
 
 struct RevivalObj
 {
@@ -14,6 +15,11 @@ struct RevivalObj
 
 class Block
 {
+public:
+	static Audio* audio;
+	static uint32_t damageSE;
+	static uint32_t breakSE;
+
 private:
 	static Model* blockModel;		// ƒ‚ƒfƒ‹
 	WorldTransform* trans = nullptr;
@@ -43,7 +49,7 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection_);
 
-	inline void Damage(const int& subhp) { hp -= subhp; }
+	void Damage(const int& subhp);
 
 	inline Vector3 GetPos() { return trans->translation_; }
 	inline Vector3 GetScale() { return trans->scale_; }
