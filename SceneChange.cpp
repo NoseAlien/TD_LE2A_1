@@ -41,8 +41,7 @@ void SceneChange::Update()
 			ease.Update();
 			bgmEase.Update();
 			sprite->SetPosition(ease.Out({ 0, -1080 }, { 0,0 }));
-			Audio::GetInstance()->SetVolume(GameScene::bgm, bgmEase.Out(1, 0));
-			//Audio::GetInstance()->SetVolume(GameScene::bgm, 0);
+			Audio::GetInstance()->SetVolume(GameScene::bgmPlaying, bgmEase.Out(1, 0));
 
 			if (ease.GetisEnd() == true)
 			{
@@ -59,7 +58,12 @@ void SceneChange::Update()
 			ease.Update();
 			bgmEase.Update();
 			sprite->SetPosition(ease.In({ 0,0 }, { 0,1080 }));
-			Audio::GetInstance()->SetVolume(GameScene::bgm, bgmEase.In(0, 1));
+
+			if (Audio::GetInstance()->IsPlaying(GameScene::bgmPlaying) == false)
+			{
+				GameScene::bgmPlaying = Audio::GetInstance()->PlayWave(GameScene::bgm);
+			}
+			Audio::GetInstance()->SetVolume(GameScene::bgmPlaying, bgmEase.In(0, 1));
 
 			if (ease.GetisEnd() == true)
 			{

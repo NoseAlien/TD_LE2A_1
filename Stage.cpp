@@ -303,7 +303,11 @@ void Stage::Update()
 		{
 			if (stagePcrogress == Play)
 			{
-				Audio::GetInstance()->PlayWave(gameClearBGM);
+				if (Audio::GetInstance()->IsPlaying(GameScene::bgmPlaying) == true)
+				{
+					Audio::GetInstance()->StopWave(GameScene::bgmPlaying);
+					Audio::GetInstance()->PlayWave(gameClearBGM);
+				}
 				stagePcrogress = Staging;
 				SlowMotion::GetInstance()->StartSlowMotion(0.05, 280);
 				endTime = GetNowTime();
@@ -331,10 +335,10 @@ void Stage::Update()
 		{
 			if (stagePcrogress == Play)
 			{
-				Audio::GetInstance()->PlayWave(gameOverBGM);
-				if (Audio::GetInstance()->IsPlaying(GameScene::bgm) == true)
+				if (Audio::GetInstance()->IsPlaying(GameScene::bgmPlaying) == true)
 				{
-					Audio::GetInstance()->StopWave(GameScene::bgm);
+					Audio::GetInstance()->StopWave(GameScene::bgmPlaying);
+					Audio::GetInstance()->PlayWave(gameOverBGM);
 				}
 				stagePcrogress = Staging;
 				if (player->GetLife() <= 0 || playerIsHitGoal == true)

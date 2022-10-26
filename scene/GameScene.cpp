@@ -30,6 +30,7 @@ uint32_t GameScene::leverTexture1;
 uint32_t GameScene::leverTexture2;
 
 uint32_t GameScene::bgm = 0;
+uint32_t GameScene::bgmPlaying = 0;
 uint32_t GameScene::picopicoSE = 0;
 uint32_t GameScene::spaceSE = 0;
 
@@ -158,10 +159,13 @@ void GameScene::Initialize()
 
 	isGoToTitle = false;
 
-	//audio_->PlayWave(bgm, true);
+	// 鳴らしてる最中のBGM
+	bgmPlaying = audio_->PlayWave(bgm, true);
 }
 void GameScene::Update()
 {
+	//audio_->SetVolume(bgmPlaying, 0);
+
 	BackGroundUpdate();
 
 	if (gameState == isGame)
@@ -413,8 +417,8 @@ void GameScene::CurrentStageInit()
 	switch (currentStage)
 	{
 	case 0:
-		//ground->Init(10);
-		ground->Init(10000);
+		ground->Init(10);
+		//ground->Init(10000);
 		break;
 	case 1:
 		ground->Init(25);
