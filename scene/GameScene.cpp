@@ -467,11 +467,7 @@ void GameScene::CurrentStageInit()
 		//stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		break;
 	case 5:
-//<<<<<<< HEAD
-		ground->Init(40);
-//=======
-		//ground->Init(55);
-//>>>>>>> origin/master
+		ground->Init(55);
 		stages[currentStage]->GenerateGoal({ 150,20,0 });
 
 		for (int i = 0; i < 9; i++)

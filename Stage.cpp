@@ -97,6 +97,7 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 
 	grainScatterEffect = move(make_unique<GrainScatterEffect>());
 	repairEffect = move(make_unique<RepairEffect>());
+	breakBlockEffect = move(make_unique<BreakBlockEffect>());
 
 	damageEffect = DamageEffect::GetInstance();
 	windPressureEffect = WindPressureEffect::GetInstance();
@@ -456,6 +457,7 @@ void Stage::Update()
 	windPressureEffect->Update();
 	grainScatterEffect->Update();
 	repairEffect->Update();
+	breakBlockEffect->Update();
 }
 void Stage::Draw()
 {
@@ -500,6 +502,8 @@ void Stage::Draw()
 	//}
 
 	ground->EffectDraw();
+
+	breakBlockEffect->Draw();
 }
 void Stage::DrawSprite()
 {
@@ -1561,6 +1565,7 @@ void Stage::BlockUpdate()
 				if (temp->GetHaveStar() == true &&
 					temp->revival->isRevival == false)
 				{
+					breakBlockEffect->Generate(temp->GetPos(), temp->GetScale());
 					BlockGenerateStar(temp->GetPos(), 5);
 				}
 
@@ -1577,7 +1582,6 @@ void Stage::BlockUpdate()
 				blocks.remove(temp);
 				break;
 			}
-
 		}
 	}
 }

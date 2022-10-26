@@ -3,7 +3,7 @@
 
 Model* Cannon::cannonModel = nullptr;
 
-Cannon::Cannon() : maxShotTimer(240)
+Cannon::Cannon() : maxShotTimer(100)
 {
 	trans = new WorldTransform();
 	trans->Initialize();
