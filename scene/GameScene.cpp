@@ -449,8 +449,8 @@ void GameScene::CurrentStageInit()
 
 	case 3:	 // ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		//stages[currentStage]->SetEndurancePrameter(30, 10, 100);
-		stages[currentStage]->SetEndurancePrameter(5, 10, 100);
+		stages[currentStage]->SetEndurancePrameter(30, 10, 100);
+		//stages[currentStage]->SetEndurancePrameter(5, 10, 100);
 		ground->Init(5000);
 		player->SetMoveType(true);
 

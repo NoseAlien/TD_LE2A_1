@@ -1735,31 +1735,28 @@ void Stage::EnduranceUpdate()
 	//	preTimer = GetNowTime() / 100;
 	//}
 
-	if (enduranceTimeDightsNumber.back() - 1 < 3 &&
-		enduranceTimeDightsNumber.back() - 1 >= 0)
-	{
-		// Šg‘å—¦
-		if (startTextExrate >= 1)
-		{
-			startTextExrate += 0.005;
-		}
-		else if (startTextExrate >= 0)
-		{
-			startTextExrate += 1;
-		}
+	//static int countTime = 0;
+	//static DWORD minuteFrameTime = 0;
+	//static DWORD minuteFrameNowTime = 0;
+	//static DWORD minuteFrameStartTime = 0;
 
-		startTextSprites[enduranceTimeDightsNumber.back() - 1]->SetSize({ 448 * startTextExrate,448 * startTextExrate });
-	}
-
+	//static int preNumber = 0;
 
 	// ŽžŠÔ
 	if (isGetTime == 0)
 	{
 		isGetTime = 1;
 		enduranceStartTime = GetNowTime() / 100;
+		//preNumber = enduranceTimeDightsNumber.back();
 	}
 	if (isGetTime == 1 && gameOver == false)
 	{
+		//if (preNumber != enduranceTimeDightsNumber.back())
+		//{
+		//	preNumber = enduranceTimeDightsNumber.back();
+		//	startTextExrate = 0;
+		//}
+
 		enduranceNowTime = GetNowTime() / 100;
 		enduranceEndTime = enduranceNowTime - enduranceStartTime;
 		if (enduranceEndTime == enduranceTime)
@@ -1793,6 +1790,40 @@ void Stage::EnduranceUpdate()
 	{
 		enduranceTimeSprites[i]->SetTextureHandle(numberSheet[enduranceTimeDightsNumber[i]]);
 	}
+
+
+	//if (enduranceTimeDightsNumber.back() - 1 < 3 &&
+	//	enduranceTimeDightsNumber.back() - 1 >= 0)
+	//{
+
+	//	// Šg‘å—¦
+	//	if (startTextExrate >= 1)
+	//	{
+	//		startTextExrate += 0.005;
+	//	}
+	//	else if (startTextExrate >= 0)
+	//	{
+	//		startTextExrate += 1 / 60;
+	//		//startTextExrate += 1;
+	//	}
+
+	//	startTextSprites[enduranceTimeDightsNumber.back() - 1]->SetSize({ 448 * startTextExrate,448 * startTextExrate });
+
+	//	//// Šp“x
+	//	//if (startTextAngle >= 0)
+	//	//{
+	//	//	startTextAngle += 0.25;
+	//	//}
+	//	//else if (startTextAngle >= -180)
+	//	//{
+	//	//	startTextAngle += 5 / 60;
+	//	//}
+	//	//startTextSprites[enduranceTimeDightsNumber.back() - 1]->SetRotation(DegreeToRad(startTextAngle));
+
+	//	//// ƒAƒ‹ƒtƒ@
+	//	//startTextAlpha -= 1 / 60;
+	//	//startTextSprites[enduranceTimeDightsNumber.back() - 1]->SetColor({ 1,1,1,startTextAlpha });
+	//}
 }
 
 // ”g“®
