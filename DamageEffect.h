@@ -10,8 +10,8 @@ struct DamageParticle
 	std::unique_ptr<Sprite> damegeSprite[2];
 	int dightsSize;
 	Easing ease;
-	float alpha;
 	bool isDestroy;
+	Vector4 color;
 	void Generate(const Vector3& pos, std::vector<int> dightsNumber);
 	void Update();
 	void Draw();

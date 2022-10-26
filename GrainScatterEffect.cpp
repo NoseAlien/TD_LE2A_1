@@ -35,7 +35,7 @@ void GrainScatterEffect::Generate(const Vector3& pos, const bool& colorType)
 		}
 		else
 		{
-			particles.back()->SetSpriteColor({ 1,0.46f,0.46f,1 });
+			particles.back()->SetSpriteColor({ 0.9f,0.675f,0.18f,1 });
 		}
 	}
 	//else

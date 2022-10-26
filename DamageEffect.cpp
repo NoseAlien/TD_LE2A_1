@@ -50,7 +50,6 @@ void DamageParticle::Generate(const Vector3& pos, std::vector<int> dightsNumber)
 	auto tempPos = WorldToScreen(pos, viewProjection_);
 	dightsSize = dightsNumber.size();
 	isDestroy = false;
-	alpha = 1;
 
 	const int size = 768;
 	if (dightsSize == 1)
@@ -59,6 +58,7 @@ void DamageParticle::Generate(const Vector3& pos, std::vector<int> dightsNumber)
 			Stage::numberSheet[dightsNumber[0]], { 128 + tempPos.x,tempPos.y - 64 }));
 		damegeSprite[0]->SetSize({ size,size });
 		damegeSprite[0]->SetAnchorPoint({ 0.5f,0.5f });
+		color = { 1,1,1,1 };
 	}
 	if (dightsSize == 2)
 	{
@@ -68,6 +68,8 @@ void DamageParticle::Generate(const Vector3& pos, std::vector<int> dightsNumber)
 				Stage::numberSheet[dightsNumber[i]], { 128 + tempPos.x - 24 + i * 48,tempPos.y - 64 }));
 			damegeSprite[i]->SetSize({ size,size });
 			damegeSprite[i]->SetAnchorPoint({ 0.5f,0.5f });
+			color = { 0.9f,0.675f,0.18f,1 };
+			damegeSprite[i]->SetColor(color);
 		}
 	}
 
@@ -87,9 +89,9 @@ void DamageParticle::Update()
 		{
 			if (i == 0)
 			{
-				alpha -= 0.025;
+				color.w -= 0.025;
 			}
-			damegeSprite[i]->SetColor({ 1,1,1,alpha });
+			damegeSprite[i]->SetColor(color);
 			if (damegeSprite[i]->GetColor().w <= 0)
 			{
 				isDestroy = true;
