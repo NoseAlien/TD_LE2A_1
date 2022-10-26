@@ -304,8 +304,8 @@ void GameScene::Update()
 
 	//debugText_->SetPos(20, 20);
 	//debugText_->Printf("CurrentStage = %d", currentStage);
-	debugText_->SetPos(20, 40);
-	debugText_->Printf("GroundHP = %d", ground->GetHP());
+	//debugText_->SetPos(20, 40);
+	//debugText_->Printf("GroundHP = %d", ground->GetHP());
 	//debugText_->SetPos(20, 60);
 	//debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
 }
@@ -421,51 +421,49 @@ void GameScene::CurrentStageInit()
 	switch (currentStage)
 	{
 	case 0:
-		stages[currentStage]->SetisEndless(true);
+		//stages[currentStage]->SetisEndless(true);
+		stages[currentStage]->SetisEndurance(true);
+		ground->Init(5000);
+		player->SetMoveType(true);
+
 		for (int i = 0; i < 5; i++)
 		{
 			stages[currentStage]->GenerateStar({ (float)(-30 + i * 15),0,0 });
 		}
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
-		ground->Init(10);
-		//ground->Init(10000);
+		//ground->Init(10);
 		break;
+
 	case 1:
 		ground->Init(25);
 		for (int i = 0; i < 3; i++)
 		{
 			stages[currentStage]->GenerateStar({ (float)(-20 + i * 20),0,0 });
 		}
-
-		//stages[currentStage]->GenerateThorn({ 25,21.5,0 }, false);
-		//stages[currentStage]->GenerateThorn({ -25,21.5,0 }, false);
 		break;
+
 	case 2:
 		ground->Init(65);
 		for (int i = 0; i < 4; i++)
 		{
 			stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 });
 		}
-
-		//stages[currentStage]->GenerateThorn({ -20,21.5,0 }, false);
-		//stages[currentStage]->GenerateThorn({ 20,-10,0 }, true);
-		//stages[currentStage]->GenerateThorn({ 0,-10,0 }, true);
 		break;
+
 	case 3:
 		ground->Init(75);
 		stages[currentStage]->GenerateCannon({ 35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-35) });
 		stages[currentStage]->GenerateCannon({ -35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(35) });
-
 		break;
+
 	case 4:
 		ground->Init(55);
 		ground->SetThickness(14);
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
-
-		//stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		break;
+
 	case 5:
 		ground->Init(55);
 		stages[currentStage]->GenerateGoal({ 150,20,0 });

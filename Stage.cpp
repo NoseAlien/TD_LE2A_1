@@ -169,7 +169,6 @@ void Stage::UnLoad()
 
 void Stage::Init()
 {
-
 	damageEffect->Clear();
 	windPressureEffect->Clear();
 
@@ -263,7 +262,7 @@ void Stage::Init()
 	overLineEase.ReSet();
 
 	// エンドレス
-	isEndless = false;
+	//isEndless = false;
 	endlessAttackCount = 0;
 	endlessAttackMaxCount = 60;
 }
@@ -360,7 +359,7 @@ void Stage::Update()
 				}
 				//endTime = GetNowTime();
 				//clearTime = endTime - startTime;
-				if (isEndless == true)
+				if (isEndurance == true)
 				{
 					endTime = GetNowTime();
 					clearTime = endTime - startTime;
@@ -463,15 +462,16 @@ void Stage::Draw()
 {
 	lineModel->Draw(*lineTrans, viewProjection_);
 	lineModel->Draw(*lineTrans2, viewProjection_);
+
 	//if (stageType == RaceStage)
 	//{
 	//	lineModel->Draw(*goalLineTrans, viewProjection_);
 	//}
 
-	if (isEndurance == true)
-	{
-		lineModel->Draw(*enduranceLineTrans, viewProjection_, lineModelTexture);
-	}
+	//if (isEndurance == true)
+	//{
+	//	lineModel->Draw(*enduranceLineTrans, viewProjection_, lineModelTexture);
+	//}
 
 	player->Draw(viewProjection_);
 	ground->Draw(viewProjection_);
@@ -536,7 +536,7 @@ void Stage::DrawSprite()
 		timeStrSprite->Draw2();
 
 
-		if (isEndless == false)
+		if (isEndurance == false)
 		{
 			for (int i = 0; i < dightsNumber.size(); i++)
 			{
@@ -940,10 +940,10 @@ void Stage::PlayerUpdate()
 
 					if (temp->GetisChangeColor() == false)
 					{
-						if (isEndless == true)
+						if (isEndurance == true)
 						{
 							endlessAttackCount += player->GetHaveStarNum() * 5;
-							ground->Damage(0);
+							//ground->Damage(0);
 						}
 						else
 						{
@@ -957,7 +957,7 @@ void Stage::PlayerUpdate()
 					}
 					else
 					{
-						if (isEndless == true)
+						if (isEndurance == true)
 						{
 							endlessAttackCount += player->GetHaveStarNum() * 10;
 							ground->Damage(0);
@@ -1041,7 +1041,7 @@ void Stage::FloorUpdate()
 
 		if (player->GetHaveStarNum() > 0)
 		{
-			if (isEndless == true)
+			if (isEndurance == true)
 			{
 				endlessAttackCount += player->GetHaveStarNum();
 			}
@@ -1060,7 +1060,7 @@ void Stage::FloorUpdate()
 		{
 			if (player->GetisHeavyAttack())
 			{
-				if (isEndless == true)
+				if (isEndurance == true)
 				{
 					endlessAttackCount++;
 					ground->LargeDamage(0);
@@ -1076,7 +1076,7 @@ void Stage::FloorUpdate()
 			}
 			else if (player->GetisWeakAttack())
 			{
-				if (isEndless == true)
+				if (isEndurance == true)
 				{
 					ground->Damage(0);
 				}
@@ -1106,7 +1106,7 @@ void Stage::FloorUpdate()
 			});
 	}
 
-	if (isEndless == true)
+	if (isEndurance == true)
 	{
 		if (endlessAttackCount >= endlessAttackMaxCount)
 		{
@@ -1179,7 +1179,7 @@ void Stage::StarUpdate()
 						//windPressureEffect->Generate(tempStar->GetPos(), tempStar->GetDir());
 						if (tempStar->GetisChangeColor() == false)
 						{
-							if (isEndless == true)
+							if (isEndurance == true)
 							{
 								endlessAttackCount += 5;
 								ground->Damage(0);
@@ -1194,7 +1194,7 @@ void Stage::StarUpdate()
 						}
 						else
 						{
-							if (isEndless == true)
+							if (isEndurance == true)
 							{
 								endlessAttackCount += 10;
 								ground->Damage(0);
@@ -1675,13 +1675,10 @@ void Stage::EnduranceUpdate()
 {
 	if (isGetTime == 0)
 	{
-		if (ground->GetPos().y + ground->GetScale().y >= -3.85)
-		{
-			isGetTime = 1;
-			enduranceStartTime = GetNowTime() / 100;
-		}
+		isGetTime = 1;
+		enduranceStartTime = GetNowTime() / 100;
 	}
-	if (isGetTime == 1 && ground->GetPos().y + ground->GetScale().y <= 0)
+	if (isGetTime == 1)
 	{
 		enduranceNowTime = GetNowTime() / 100;
 		enduranceEndTime = enduranceNowTime - enduranceStartTime;
@@ -1753,8 +1750,3 @@ void Stage::WaveUpdate()
 	}
 
 }
-
-//// エンドレース
-//void Stage::EndlessUpdate()
-//{
-//}

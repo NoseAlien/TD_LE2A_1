@@ -44,7 +44,7 @@ class Stage
 {
 private:
 	// エンドレス関連
-	bool isEndless;
+	//bool isEndless;
 	int endlessAttackCount;
 	int endlessAttackMaxCount;
 
@@ -225,6 +225,6 @@ public:
 	inline int GetGameOver() { return gameOver; }
 
 	inline void SetisEndurance(const bool& isEndurance) { this->isEndurance = isEndurance; }
-	inline void SetisEndless(const bool& isEndless) { this->isEndless = isEndless; }
+	//inline void SetisEndless(const bool& isEndless) { this->isEndless = isEndless; }
 };
 
