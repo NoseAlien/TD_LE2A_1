@@ -20,6 +20,7 @@ Model* Stage::lineModel = nullptr;
 uint32_t Stage::lineModelTexture;
 vector<uint32_t> Stage::stageNumberTextures = {};
 vector<uint32_t> Stage::ruleTex = {};
+vector<uint32_t> Stage::ruleStrTex = {};
 
 uint32_t Stage::overStrTexture;
 uint32_t Stage::gameOverBGM;
@@ -100,6 +101,8 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 	// ルール関連
 	ruleSprite.reset(Sprite::Create(ruleTex[0], { 960,675 }));
 	ruleSprite->SetAnchorPoint({ 0.5f,0.5f });
+	ruleStrSprite.reset(Sprite::Create(ruleStrTex[0], { 214,178 }));
+	ruleStrSprite->SetAnchorPoint({ 0.5f,0.5f });
 }
 Stage::~Stage()
 {
@@ -133,6 +136,7 @@ void Stage::Load()
 	for (int i = 0; i < 3; i++)
 	{
 		ruleTex.push_back(TextureManager::Load("SpriteTexture/rule/rule_" + to_string(i) + ".png"));
+		ruleStrTex.push_back(TextureManager::Load("SpriteTexture/rule/rule_str_" + to_string(i) + ".png"));
 	}
 
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText1.png"));
@@ -174,12 +178,9 @@ void Stage::UnLoad()
 
 void Stage::Init()
 {
-	//ruleSprite->SetSize({ 0,0 });
-
 	// エンドレス関連のカウント
 	isEndlessCountDown = false;
 	endlessCountDownIndex = 0;
-
 
 	damageEffect->Clear();
 	windPressureEffect->Clear();
@@ -263,9 +264,15 @@ void Stage::Init()
 	stageNumberSprite->SetRotation(0);
 	stageNumberSprite->SetColor({ 1,1,1,1 });
 
+	// ルール関連
 	ruleSprite->SetSize({ 0,0 });
 	ruleSprite->SetRotation(0);
 	ruleSprite->SetColor({ 1,1,1,1 });
+
+	ruleStrEase.ReSet();
+	ruleStrEase.SetEaseTimer(60);
+	ruleStrEase.SetPowNum(5);
+	ruleStrSprite->SetSize({ 0,0 });
 
 	// 星復活関連
 	overStrSprite->SetPosition({ 960,1500 });
@@ -281,8 +288,6 @@ void Stage::Init()
 	//isEndless = false;
 	endlessAttackCount = 0;
 	endlessAttackMaxCount = 60;
-
-
 }
 
 void Stage::Update()
@@ -296,16 +301,19 @@ void Stage::Update()
 		if (isEndurance == true)
 		{
 			ruleSprite->SetTextureHandle(ruleTex[1]);
+			ruleStrSprite->SetTextureHandle(ruleStrTex[1]);
 		}
 		else
 		{
 			if (stageType == BaseStage || stageType == CannonStage)
 			{
 				ruleSprite->SetTextureHandle(ruleTex[0]);
+				ruleStrSprite->SetTextureHandle(ruleStrTex[0]);
 			}
 			if (stageType == RaceStage)
 			{
 				ruleSprite->SetTextureHandle(ruleTex[2]);
+				ruleStrSprite->SetTextureHandle(ruleStrTex[2]);
 			}
 		}
 	}
@@ -321,6 +329,12 @@ void Stage::Update()
 
 	if (stagePcrogress == Play || stagePcrogress == Staging)
 	{
+		if (ruleStrEase.GetisEnd() == false)
+		{
+			ruleStrEase.Update();
+			ruleStrSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 300,45 }));
+		}
+
 		StarUpdate();
 		BlockUpdate();
 		FloorUpdate();
@@ -567,7 +581,8 @@ void Stage::DrawSprite()
 	}
 
 	// ルール
-	ruleSprite->Draw();
+	ruleStrSprite->Draw2();
+	ruleSprite->Draw2();
 
 	// クリア描画
 	if (gameClear)

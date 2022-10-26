@@ -43,6 +43,10 @@ private:
 	static std::vector<uint32_t> ruleTex;
 	std::unique_ptr<Sprite> ruleSprite;
 
+	Easing ruleStrEase;
+	static std::vector<uint32_t> ruleStrTex;
+	std::unique_ptr<Sprite> ruleStrSprite;
+
 private:
 	// エンドレス関連
 	//bool isEndless;
