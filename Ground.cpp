@@ -209,7 +209,6 @@ void Ground::Update()
 	// ゲージ関連の更新
 	const float gaugeSize = 1023;
 	frontColorSprite->SetSize({ gaugeSize * ((float)hp / maxhp),71 });
-
 	if (backColorSprite->GetSize().x > frontColorSprite->GetSize().x)
 	{
 		backColorSprite->SetSize({ backColorSprite->GetSize().x - 2, 71 });
