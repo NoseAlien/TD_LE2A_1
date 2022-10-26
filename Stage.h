@@ -34,6 +34,16 @@ enum StageProgress
 class Stage
 {
 private:
+	// 説明の画像
+	static uint32_t tutorial1Tex;
+	static uint32_t tutorial2Tex;
+	std::unique_ptr<Sprite> tutorial1Sprite;
+	std::unique_ptr<Sprite> tutorial2Sprite;
+	Easing tutorialMoveEase;
+	Easing tutorialScaleEase;
+
+
+private:
 	// エンドレスのカウント
 	bool isEndlessCountDown;
 	int endlessCountDownIndex;
