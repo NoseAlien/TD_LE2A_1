@@ -175,10 +175,19 @@ private: // メンバ変数
 	int resetMaxTimer;
 	int shootingStarSubScaleSpeed;
 
+	// UFO
+	static uint32_t ufoTexture;
+	std::unique_ptr<Sprite> ufoSprite;
+	int ufoMoveDir;
+	int ufoResetPosTimer;
+	int ufoResetPosMaxTimer;
+	int ufoMoveAngle;
+
 	// セレクト画面関連
 	static uint32_t selectFrameTexture;
 	std::unique_ptr<Sprite> selectFrameSprite;
 
+	// レバー
 	int leverAngle;
 	int leverTargetAngle;
 	static uint32_t leverTexture1;
@@ -198,6 +207,7 @@ private:
 public:
 	// BGMやSE関連
 	static uint32_t bgm;
+	static uint32_t bgmPlaying;	// 鳴らしてる最中のBGM
 	static uint32_t picopicoSE;
 	static uint32_t spaceSE;
 

@@ -246,7 +246,6 @@ void Player::SelectSceneUpdate()
 	trans->UpdateMatrix();
 }
 
-static bool isCollapse = false;
 void Player::Draw(const ViewProjection& viewProjection_)
 {
 	fream++;
