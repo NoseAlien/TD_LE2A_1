@@ -11,6 +11,10 @@ vector<uint32_t> Ground::surprisedTexture = {};
 vector<uint32_t> Ground::groundCrackTexture = {};
 vector<uint32_t> Ground::cryTexture = {};
 
+uint32_t Ground::gaugeFlameTex = 0;
+uint32_t Ground::backColorTex = 0;
+uint32_t Ground::frontColorTex = 0;
+
 Ground::Ground() :
 	collisionRadius(10)
 {
@@ -23,6 +27,20 @@ Ground::~Ground()
 
 void Ground::Load()
 {
+	// ゲージ
+	gaugeFlameTex = TextureManager::Load("SpriteTexture/Gauge/gage.png");
+	backColorTex = TextureManager::Load("SpriteTexture/Gauge/purple1x1.png");
+	frontColorTex = TextureManager::Load("SpriteTexture/Gauge/lightpurple1x1.png");
+	gaugeFlameSprite.reset(Sprite::Create(gaugeFlameTex, { 960,980 }));
+	gaugeFlameSprite->SetSize({ 1125,105 });
+	gaugeFlameSprite->SetAnchorPoint({ 0.5f,0.5f });
+	backColorSprite.reset(Sprite::Create(backColorTex, { 960 - 512,980 }));
+	backColorSprite->SetAnchorPoint({ 0,0.5f });
+	backColorSprite->SetSize({ 1023,71 });
+	frontColorSprite.reset(Sprite::Create(frontColorTex, { 960 - 512,980 }));
+	frontColorSprite->SetAnchorPoint({ 0,0.5f });
+	frontColorSprite->SetSize({ 1023,53 });
+
 	damageSE = audio->LoadWave("se/floor_damage.wav");
 	largeDamageSE = audio->LoadWave("se/floor_damage_L.wav");
 	defeatSE = audio->LoadWave("se/floor_break.wav");
@@ -186,6 +204,14 @@ void Ground::Update()
 	if (hp >= maxhp)
 	{
 		hp = maxhp;
+	}
+
+	// ゲージ関連の更新
+	const float gaugeSize = 1023;
+	frontColorSprite->SetSize({ gaugeSize * ((float)hp / maxhp),71 });
+	if (backColorSprite->GetSize().x > frontColorSprite->GetSize().x)
+	{
+		backColorSprite->SetSize({ backColorSprite->GetSize().x - 2, 71 });
 	}
 
 	// まばたきする間隔を決めるタイマー
@@ -404,6 +430,10 @@ void Ground::DrawSprite()
 	if (isAlive == false) return;
 
 	faceSprite->Draw2();
+
+	backColorSprite->Draw2();
+	frontColorSprite->Draw2();
+	gaugeFlameSprite->Draw2();
 }
 
 void Ground::SetThickness(const int& num)
