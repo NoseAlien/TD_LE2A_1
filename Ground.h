@@ -12,6 +12,16 @@ public:
 	static Audio* audio;
 
 private:
+	// ゲージ関連
+	static uint32_t gaugeFlameTex;
+	static uint32_t backColorTex;
+	static uint32_t frontColorTex;
+	std::unique_ptr<Sprite> gaugeFlameSprite;
+	std::unique_ptr<Sprite> backColorSprite;
+	std::unique_ptr<Sprite> frontColorSprite;
+
+
+private:
 	// SE関連
 	uint32_t damageSE;
 	uint32_t largeDamageSE;
