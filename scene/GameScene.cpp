@@ -26,8 +26,9 @@ uint32_t GameScene::meteoriteTexture = 0;
 uint32_t GameScene::shootingStarTexture = 0;
 uint32_t GameScene::preesSpaceStrTerxture = 0;
 uint32_t GameScene::escStrTerxture = 0;
-uint32_t GameScene::leverTexture1;
-uint32_t GameScene::leverTexture2;
+uint32_t GameScene::leverTexture1 = 0;
+uint32_t GameScene::leverTexture2 = 0;
+uint32_t GameScene::ufoTexture = 0;
 
 uint32_t GameScene::bgm = 0;
 uint32_t GameScene::bgmPlaying = 0;
@@ -102,6 +103,7 @@ void GameScene::Load()
 	escStrTerxture = TextureManager::Load("SpriteTexture/esc.png");
 	leverTexture1 = TextureManager::Load("SpriteTexture/backGround/lever_1.png");
 	leverTexture2 = TextureManager::Load("SpriteTexture/backGround/lever_2.png");
+	ufoTexture = TextureManager::Load("SpriteTexture/backGround/UFO.png");
 
 	bgm = Audio::GetInstance()->LoadWave("bgm/bgm.wav");
 	picopicoSE = Audio::GetInstance()->LoadWave("se/picopico.wav");
@@ -313,13 +315,13 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 	backColorSprite->Draw2();
-	backGroundSprite->SetColor({ 1,1,1,0.5f });
 
+	BackGroundDraw();
 	if (gameState != isSelect)
 	{
+		backGroundSprite->SetColor({ 1,1,1,0.5f });
 		backGroundSprite->Draw2();	// 背景の描画
 	}
-	BackGroundDraw();
 	if (gameState == isTitle)
 	{
 		TitleDraw();
@@ -628,6 +630,13 @@ void GameScene::TitleInit()
 	saturnCircleMove.maxTimer = 20;
 	saturnCircleMove.moveAngle = Random::Range(0, 360);
 
+	ufoSprite.reset(Sprite::Create(ufoTexture, { 2200,760 }));
+	ufoSprite->SetAnchorPoint({ 0.5f,0.5f });
+	ufoMoveDir = -1;
+	ufoResetPosTimer = 0;
+	ufoResetPosMaxTimer = 120;
+	ufoMoveAngle = 0;
+
 	meteoriteSprite.reset(Sprite::Create(meteoriteTexture, { 1440,320 }));
 	meteoriteSprite->SetAnchorPoint({ 0.5f,0.5f });
 	meteoriteCircleMove.lenght = 2;
@@ -909,6 +918,54 @@ void GameScene::BackGroundUpdate()
 			audio_->PlayWave(spaceSE);
 		}
 	}
+
+	// UFOの移動処理
+	if (ufoSprite->GetPosition().x <= -220 && ufoMoveDir == -1)
+	{
+		ufoResetPosTimer++;
+		if (ufoResetPosTimer >= ufoResetPosMaxTimer)
+		{
+			ufoMoveDir = 1;
+			ufoSprite->SetPosition({ -220,260 });
+			ufoResetPosTimer = 0;
+			ufoResetPosMaxTimer = Random::Range(120, 180);
+		}
+
+	}
+	if (ufoSprite->GetPosition().x >= 2200 && ufoMoveDir == 1)
+	{
+		ufoResetPosTimer++;
+		if (ufoResetPosTimer >= ufoResetPosMaxTimer)
+		{
+			ufoMoveDir = -1;
+			ufoSprite->SetPosition({ 2200,760 });
+			ufoResetPosTimer = 0;
+			ufoResetPosMaxTimer = Random::Range(120, 180);
+		}
+	}
+
+	// 向き
+	if (ufoMoveDir == -1)
+	{
+		ufoSprite->SetRotation(DegreeToRad(-30));
+	}
+	else if (ufoMoveDir == 1)
+	{
+		ufoSprite->SetRotation(DegreeToRad(+30));
+	}
+
+	// 上下動く処理
+	ufoMoveAngle++;
+	if (ufoMoveAngle > 360)
+	{
+		ufoMoveAngle = 0;
+	}
+
+	ufoSprite->SetPosition(
+		{
+			ufoSprite->GetPosition().x + ufoMoveDir * 5,
+			ufoSprite->GetPosition().y + sin(DegreeToRad(ufoMoveAngle)),
+		});
 }
 void GameScene::BackGroundDraw()
 {
@@ -919,6 +976,7 @@ void GameScene::BackGroundDraw()
 
 	shootingStarSprite->Draw2();
 	meteoriteSprite->Draw2();
+	ufoSprite->Draw2();
 	saturnSprite->Draw2();
 
 	if (gameState == isTitle)
