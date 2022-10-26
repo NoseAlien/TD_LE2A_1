@@ -12,6 +12,7 @@ Audio* Player::audio = nullptr;
 uint32_t Player::playerTexAnime[9] = {};
 uint32_t Player::heartTexture = {};
 unique_ptr<Model> Player::spawnModel = nullptr;
+unique_ptr<Model> Player::spawn2Model = nullptr;
 uint32_t Player::redPixel = 0;
 
 Player::Player() :
@@ -70,8 +71,10 @@ void Player::Load()
 	}
 
 	spawnModel.reset(Model::CreateFromOBJ("player_spawn", true));
+	spawn2Model.reset(Model::CreateFromOBJ("player_spawn_1", true));
 	spawnTrans = move(make_unique<WorldTransform>());
 	spawnTrans->Initialize();
+
 }
 
 static int tempTimer = 0; // ƒQ[ƒ€ŠJŽn‚Æ“¯Žž‚ÉUŒ‚‚µ‚È‚¢‚½‚ß
@@ -92,6 +95,7 @@ void Player::Init()
 	trans->scale_ = { 2,2,2 };
 	trans->rotation_ = { DegreeToRad(180),0,0 };
 	trans->UpdateMatrix();
+
 	spawnTrans->translation_ =
 	{
 		trans->translation_.x,
@@ -283,7 +287,14 @@ void Player::Draw(const ViewProjection& viewProjection_)
 		}
 	}
 
-	spawnModel->Draw(*spawnTrans, viewProjection_);
+	if (moveType == true)
+	{
+		spawn2Model->Draw(*spawnTrans, viewProjection_);
+	}
+	else
+	{
+		spawnModel->Draw(*spawnTrans, viewProjection_);
+	}
 }
 void Player::DrawSpriteFront()
 {

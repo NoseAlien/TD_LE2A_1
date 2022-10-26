@@ -137,7 +137,7 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 6)));	// 砲台ライン
 	stages.emplace_back(move(make_unique<Stage>(RaceStage, 7)));	// レース
 
-	stages.emplace_back(move(make_unique<Stage>(BaseStage, 8)));	// ボーナス
+	stages.emplace_back(move(make_unique<Stage>(CannonStage, 8)));	// ボーナス
 
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 9)));	// ブロック
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 10)));	// ブロック＊４
@@ -145,6 +145,7 @@ void GameScene::Initialize()
 
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 12)));	// ボーナス
 	stages.emplace_back(move(make_unique<Stage>(RaceStage, 13)));	// レース
+
 	//stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
 	LoadData();
 
