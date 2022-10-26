@@ -87,6 +87,7 @@ void GameScene::Load()
 	Stage::Load();
 	Player::audio = audio;
 	Ground::audio = audio;
+	Block::audio = audio;
 	player->Load();
 	ground->Load();
 	Particle::Load();
