@@ -19,6 +19,8 @@ uint32_t Stage::clearStrTexture = 0;
 Model* Stage::lineModel = nullptr;
 uint32_t Stage::lineModelTexture;
 vector<uint32_t> Stage::stageNumberTextures = {};
+vector<uint32_t> Stage::ruleTex = {};
+
 uint32_t Stage::overStrTexture;
 uint32_t Stage::gameOverBGM;
 uint32_t Stage::gameClearBGM;
@@ -92,7 +94,7 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 		enduranceTimeSprites[i]->SetSize({ 32,32 });
 	}
 
-	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber - 1], { 960,540 }));
+	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber - 1], { 960,270 }));
 	stageNumberSprite->SetAnchorPoint({ 0.5f,0.5f });
 
 	grainScatterEffect = move(make_unique<GrainScatterEffect>());
@@ -101,6 +103,10 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 
 	damageEffect = DamageEffect::GetInstance();
 	windPressureEffect = WindPressureEffect::GetInstance();
+
+	// ルール関連
+	ruleSprite.reset(Sprite::Create(ruleTex[0], { 960,675 }));
+	ruleSprite->SetAnchorPoint({ 0.5f,0.5f });
 }
 Stage::~Stage()
 {
@@ -131,6 +137,11 @@ Vector2 clearStrSize(0, 0);
 float addSizeValue = 512;
 void Stage::Load()
 {
+	for (int i = 0; i < 3; i++)
+	{
+		ruleTex.push_back(TextureManager::Load("SpriteTexture/rule/rule_" + to_string(i) + ".png"));
+	}
+
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText1.png"));
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText2.png"));
 	startTextTextures.emplace_back(TextureManager::Load("SpriteTexture/Text/StartText3.png"));
@@ -169,6 +180,8 @@ void Stage::UnLoad()
 
 void Stage::Init()
 {
+	//ruleSprite->SetSize({ 0,0 });
+
 	damageEffect->Clear();
 	windPressureEffect->Clear();
 
@@ -251,6 +264,10 @@ void Stage::Init()
 	stageNumberSprite->SetRotation(0);
 	stageNumberSprite->SetColor({ 1,1,1,1 });
 
+	ruleSprite->SetSize({ 0,0 });
+	ruleSprite->SetRotation(0);
+	ruleSprite->SetColor({ 1,1,1,1 });
+
 	// 星復活関連
 	overStrSprite->SetPosition({ 960,1500 });
 
@@ -271,6 +288,26 @@ void Stage::Update()
 {
 	//if (gameClear == true || gameOver == true) return;
 	//if (stagePcrogress == End) return;
+
+	// ルール関連
+	if (stagePcrogress == Start)
+	{
+		if (isEndurance == true)
+		{
+			ruleSprite->SetTextureHandle(ruleTex[1]);
+		}
+		else
+		{
+			if (stageType == BaseStage || stageType == CannonStage)
+			{
+				ruleSprite->SetTextureHandle(ruleTex[0]);
+			}
+			if (stageType == RaceStage)
+			{
+				ruleSprite->SetTextureHandle(ruleTex[2]);
+			}
+		}
+	}
 
 	if (sceneChange->GetisSceneChangeNow() == false)
 	{
@@ -528,6 +565,9 @@ void Stage::DrawSprite()
 		stageNumberSprite->Draw2();
 	}
 
+	// ルール
+	ruleSprite->Draw();
+
 	// クリア描画
 	if (gameClear)
 	{
@@ -586,12 +626,19 @@ void Stage::ShowStageNumberUpdate()
 {
 	if (isShowStageNumber == true)
 	{
-		sizeExrate += 0.04f;
+		// ステージナンバー
+
+		if (sizeExrate < 2)
+		{
+			sizeExrate += 0.04f;
+		}
 		if (sizeExrate >= 2)
 		{
-			sizeExrate = 2;
+			sizeExrate += 0.001f;
 		}
+
 		stageNumberSprite->SetSize({ 600 * sizeExrate,140 * sizeExrate });
+		ruleSprite->SetSize({ 320 * sizeExrate,250 * sizeExrate });
 
 		rotAngel += 7.2f;
 		if (rotAngel >= 360)
@@ -599,10 +646,11 @@ void Stage::ShowStageNumberUpdate()
 			rotAngel = 360;
 		}
 		stageNumberSprite->SetRotation(DegreeToRad(rotAngel));
+		ruleSprite->SetRotation(DegreeToRad(rotAngel));
 
-		if (sizeExrate == 2 && rotAngel == 360)
+		if (sizeExrate >= 2.00005 && rotAngel == 360)
 		{
-			alpha -= 0.025;
+			alpha -= 0.01;
 			if (alpha <= 0)
 			{
 				alpha = 0;
@@ -610,7 +658,10 @@ void Stage::ShowStageNumberUpdate()
 				isStartTextEnd = false;
 			}
 			stageNumberSprite->SetColor({ 1,1,1,alpha });
+			ruleSprite->SetColor({ 1,1,1,alpha });
 		}
+
+
 	}
 }
 void Stage::CountDownUpdate()
@@ -676,7 +727,6 @@ void Stage::CountDownUpdate()
 			startTextExrate += 1.5 / fream;
 		}
 		startTextSprites[startTextIndex]->SetSize({ 726 * startTextExrate,448 * startTextExrate });
-
 
 		startTextSprites[startTextIndex]->SetRotation(DegreeToRad(0));
 
