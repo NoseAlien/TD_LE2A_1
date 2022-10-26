@@ -471,21 +471,21 @@ void GameScene::CurrentStageInit()
 
 	case 3:	 // ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->SetEndurancePrameter(60, 10, 100);
+		stages[currentStage]->SetEndurancePrameter(40, 10, 100);
 		//stages[currentStage]->SetEndurancePrameter(5, 10, 100);
 		ground->Init(5000);
 		ground->SetisIron(true);
 		player->SetMoveType(true);
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
-			if (i == 0 || i == 3)
+			if (i == 0 || i == 4)
 			{
-				stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 }, true);
+				stages[currentStage]->GenerateStar({ (float)(-30 + i * 15),0,0 }, true);
 			}
 			else
 			{
-				stages[currentStage]->GenerateStar({ (float)(-30 + i * 20),0,0 });
+				stages[currentStage]->GenerateStar({ (float)(-30 + i * 15),0,0 });
 			}
 		}
 		//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
@@ -522,7 +522,7 @@ void GameScene::CurrentStageInit()
 
 	case 7: // ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->SetEndurancePrameter(60, 20, 20);
+		stages[currentStage]->SetEndurancePrameter(60, 20, 200);
 		ground->Init(5000);
 		ground->SetisIron(true);
 		player->SetMoveType(true);
@@ -558,7 +558,7 @@ void GameScene::CurrentStageInit()
 
 	case 11:// ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->SetEndurancePrameter(90, 20, 200);
+		stages[currentStage]->SetEndurancePrameter(60, 30, 300);
 		ground->Init(5000);
 		ground->SetisIron(true);
 		player->SetMoveType(true);
@@ -573,7 +573,7 @@ void GameScene::CurrentStageInit()
 		break;
 
 	case 12:
-		ground->Init(65);
+		ground->Init(55);
 		stages[currentStage]->GenerateBlock({ 30,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ 50,-10,0 }, true, { 2,2,2 });
 
