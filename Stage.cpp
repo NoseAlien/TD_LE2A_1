@@ -168,6 +168,7 @@ void Stage::UnLoad()
 
 void Stage::Init()
 {
+
 	damageEffect->Clear();
 	windPressureEffect->Clear();
 
@@ -259,6 +260,11 @@ void Stage::Init()
 	overLineEase.SetEaseTimer(60);
 	goundeTempScaleY = 0;
 	overLineEase.ReSet();
+
+	// エンドレス
+	isEndless = false;
+	endlessAttackCount = 0;
+	endlessAttackMaxCount = 60;
 }
 
 void Stage::Update()
@@ -349,13 +355,25 @@ void Stage::Update()
 				if (ground->GetPos().y + ground->GetScale().y >= 0 && isOverLine == false)
 				{
 					isOverLine = true;
-					//overLineEase.SetPowNum(5);
-					//overLineEase.SetEaseTimer(60);
 					goundeTempScaleY = ground->GetScale().y / 10;
 				}
-				endTime = GetNowTime();
-				clearTime = endTime - startTime;
-				gameOver = true;
+				//endTime = GetNowTime();
+				//clearTime = endTime - startTime;
+				if (isEndless == true)
+				{
+					endTime = GetNowTime();
+					clearTime = endTime - startTime;
+					if (fastClearTime > clearTime)
+					{
+						fastClearTime = clearTime;
+					}
+					isMoveClearTime = true;
+					gameClear = true;
+				}
+				else
+				{
+					gameOver = true;
+				}
 			}
 			//if (player->GetLife() <= 0 || playerIsHitGoal == true)
 			//{
@@ -376,6 +394,45 @@ void Stage::Update()
 			overStrSprite->SetPosition({ 960,clearStrPosY });
 			overStrSprite->SetSize({ 768,768 });
 
+			//// エンドレスの時
+			//if (isEndurance == true)
+			//{
+			//	clearTimeLastDightPos.x = 960 + ((dightsNumber.size() + 1) * 48 + 128) / 2;
+			//	clearTimeLastDightPos.y = lerp(1700, 480, pow((clearScreenClock - 125) / 30.0, 0.2));
+			//	// クリアタイム
+			//	for (int i = 0; i < dightsNumber.size(); i++)
+			//	{
+			//		clearTimeSprites[i]->SetTextureHandle(numberSheet[dightsNumber[i]]);
+			//		clearTimeSprites[i]->SetPosition(
+			//			{
+			//				clearTimeLastDightPos.x - (dightsNumber.size() - (float)i) * 48,
+			//				clearTimeLastDightPos.y
+			//			});
+			//		if (i == dightsNumber.size() - 2)
+			//		{
+			//			dotStrSprite->SetPosition(
+			//				{
+			//					clearTimeLastDightPos.x - (dightsNumber.size() - (float)i) * 48,
+			//					clearTimeLastDightPos.y
+			//				});
+			//		}
+			//	}
+			//	timeStrSprite->SetPosition(
+			//		{
+			//			clearTimeLastDightPos.x - dightsNumber.size() * 48 - 128,
+			//			clearTimeLastDightPos.y
+			//		});
+
+			//	if (overScreenClock >= 260)
+			//	{
+			//		stagePcrogress = End;
+			//		sceneChange->StartSceneChange();
+			//		player->SetDieEffectisEnd(false);
+			//		overScreenClock = 0;
+			//	}
+			//}
+			//else
+			//{
 			if (overScreenClock >= 160)
 			{
 				stagePcrogress = End;
@@ -383,6 +440,7 @@ void Stage::Update()
 				player->SetDieEffectisEnd(false);
 				overScreenClock = 0;
 			}
+			//}
 		}
 	}
 
@@ -469,14 +527,22 @@ void Stage::DrawSprite()
 		for (int i = 0; i < dightsNumber.size(); i++)
 		{
 			clearTimeSprites[i]->Draw2();
-			fastClearTimeSprites[i]->Draw2();
 		}
 		dotStrSprite->Draw2();
-		dotStrSprite2->Draw2();
-
 		timeStrSprite->Draw2();
-		fastTimeStrSprite->Draw2();
+
+
+		if (isEndless == false)
+		{
+			for (int i = 0; i < dightsNumber.size(); i++)
+			{
+				fastClearTimeSprites[i]->Draw2();
+			}
+			dotStrSprite2->Draw2();
+			fastTimeStrSprite->Draw2();
+		}
 	}
+
 	if (gameOver)
 	{
 		overStrSprite->Draw2();
@@ -625,13 +691,11 @@ void Stage::ClearTimeUpdate()
 	{
 		clearScreenClock++;
 
-		//float clearStrPosY = lerp(1700.0f, 270, pow((clearScreenClock - 50) / 30.0, 0.2));
 		float clearStrPosY = lerp(1700.0f, 270, pow((clearScreenClock - 50) / 30.0, 0.2));
 
 		clearStrSprite->SetPosition({ 960,clearStrPosY });
 		clearStrSprite->SetSize({ 768,768 });
 
-		//clearTimeLastDightPos.x = lerp(2400, 1856, pow((clearScreenClock - 100) / 30.0, 0.2));
 		dightsNumber = GetDightsNumber(clearTime);
 
 		clearTimeLastDightPos.x = 960 + ((dightsNumber.size() + 1) * 48 + 128) / 2;
@@ -712,7 +776,6 @@ void Stage::GameOverCameraUpdate()
 		}
 	}
 }
-
 void Stage::GroundOverLineUpdate()
 {
 	if (isOverLine)
@@ -873,7 +936,16 @@ void Stage::PlayerUpdate()
 
 					if (temp->GetisChangeColor() == false)
 					{
-						ground->Damage(player->GetHaveStarNum() * 5);
+						if (isEndless == true)
+						{
+							endlessAttackCount += player->GetHaveStarNum() * 5;
+							ground->Damage(0);
+						}
+						else
+						{
+							ground->Damage(player->GetHaveStarNum() * 5);
+						}
+
 						damageEffect->Generate(
 							player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 5));
 
@@ -881,7 +953,15 @@ void Stage::PlayerUpdate()
 					}
 					else
 					{
-						ground->Damage(player->GetHaveStarNum() * 10);
+						if (isEndless == true)
+						{
+							endlessAttackCount += player->GetHaveStarNum() * 10;
+							ground->Damage(0);
+						}
+						else
+						{
+							ground->Damage(player->GetHaveStarNum() * 10);
+						}
 						damageEffect->Generate(
 							player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 10));
 						viewProjection_.SetShakeValue(3, 30, 2);
@@ -957,26 +1037,50 @@ void Stage::FloorUpdate()
 
 		if (player->GetHaveStarNum() > 0)
 		{
-			ground->LargeDamage(
-				player->GetWeakAttackDamage() +
-				player->GetHaveStarNum() *
-				player->GetStarAttackDamage());
+			if (isEndless == true)
+			{
+				endlessAttackCount += player->GetHaveStarNum();
+			}
+			else
+			{
+				ground->LargeDamage(
+					player->GetWeakAttackDamage() +
+					player->GetHaveStarNum() *
+					player->GetStarAttackDamage());
+			}
 			player->SetHaveStarNum(0);
 			ground->SetisHit(2);
+
 		}
 		else
 		{
 			if (player->GetisHeavyAttack())
 			{
-				PlayerGenerateStar(player->GetPos());
+				if (isEndless == true)
+				{
+					endlessAttackCount++;
+					ground->LargeDamage(0);
+				}
+				else
+				{
+					ground->LargeDamage(player->GetHeavyAttackDamage());
+				}
 				damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetHeavyAttackDamage()));
-				ground->LargeDamage(player->GetHeavyAttackDamage());
+				PlayerGenerateStar(player->GetPos());
 				ground->SetisHit(2);
+
 			}
 			else if (player->GetisWeakAttack())
 			{
+				if (isEndless == true)
+				{
+					ground->Damage(0);
+				}
+				else
+				{
+					ground->Damage(player->GetWeakAttackDamage());
+				}
 				damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetWeakAttackDamage()));
-				ground->Damage(player->GetWeakAttackDamage());
 				ground->SetisHit(2);
 			}
 		}
@@ -997,62 +1101,20 @@ void Stage::FloorUpdate()
 				player->GetPos().z
 			});
 	}
-	//if (player->GetisDown() == false)
-	//{
-	//	player->SetPos(
-	//		{
-	//			player->GetPos().x,
-	//			ground->GetPos().y + ground->GetScale().y + player->GetRadius() * 2,
-	//			player->GetPos().z
-	//		});
-	//}
 
-	//// 大きくなる処理
-	//if (stageType != RaceStage)
-	//{
-	//	const int starSize = 5;
-	//	if (stars.size() >= starSize && ground->GetisAddScaleCountDown() == 0)
-	//	{
-	//		ground->SetisAddScaleCountDown(1);
-	//	}
-	//	if (ground->GetisAddScaleCountDown() == 1)
-	//	{
-	//		for (const auto& temp : stars)
-	//		{
-	//			temp->SetisAngleShacke(true);
-	//		}
-	//	}
-	//	if (stars.size() < starSize)
-	//	{
-	//		ground->SetisAddScaleCountDown(0);
-	//		ground->SetisSuctionStar(false);
-	//		for (const auto& temp : stars)
-	//		{
-	//			temp->SetisAngleShacke(false);
-	//		}
-	//	}
-
-	//	// 星を吸収する処理
-	//	if (ground->GetisSuctionStar() == true)
-	//	{
-	//		for (const auto& temp : stars)
-	//		{
-	//			repairEffect->Generate(temp->GetPos());
-	//		}
-	//		stars.clear();
-	//		ground->SetisSuctionStar(false);
-	//	}
-
-	//	// 八個集まったか
-	//	if (stars.size() >= starSize - 2)
-	//	{
-	//		ground->SetisDanger(true);
-	//	}
-	//	else
-	//	{
-	//		ground->SetisDanger(false);
-	//	}
-	//}
+	if (isEndless == true)
+	{
+		if (endlessAttackCount >= endlessAttackMaxCount)
+		{
+			ground->SubThickness(3);
+			endlessAttackMaxCount += 10;
+			if (endlessAttackMaxCount >= 100)
+			{
+				endlessAttackMaxCount = 100;
+			}
+			endlessAttackCount = 0;
+		}
+	}
 
 	ground->Update();
 }
@@ -1113,14 +1175,30 @@ void Stage::StarUpdate()
 						//windPressureEffect->Generate(tempStar->GetPos(), tempStar->GetDir());
 						if (tempStar->GetisChangeColor() == false)
 						{
-							ground->Damage(player->GetStarAttackDamage());
+							if (isEndless == true)
+							{
+								endlessAttackCount += 5;
+								ground->Damage(0);
+							}
+							else
+							{
+								ground->Damage(player->GetStarAttackDamage());
+							}
 							damageEffect->Generate(
 								tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage()));
 							viewProjection_.SetShakeValue(2, 20, 2);
 						}
 						else
 						{
-							ground->Damage(player->GetStarAttackDamage() * 2);
+							if (isEndless == true)
+							{
+								endlessAttackCount += 10;
+								ground->Damage(0);
+							}
+							else
+							{
+								ground->Damage(player->GetStarAttackDamage() * 2);
+							}
 							damageEffect->Generate(
 								tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage() * 2));
 							viewProjection_.SetShakeValue(3, 30, 2);
@@ -1507,6 +1585,23 @@ void Stage::BlockUpdate()
 // 大砲
 void Stage::CannonUpdate()
 {
+	static int shotTimer = 0;
+	static int maxShotTimer = 240;
+	shotTimer++;
+	if (shotTimer >= maxShotTimer)
+	{
+		for (const auto& temp : cannons)
+		{
+			if (temp->GetisAddScale() == false)
+			{
+				temp->SetisAddScale(true);
+				maxShotTimer = Random::Range(180, 240);
+			}
+		}
+		shotTimer = 0;
+	}
+
+
 	int count = 0;
 	float speed = 0;
 	for (const auto& temp : cannons)
@@ -1654,3 +1749,8 @@ void Stage::WaveUpdate()
 	}
 
 }
+
+//// エンドレース
+//void Stage::EndlessUpdate()
+//{
+//}

@@ -112,6 +112,11 @@ public:
 		}
 	}
 
+	inline void SubThickness(const float& exrate)
+	{
+		trans->scale_.y -= 1.2f / 15 * exrate;
+	}
+
 	inline Vector3 GetMouthPos()
 	{
 		return

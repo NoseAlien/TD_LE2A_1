@@ -126,7 +126,8 @@ void GameScene::Initialize()
 	slowMotion->Init();
 
 	stages.clear();
-	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
+	//stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
+	stages.emplace_back(move(make_unique<Stage>(CannonStage, 1)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 2)));
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 3)));
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 4)));
@@ -302,8 +303,8 @@ void GameScene::Update()
 
 	//debugText_->SetPos(20, 20);
 	//debugText_->Printf("CurrentStage = %d", currentStage);
-	//debugText_->SetPos(20, 40);
-	//debugText_->Printf("GroundHP = %d", ground->GetHP());
+	debugText_->SetPos(20, 40);
+	debugText_->Printf("GroundHP = %d", ground->GetHP());
 	//debugText_->SetPos(20, 60);
 	//debugText_->Printf("playerPos = %f,%f", player->GetPos().x, player->GetPos().y);
 }
@@ -419,6 +420,13 @@ void GameScene::CurrentStageInit()
 	switch (currentStage)
 	{
 	case 0:
+		stages[currentStage]->SetisEndless(true);
+		for (int i = 0; i < 5; i++)
+		{
+			stages[currentStage]->GenerateStar({ (float)(-30 + i * 15),0,0 });
+		}
+		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
+		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		ground->Init(10);
 		//ground->Init(10000);
 		break;
@@ -458,9 +466,8 @@ void GameScene::CurrentStageInit()
 		//stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		break;
 	case 5:
-		ground->Init(60);
+		ground->Init(40);
 		stages[currentStage]->GenerateGoal({ 150,20,0 });
-
 
 		for (int i = 0; i < 9; i++)
 		{
@@ -527,6 +534,11 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateBlock({ 275,-2,0 }, true, { 2,2,2 });
 
 		stages[currentStage]->GenerateGoal({ 300,20,0 });
+
+		for (int i = 0; i < 15; i++)
+		{
+			stages[currentStage]->GenerateThorn({ 300,21.5f - float(i) * 3,0 }, false, { 0,0,DegreeToRad(-90) });
+		}
 		break;
 		//case 10:	// デバッグ用のステージ
 		//	ground->Init(10000);

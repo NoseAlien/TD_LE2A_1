@@ -114,8 +114,6 @@ void Star::Update()
 		{
 			isGenerate = true;
 
-			isDestroy = false;
-
 			// アニメーション関連
 			animeIndex = 0;
 			fream = 0;
@@ -139,6 +137,7 @@ void Star::Update()
 			isNotGravity = false;
 			isAngleShake = false;
 			isDestroy = false;
+			isGround = true;
 			//isGround = false;
 			isAttack = 0;
 			//canHitTimer = 0;

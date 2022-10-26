@@ -31,7 +31,10 @@ public:
 	void Draw(const ViewProjection& viewProjection_);
 
 	inline void SetisShot(const bool& isShot) { this->isShot = isShot; }
+	inline void SetisAddScale(const bool& isAddScale) { this->isAddScale = isAddScale; }
+
 	inline bool GetisShot() { return isShot; }
+	inline bool GetisAddScale() { return isAddScale; }
 	inline bool GetisReverseAddScale() { return isReverseAddScale; }
 	inline Vector3 GetDirVec() { return dirVec; }
 	inline Vector3 GetPos() { return trans->translation_; }

@@ -20,6 +20,7 @@ enum StageType
 	RaceStage,
 	CannonStage,
 	EnduranceStage,
+	EndlessStage,
 };
 
 enum StageProgress
@@ -40,6 +41,12 @@ enum StageProgress
 
 class Stage
 {
+private:
+	// エンドレス関連
+	bool isEndless;
+	int endlessAttackCount;
+	int endlessAttackMaxCount;
+
 private:
 	// SE関連
 	static uint32_t gameClearBGM;
@@ -186,6 +193,7 @@ private:
 	void RaceUpdate();
 	void EnduranceUpdate();
 	void WaveUpdate();
+	void EndlessUpdate();
 
 	void GameOverCameraUpdate();
 	void GroundOverLineUpdate();
@@ -215,5 +223,6 @@ public:
 	inline int GetGameOver() { return gameOver; }
 
 	inline void SetisEndurance(const bool& isEndurance) { this->isEndurance = isEndurance; }
+	inline void SetisEndless(const bool& isEndless) { this->isEndless = isEndless; }
 };
 
