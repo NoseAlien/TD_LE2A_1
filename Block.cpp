@@ -3,6 +3,9 @@ using namespace std;
 
 Model* Block::blockModel = nullptr;
 uint32_t Block::blockBreakTexture = 0;
+Audio* Block::audio = nullptr;
+uint32_t Block::damageSE = 0;
+uint32_t Block::breakSE = 0;
 
 Block::Block() :
 	maxhp(2)
@@ -20,6 +23,8 @@ void Block::Load()
 {
 	blockModel = Model::CreateFromOBJ("block", false);
 	blockBreakTexture = TextureManager::Load("block/block_break.png");
+	damageSE = audio->LoadWave("se/floor_damage.wav");
+	breakSE = audio->LoadWave("se/block_break.wav");
 }
 
 void Block::UnLoad()
@@ -115,6 +120,18 @@ void Block::Draw(const ViewProjection& viewProjection_)
 		{
 			blockModel->Draw(*trans, viewProjection_);
 		}
+	}
+}
+
+void Block::Damage(const int& subhp) {
+	hp -= subhp;
+	if(hp <= 0)
+	{
+		audio->PlayWave(breakSE);
+	}
+	else
+	{
+		audio->PlayWave(damageSE);
 	}
 }
 

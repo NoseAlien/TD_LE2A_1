@@ -57,7 +57,7 @@ void BreakBlockEffect::Update()
 		particles[i]->SetVec(tempVec * offset * slowMotion->GetSlowExrate());
 
 		auto tempRot = particles[i]->GetRot();
-		tempRot -= 0.04;
+		tempRot -= 0.02;
 		particles[i]->SetRot(tempRot);
 	}
 
