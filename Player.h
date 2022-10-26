@@ -41,6 +41,8 @@ private:
 	// SEŠÖ˜A	
 	uint32_t jumpSE = 0;
 	uint32_t damageSE = 0;
+	uint32_t pasteSE = 0;
+	uint32_t returnSE = 0;
 
 private:
 	// –îˆó

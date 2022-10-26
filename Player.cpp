@@ -45,6 +45,8 @@ void Player::Load()
 
 	jumpSE = audio->LoadWave("se/jump.wav");
 	damageSE = audio->LoadWave("se/damage.wav");
+	pasteSE = audio->LoadWave("se/paste.wav");
+	returnSE = audio->LoadWave("se/return.wav");
 
 	string str;
 	for (int i = 0; i < 9; i++)
@@ -354,6 +356,7 @@ void Player::EffectGenerate(const Vector3& pos)
 	}
 	if (isHeavyAttack == true)
 	{
+		audio->PlayWave(pasteSE);
 		viewProjection_.SetShakeValue(1, 20);
 		heavyAttackEffect->Generate({ pos.x,pos.y + 2 - radius,pos.z });
 	}
@@ -616,7 +619,7 @@ void Player::AttackUpdate()
 
 				isJumpAddScaleStep = 1;
 				audio->PlayWave(jumpSE);
-
+				audio->PlayWave(returnSE);
 			}
 		}
 
