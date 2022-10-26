@@ -38,6 +38,7 @@ private:
 	// ¶¬‚ÌŒ©‚½–ÚŠÖ˜A
 	bool isGenerate;
 	Easing geneAddScaleEase;
+	Easing geneAddRotEase;
 
 public:
 	Block();
