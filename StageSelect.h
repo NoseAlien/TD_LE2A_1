@@ -21,6 +21,7 @@ private:
 	int stageSize;
 	int currentStage;
 	float moveSpeed;
+	int quickSelectFrame;
 
 public:
 	StageSelect(const int& stageSize);
