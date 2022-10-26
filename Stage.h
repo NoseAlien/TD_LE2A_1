@@ -45,8 +45,11 @@ class Stage
 private:
 	// エンドレス関連
 	//bool isEndless;
-	int endlessAttackCount;
-	int endlessAttackMaxCount;
+	int endlessAttackCount;		// ダメージ量
+	int endlessAttackMaxCount;	// マックスダメージ量
+
+	int addEndlessAttackCount;	// 一回につきマックスダメージ量を増やす変数
+	int endlessAttackLimitBreaking;	// 最大限界
 
 private:
 	// SE関連
@@ -225,6 +228,12 @@ public:
 	inline int GetGameOver() { return gameOver; }
 
 	inline void SetisEndurance(const bool& isEndurance) { this->isEndurance = isEndurance; }
-	//inline void SetisEndless(const bool& isEndless) { this->isEndless = isEndless; }
+	inline void SetEndurancePrameter(
+		const int& enduranceTime, const int& addEndlessAttackCount, const int& endlessAttackLimitBreaking)
+	{
+		this->enduranceTime = enduranceTime;
+		this->addEndlessAttackCount = addEndlessAttackCount;
+		this->endlessAttackLimitBreaking = endlessAttackLimitBreaking;
+	}
 };
 
