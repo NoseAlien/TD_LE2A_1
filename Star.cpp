@@ -196,7 +196,7 @@ void Star::Update()
 
 			if (isAngleShake == true)
 			{
-				trans->scale_ = trans->scale_ = { 1.5,1.5,1.5 };
+				trans->scale_ = { 1.5,1.5,1.5 };
 				trans->scale_.z *= cos(clock() * 0.05) * 0.15 + 1;
 				trans->scale_.x *= cos(clock() * 0.05) * 0.15 + 1;
 				trans->scale_.y *= sin(clock() * 0.05) * 0.15 + 1;
@@ -250,6 +250,10 @@ void Star::AttackUpdate()
 		if (gravity <= -1) gravity = -1;
 		trans->translation_.x += speed * dirVec.Normalized().x * slowMotion->GetSlowExrate();
 		trans->translation_.y += gravity * slowMotion->GetSlowExrate();
+
+		trans->scale_ = { 1.5,2,1.5 };
+
+		trans->rotation_.z += 0.7 * dirVec.Normalized().x * slowMotion->GetSlowExrate();
 	}
 }
 
@@ -302,6 +306,7 @@ void Star::SuckedUpdate()
 					suckedCurve->AddPoint(targetPos);
 					isSucked = true;
 				}
+				trans->rotation_.x += -0.5;
 			}
 		}
 
