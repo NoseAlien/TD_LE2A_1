@@ -452,7 +452,7 @@ void GameScene::CurrentStageInit()
 		break;
 
 	case 3:
-		ground->Init(75);
+		ground->Init(80);
 		stages[currentStage]->GenerateCannon({ 35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-35) });
 		stages[currentStage]->GenerateCannon({ -35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(35) });
 		break;
