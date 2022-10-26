@@ -20,7 +20,6 @@ private:
 	std::unique_ptr<Sprite> backColorSprite;
 	std::unique_ptr<Sprite> frontColorSprite;
 
-
 private:
 	// SE関連
 	uint32_t damageSE;
@@ -87,6 +86,11 @@ private:
 	// エフェクト関連
 	std::unique_ptr<BreakGroundEffect> breakGroundEffect;
 	bool isGeneEffect;
+
+private:
+	// 鉄テクスチャー
+	static uint32_t ironTexture;
+	bool isIron;
 
 public:
 	void Load();
@@ -157,6 +161,7 @@ public:
 	inline void SetisSuctionStar(const bool& isSuctionStar) { this->isSuctionStar = isSuctionStar; }
 	inline void SetisHit(const int& isHit) { this->isHit = isHit; }
 	inline void SetScale(const Vector3& scale) { trans->scale_ = scale; }
+	inline void SetisIron(const bool& isIron) { this->isIron = isIron; }
 
 public:
 	static Ground* GetInstance();

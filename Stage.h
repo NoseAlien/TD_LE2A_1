@@ -31,14 +31,6 @@ enum StageProgress
 	End,
 };
 
-//struct RevivalObject
-//{
-//	bool isRevival = false;
-//	int timer = 0;
-//	int maxTimer = 180;
-//	Vector3 pos;
-//};
-
 class Stage
 {
 private:
@@ -224,7 +216,7 @@ public:
 	void DrawEffectFront();
 	void DrawEffectBack();
 
-	void GenerateStar(const Vector3& pos);
+	void GenerateStar(const Vector3& pos, const bool& alwaysChangeColor = false);
 	void GenerateThorn(const Vector3& pos, const bool& isReverseVertical,
 		const Vector3& rot = { 0,0,0 }, const Vector3& scale = { 0.25,0.5,0.25 });
 	void GenerateBlock(const Vector3& pos, const bool& haveStar, const Vector3& scale = { 2,2,2 });

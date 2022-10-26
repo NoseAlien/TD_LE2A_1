@@ -162,6 +162,7 @@ void Stage::Load()
 				"SpriteTexture/select_nuber/stage_number_" + to_string(i) + ".png"));
 	}
 
+
 	gameOverBGM = Audio::GetInstance()->LoadWave("bgm/gameover.wav");
 	gameClearBGM = Audio::GetInstance()->LoadWave("bgm/clear.wav");
 	grainDiedSE = Audio::GetInstance()->LoadWave("se/bonn.wav");
@@ -280,6 +281,8 @@ void Stage::Init()
 	//isEndless = false;
 	endlessAttackCount = 0;
 	endlessAttackMaxCount = 60;
+
+
 }
 
 void Stage::Update()
@@ -593,11 +596,11 @@ void Stage::DrawEffectFront()
 	{
 		startTextSprites[3]->Draw2();
 	}
-	if (enduranceTimeDightsNumber.back() - 1 < 3 &&
-		enduranceTimeDightsNumber.back() - 1 >= 0)
-	{
-		startTextSprites[enduranceTimeDightsNumber.back() - 1]->Draw2();
-	}
+	//if (enduranceTimeDightsNumber.back() - 1 < 3 &&
+	//	enduranceTimeDightsNumber.back() - 1 >= 0)
+	//{
+	//	startTextSprites[enduranceTimeDightsNumber.back() - 1]->Draw2();
+	//}
 
 	grainScatterEffect->Draw();
 	repairEffect->Draw();
@@ -619,7 +622,6 @@ void Stage::ShowStageNumberUpdate()
 	if (isShowStageNumber == true)
 	{
 		// ステージナンバー
-
 		if (sizeExrate < 2)
 		{
 			sizeExrate += 0.04f;
@@ -800,9 +802,10 @@ void Stage::GroundOverLineUpdate()
 	}
 }
 
-void Stage::GenerateStar(const Vector3& pos)
+void Stage::GenerateStar(const Vector3& pos, const bool& alwaysChangeColor)
 {
 	stars.emplace_back(move(make_unique<Star>()));
+	stars.back()->SetAlwaysChangeColor(alwaysChangeColor);
 	stars.back()->Generate(
 		{
 			pos.x,

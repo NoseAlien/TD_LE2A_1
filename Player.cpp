@@ -14,6 +14,7 @@ uint32_t Player::heartTexture = {};
 unique_ptr<Model> Player::spawnModel = nullptr;
 unique_ptr<Model> Player::spawn2Model = nullptr;
 uint32_t Player::redPixel = 0;
+uint32_t Player::arrowTexture = 0;
 
 Player::Player() :
 	isAttack(false), maxSpeed(0.25), maxPushKeyFream(60),// maxPushKeyFream(120),
@@ -74,6 +75,16 @@ void Player::Load()
 	spawn2Model.reset(Model::CreateFromOBJ("player_spawn_1", true));
 	spawnTrans = move(make_unique<WorldTransform>());
 	spawnTrans->Initialize();
+
+	// –îˆó
+	arrowTexture = TextureManager::Load("SpriteTexture/arrow.png");
+	leftArrow.reset(Sprite::Create(arrowTexture, { 0,0 }));
+	leftArrow->SetAnchorPoint({ 0.5f,0.5f });
+	leftArrow->SetSize({ 100,42 });
+	rightArrow.reset(Sprite::Create(arrowTexture, { 0,0 }));
+	rightArrow->SetAnchorPoint({ 0.5f,0.5f });
+	rightArrow->SetSize({ 100,42 });
+	rightArrow->SetIsFlipX(true);
 
 }
 
@@ -147,10 +158,19 @@ void Player::Init()
 	heavyAttackEffect->Clear();
 	playerDieEffect->Clear();
 
+	// –îˆó
+	auto tempPos = WorldToScreen(spawnTrans->translation_, viewProjection_);
+	leftArrow->SetPosition({ tempPos.x + 128,tempPos.y + 64 });
+	rightArrow->SetPosition({ tempPos.x - 128,tempPos.y + 64 });
+
 }
 void Player::Update()
 {
 	if (sceneChange->GetisSceneChangeNow() == true) return;
+
+	auto tempPos = WorldToScreen(spawnTrans->translation_, viewProjection_);
+	leftArrow->SetPosition({ tempPos.x + 128,tempPos.y + 64 });
+	rightArrow->SetPosition({ tempPos.x - 128,tempPos.y + 64 });
 
 	if (!input_->ReleasedKey(DIK_SPACE))
 	{
@@ -298,6 +318,12 @@ void Player::Draw(const ViewProjection& viewProjection_)
 }
 void Player::DrawSpriteFront()
 {
+	if (moveType == true)
+	{
+		leftArrow->Draw2();
+		rightArrow->Draw2();
+	}
+
 	weakAttackEffect->Draw();
 	heavyAttackEffect->Draw();
 	playerDieEffect->Draw();

@@ -71,6 +71,15 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 
 	isAttack = 0;
 
+	if (alwaysChangeColor == true)
+	{
+		isChangeColor = true;
+	}
+	else
+	{
+		isChangeColor = false;
+	}
+
 	// ¶¬‚ÌŒ©‚½–ÚŠÖ˜A
 	isGenerate = false;
 	geneAddScaleEase.SetEaseTimer(60);
@@ -144,7 +153,14 @@ void Star::Update()
 			//isCanHit = true;
 
 			changeColorTimer = 0;
-			isChangeColor = false;
+			if (alwaysChangeColor == true)
+			{
+				isChangeColor = true;
+			}
+			else
+			{
+				isChangeColor = false;
+			}
 
 			suckedTimer = 0;
 			isSucked = false;
@@ -261,11 +277,14 @@ void Star::SuckedUpdate()
 {
 	if (isAttack == false)
 	{
-		changeColorTimer++;
-		if (changeColorTimer >= changeColorMaxTimer)
+		if (isChangeColor == false)
 		{
-			changeColorTimer = changeColorMaxTimer;
-			isChangeColor = true;
+			changeColorTimer++;
+			if (changeColorTimer >= changeColorMaxTimer)
+			{
+				changeColorTimer = changeColorMaxTimer;
+				isChangeColor = true;
+			}
 		}
 
 		if (isChangeColor == true)
