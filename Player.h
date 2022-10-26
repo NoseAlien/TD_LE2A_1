@@ -99,6 +99,7 @@ private:
 	int hitedBlockStep;
 
 	bool isAttackBlock;	// 上から攻撃したら
+	bool moveType;
 
 private:
 	// 自機のスポーンモデル関連
@@ -171,6 +172,7 @@ public:
 	inline void SetAttackMoveSpeed(const float& attackMoveSpeed) { this->attackMoveSpeed = attackMoveSpeed; }
 	inline void SetisHitGround(const bool& isHitGround) { this->isHitGround = isHitGround; }
 	inline void SetisAttackBlock(const bool& isAttackBlock) { this->isAttackBlock = isAttackBlock; }
+	inline void SetMoveType(const bool& moveType) { this->moveType = moveType; }
 
 public:
 	static Player* GetInstance();

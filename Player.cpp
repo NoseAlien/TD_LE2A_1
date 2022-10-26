@@ -77,6 +77,8 @@ void Player::Load()
 static int tempTimer = 0; // ゲーム開始と同時に攻撃しないため
 void Player::Init()
 {
+	moveType = false;
+
 	// アニメーション関連
 	animeIndex = 0;
 	fream = 0;
@@ -338,8 +340,7 @@ void Player::MoveUpdate()
 {
 	//if (input_->PushKey(DIK_UP)) trans->translation_.y += 0.5;
 	//if (input_->PushKey(DIK_DOWN)) trans->translation_.y -= 0.5;
-	if (input_->PushKey(DIK_RIGHT)) trans->translation_.x += 0.5;
-	if (input_->PushKey(DIK_LEFT)) trans->translation_.x -= 0.5;
+
 	//if (trans->translation_.x >= 39.5)
 	//{
 	//	trans->translation_.x = 39.5;
@@ -359,16 +360,51 @@ void Player::MoveUpdate()
 	//{
 	//	speed = maxSpeed;
 	//}
+
 	// 移動処理
 	if (isAlive == true)
 	{
-		//trans->translation_.x += speed * slowMotion->GetSlowExrate();
+		if (moveType == true)
+		{
+			if (input_->PushKey(DIK_RIGHT))
+			{
+				trans->translation_.x += 0.5 * slowMotion->GetSlowExrate();
+			}
+			if (input_->PushKey(DIK_LEFT))
+			{
+				trans->translation_.x -= 0.5 * slowMotion->GetSlowExrate();
+			}
+		}
+		else
+		{
+			trans->translation_.x += speed * slowMotion->GetSlowExrate();
+		}
 
 		if (stageType != RaceStage)
 		{
-			if (trans->translation_.x >= 43)
+			if (moveType == true)
 			{
-				trans->translation_.x = -43;
+				if (input_->PushKey(DIK_RIGHT))
+				{
+					if (trans->translation_.x >= 43)
+					{
+						trans->translation_.x = -43;
+					}
+				}
+				if (input_->PushKey(DIK_LEFT))
+				{
+					if (trans->translation_.x <= -43)
+					{
+						trans->translation_.x = 43;
+					}
+				}
+			}
+			else
+			{
+				if (trans->translation_.x >= 43)
+				{
+					trans->translation_.x = -43;
+				}
 			}
 		}
 		if (trans->translation_.y >= 20)
