@@ -231,6 +231,13 @@ void GameScene::Update()
 
 			if (stages[currentStage]->GetGameClear() == true)
 			{
+				currentStage += 1;
+				if (currentStage >= stages.size())
+				{
+					currentStage = stages.size() - 1;
+				}
+				stageSelect->SetCurrentStage(currentStage);
+				stageSelect->ResetObjPos();
 				if (currentStage == 12)
 				{
 					gameState = isSelect;
@@ -239,14 +246,6 @@ void GameScene::Update()
 				{
 					CurrentStageInit();
 				}
-
-				currentStage += 1;
-				if (currentStage >= stages.size())
-				{
-					currentStage = stages.size() - 1;
-				}
-				stageSelect->SetCurrentStage(currentStage);
-				stageSelect->ResetObjPos();
 			}
 			if (stages[currentStage]->GetGameOver() == true)
 			{
@@ -472,7 +471,7 @@ void GameScene::CurrentStageInit()
 
 	case 3:	 // ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->SetEndurancePrameter(30, 10, 100);
+		stages[currentStage]->SetEndurancePrameter(60, 10, 100);
 		//stages[currentStage]->SetEndurancePrameter(5, 10, 100);
 		ground->Init(5000);
 		ground->SetisIron(true);
@@ -523,7 +522,7 @@ void GameScene::CurrentStageInit()
 
 	case 7: // ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->SetEndurancePrameter(60, 20, 200);
+		stages[currentStage]->SetEndurancePrameter(60, 20, 20);
 		ground->Init(5000);
 		ground->SetisIron(true);
 		player->SetMoveType(true);
@@ -559,7 +558,7 @@ void GameScene::CurrentStageInit()
 
 	case 11:// ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->SetEndurancePrameter(90, 30, 300);
+		stages[currentStage]->SetEndurancePrameter(90, 20, 200);
 		ground->Init(5000);
 		ground->SetisIron(true);
 		player->SetMoveType(true);
