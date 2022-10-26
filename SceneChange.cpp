@@ -28,9 +28,9 @@ void SceneChange::Update()
 	{
 		if (isGenerate == true)
 		{
-			ease.SetEaseTimer(60);
+			ease.SetEaseTimer(30);
 			ease.SetPowNum(5);
-			bgmEase.SetEaseTimer(60);
+			bgmEase.SetEaseTimer(30);
 			bgmEase.SetPowNum(5);
 			isGenerate = false;
 			isSceneChangeIn = true;

@@ -106,6 +106,8 @@ private:
 	static std::unique_ptr<Model> spawnModel;
 	std::unique_ptr<WorldTransform> spawnTrans = nullptr;	// トランスフォーム
 
+	static std::unique_ptr<Model> spawn2Model;
+
 private:
 	void MoveUpdate();
 	void AttackUpdate();
@@ -172,7 +174,12 @@ public:
 	inline void SetAttackMoveSpeed(const float& attackMoveSpeed) { this->attackMoveSpeed = attackMoveSpeed; }
 	inline void SetisHitGround(const bool& isHitGround) { this->isHitGround = isHitGround; }
 	inline void SetisAttackBlock(const bool& isAttackBlock) { this->isAttackBlock = isAttackBlock; }
-	inline void SetMoveType(const bool& moveType) { this->moveType = moveType; }
+	inline void SetMoveType(const bool& moveType) 
+	{
+		this->moveType = moveType; 
+		spawnTrans->scale_ = { 1,1,1 };
+		spawnTrans->UpdateMatrix();
+	}
 
 public:
 	static Player* GetInstance();

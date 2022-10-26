@@ -21,7 +21,6 @@ enum StageType
 	RaceStage,
 	CannonStage,
 	EnduranceStage,
-	EndlessStage,
 };
 
 enum StageProgress
@@ -42,6 +41,11 @@ enum StageProgress
 
 class Stage
 {
+private:
+	// ルール関連
+	static std::vector<uint32_t> ruleTex;
+	std::unique_ptr<Sprite> ruleSprite;
+
 private:
 	// エンドレス関連
 	//bool isEndless;
@@ -232,6 +236,27 @@ public:
 		const int& enduranceTime, const int& addEndlessAttackCount, const int& endlessAttackLimitBreaking)
 	{
 		this->enduranceTime = enduranceTime;
+
+		if (GetDightsNumber(enduranceTime - enduranceEndTime).size() == 2)
+		{
+			enduranceTimeDightsNumber[0] = GetDightsNumber(enduranceTime - enduranceEndTime)[0];
+			enduranceTimeDightsNumber[1] = GetDightsNumber(enduranceTime - enduranceEndTime)[1];
+		}
+		else if (GetDightsNumber(enduranceTime - enduranceEndTime).size() == 1)
+		{
+			enduranceTimeDightsNumber[0] = 0;
+			enduranceTimeDightsNumber[1] = GetDightsNumber(enduranceTime - enduranceEndTime)[0];
+		}
+		else if (GetDightsNumber(enduranceTime - enduranceEndTime).size() == 0)
+		{
+			enduranceTimeDightsNumber[0] = 0;
+			enduranceTimeDightsNumber[1] = 0;
+		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			enduranceTimeSprites[i]->SetTextureHandle(numberSheet[enduranceTimeDightsNumber[i]]);
+		}
 		this->addEndlessAttackCount = addEndlessAttackCount;
 		this->endlessAttackLimitBreaking = endlessAttackLimitBreaking;
 	}

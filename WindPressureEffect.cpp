@@ -55,7 +55,6 @@ void WindPressureEffect::Clear()
 	waves.clear();
 }
 
-
 WindPressureEffect* WindPressureEffect::GetInstance()
 {
 	static WindPressureEffect* windPressureEffect = new WindPressureEffect;
