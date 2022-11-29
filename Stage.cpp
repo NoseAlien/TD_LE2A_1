@@ -114,7 +114,8 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 	tutorial2Sprite->SetAnchorPoint({ 0.5f,0.5f });
 	tutorial2Sprite->SetSize({ 172,166 });
 
-	arrowkeyTutorialSprite.reset(Sprite::Create(arrowkeyTutorialTex, { 166,288 }));
+	//arrowkeyTutorialSprite.reset(Sprite::Create(arrowkeyTutorialTex, { 166,288 }));
+	arrowkeyTutorialSprite.reset(Sprite::Create(arrowkeyTutorialTex, { 960,880 }));
 	arrowkeyTutorialSprite->SetAnchorPoint({ 0.5f,0.5f });
 
 }
@@ -311,6 +312,7 @@ void Stage::Init()
 	ruleStrEase.SetPowNum(5);
 	ruleStrSprite->SetSize({ 0,0 });
 
+	arrowkeyTutorialSprite->SetPosition({ 960,880 });
 	arrowkeyTutorialSprite->SetSize({ 0,0 });
 
 	// 星復活関連
@@ -730,8 +732,12 @@ void Stage::ShowStageNumberUpdate()
 {
 	static Vector2 numberNowSize = {};
 	static Vector2 strNowSize = {};
+	static Vector2 arrowkeyNowSize = {};
 	if (isShowStageNumber == true)
 	{
+		arrowkeyTutorialSprite->SetTextureRect({ 0,0 }, { 490,80 });
+		//arrowkeyTutorialSprite->SetPosition({ 960,880 });
+
 		// ステージナンバー
 		if (sizeExrate < 2)
 		{
@@ -744,6 +750,7 @@ void Stage::ShowStageNumberUpdate()
 
 		stageNumberSprite->SetSize({ 600 * sizeExrate,140 * sizeExrate });
 		ruleSprite->SetSize({ 320 * sizeExrate,250 * sizeExrate });
+		arrowkeyTutorialSprite->SetSize({ 245 * sizeExrate,40 * sizeExrate });
 
 		rotAngel += 7.2f;
 		if (rotAngel >= 360)
@@ -752,9 +759,11 @@ void Stage::ShowStageNumberUpdate()
 		}
 		stageNumberSprite->SetRotation(DegreeToRad(rotAngel));
 		ruleSprite->SetRotation(DegreeToRad(rotAngel));
+		arrowkeyTutorialSprite->SetRotation(DegreeToRad(rotAngel));
 
 		numberNowSize = stageNumberSprite->GetSize();
 		strNowSize = ruleSprite->GetSize();
+		arrowkeyNowSize = arrowkeyTutorialSprite->GetSize();
 
 		if (sizeExrate >= 2.00005 && rotAngel == 360)
 		{
@@ -767,23 +776,14 @@ void Stage::ShowStageNumberUpdate()
 				stageNumberSprite->SetSize(tutorialRule.Out(numberNowSize, { 0,0 }));
 				ruleSprite->SetPosition(tutorialRule.Out({ 960,675 }, { 214,178 }));
 				ruleSprite->SetSize(tutorialRule.Out(strNowSize, { 0,0 }));
+				arrowkeyTutorialSprite->SetPosition(tutorialRule.Out({ 960,880 }, { 214,178 }));
+				arrowkeyTutorialSprite->SetSize(tutorialRule.Out(arrowkeyNowSize, { 0,0 }));
 
 				if (tutorialRule.GetisEnd())
 				{
 					isShowStageNumber = false;
 					isStartTextEnd = false;
 					timer = 0;
-				}
-
-				// 左上のルール
-				if (ruleStrEase.GetisEnd() == false)
-				{
-					ruleStrEase.Update();
-					ruleStrSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 300,45 }));
-					if (isEndurance == true)
-					{
-						arrowkeyTutorialSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 245,100 }));
-					}
 				}
 
 				//alpha -= 0.05f;
@@ -796,6 +796,21 @@ void Stage::ShowStageNumberUpdate()
 				//}
 				//stageNumberSprite->SetColor({ 1,1,1,alpha });
 				//ruleSprite->SetColor({ 1,1,1,alpha });
+			}
+		}
+	}
+	else
+	{
+		// 左上のルール
+		if (ruleStrEase.GetisEnd() == false)
+		{
+			ruleStrEase.Update();
+			ruleStrSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 300,45 }));
+			if (isEndurance == true)
+			{
+				arrowkeyTutorialSprite->SetTextureRect({ 0,0 }, { 490,200 });
+				arrowkeyTutorialSprite->SetPosition({ 166,288 });
+				arrowkeyTutorialSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 245,100 }));
 			}
 		}
 	}
