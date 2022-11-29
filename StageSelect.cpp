@@ -34,7 +34,7 @@ void StageSelect::Load()
 	stageSelectModel = Model::CreateFromOBJ("select_screen", false);
 	stageTextModel = Model::CreateFromOBJ("select_stage", false);
 
-	for (uint32_t i = 1; i <= 11; i++)
+	for (uint32_t i = 1; i <= 12; i++)
 	{
 		stageSelectTextures.push_back(
 			TextureManager::Load("SpriteTexture/select_screen/select_screen_" + to_string(i) + ".png"));
@@ -144,19 +144,20 @@ void StageSelect::StageNumberUpdate()
 
 void StageSelect::Draw()
 {
-	stageSelectModel->Draw(*stageSelectTrans[0], viewProjection_, stageSelectTextures[0]);
-	stageSelectModel->Draw(*stageSelectTrans[1], viewProjection_, stageSelectTextures[1]);
-	stageSelectModel->Draw(*stageSelectTrans[2], viewProjection_, stageSelectTextures[2]);
-	stageSelectModel->Draw(*stageSelectTrans[3], viewProjection_, stageSelectTextures[10]);
-	stageSelectModel->Draw(*stageSelectTrans[4], viewProjection_, stageSelectTextures[3]);
-	stageSelectModel->Draw(*stageSelectTrans[5], viewProjection_, stageSelectTextures[4]);
-	stageSelectModel->Draw(*stageSelectTrans[6], viewProjection_, stageSelectTextures[5]);
-	stageSelectModel->Draw(*stageSelectTrans[7], viewProjection_, stageSelectTextures[10]);
-	stageSelectModel->Draw(*stageSelectTrans[8], viewProjection_, stageSelectTextures[6]);
-	stageSelectModel->Draw(*stageSelectTrans[9], viewProjection_, stageSelectTextures[7]);
-	stageSelectModel->Draw(*stageSelectTrans[10], viewProjection_, stageSelectTextures[8]);
-	stageSelectModel->Draw(*stageSelectTrans[11], viewProjection_, stageSelectTextures[10]);
-	stageSelectModel->Draw(*stageSelectTrans[12], viewProjection_, stageSelectTextures[9]);
+	stageSelectModel->Draw(*stageSelectTrans[0], viewProjection_, stageSelectTextures[11]);
+	stageSelectModel->Draw(*stageSelectTrans[1], viewProjection_, stageSelectTextures[0]);
+	stageSelectModel->Draw(*stageSelectTrans[2], viewProjection_, stageSelectTextures[1]);
+	stageSelectModel->Draw(*stageSelectTrans[3], viewProjection_, stageSelectTextures[2]);
+	stageSelectModel->Draw(*stageSelectTrans[4], viewProjection_, stageSelectTextures[10]);
+	stageSelectModel->Draw(*stageSelectTrans[5], viewProjection_, stageSelectTextures[3]);
+	stageSelectModel->Draw(*stageSelectTrans[6], viewProjection_, stageSelectTextures[4]);
+	stageSelectModel->Draw(*stageSelectTrans[7], viewProjection_, stageSelectTextures[5]);
+	stageSelectModel->Draw(*stageSelectTrans[8], viewProjection_, stageSelectTextures[10]);
+	stageSelectModel->Draw(*stageSelectTrans[9], viewProjection_, stageSelectTextures[6]);
+	stageSelectModel->Draw(*stageSelectTrans[10], viewProjection_, stageSelectTextures[7]);
+	stageSelectModel->Draw(*stageSelectTrans[11], viewProjection_, stageSelectTextures[8]);
+	stageSelectModel->Draw(*stageSelectTrans[12], viewProjection_, stageSelectTextures[10]);
+	stageSelectModel->Draw(*stageSelectTrans[13], viewProjection_, stageSelectTextures[9]);
 
 	for (int i = 0; i < stageSize; i++)
 	{

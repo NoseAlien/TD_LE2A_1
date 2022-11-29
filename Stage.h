@@ -43,6 +43,8 @@ private:
 	Easing tutorialMoveEase;
 	Easing tutorialScaleEase;
 
+	int tutorialAttackCount;
+	bool isChangeTutorialSprite;
 
 private:
 	// エンドレスのカウント
@@ -53,6 +55,7 @@ private:
 	// ルール関連
 	static std::vector<uint32_t> ruleTex;
 	std::unique_ptr<Sprite> ruleSprite;
+	Easing tutorialRule;
 
 	Easing ruleStrEase;
 	static std::vector<uint32_t> ruleStrTex;
@@ -171,14 +174,11 @@ private:
 
 private:
 	std::list<std::unique_ptr<Star>> stars;
-	//std::vector<std::unique_ptr<RevivalObject>> starRevivals;
 	uint32_t starsIndex;
 
 	std::list<std::unique_ptr<Thorn>> thorns;
 
 	std::list<std::unique_ptr<Block>> blocks;
-	//std::vector<std::unique_ptr<RevivalObject>> blockRevivals;
-	//uint32_t blocksIndex;
 
 	std::list<std::unique_ptr<Cannon>> cannons;
 	std::unique_ptr<Goal> goal;

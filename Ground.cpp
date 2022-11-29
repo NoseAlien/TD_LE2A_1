@@ -116,6 +116,7 @@ void Ground::Init(const int& maxhp)
 	addScale = 0;
 	isSuctionStar = false;
 	isDanger = false;
+	isCanAddHP = true;
 
 	breakGroundEffect = move(make_unique<BreakGroundEffect>());
 	isGeneEffect = false;
@@ -128,14 +129,6 @@ void Ground::Init(const int& maxhp)
 			trans->translation_.z,
 		}, viewProjection_);
 	faceSprite->SetPosition({ tempPos.x,tempPos.y + 96 });
-
-	//auto tempPos = WorldToScreen(
-	//	{
-	//		trans->translation_.x + 32,
-	//		trans->translation_.y + 10 * trans->scale_.y,
-	//		trans->translation_.z,
-	//	}, viewProjection_);
-	//faceSprite->SetPosition(tempPos);
 
 	// ‚Ü‚Î‚½‚«ŠÖ˜A
 	timer = 0;

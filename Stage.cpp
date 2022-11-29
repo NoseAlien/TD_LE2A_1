@@ -90,7 +90,7 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 		enduranceTimeSprites[i]->SetSize({ 128,128 });
 	}
 
-	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber - 1], { 960,270 }));
+	stageNumberSprite.reset(Sprite::Create(stageNumberTextures[stageNumber], { 960,270 }));
 	stageNumberSprite->SetAnchorPoint({ 0.5f,0.5f });
 
 	grainScatterEffect = move(make_unique<GrainScatterEffect>());
@@ -104,6 +104,7 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 	ruleSprite.reset(Sprite::Create(ruleTex[0], { 960,675 }));
 	ruleSprite->SetAnchorPoint({ 0.5f,0.5f });
 	ruleStrSprite.reset(Sprite::Create(ruleStrTex[0], { 214,178 }));
+	//ruleStrSprite.reset(Sprite::Create(ruleStrTex[0], { 370,178 }));
 	ruleStrSprite->SetAnchorPoint({ 0.5f,0.5f });
 
 	//tutorial1Sprite.reset(Sprite::Create(tutorial1Tex, { 1814,654 }));
@@ -145,7 +146,7 @@ Vector2 clearStrSize(0, 0);
 float addSizeValue = 512;
 void Stage::Load()
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		ruleTex.push_back(TextureManager::Load("SpriteTexture/rule/rule_" + to_string(i) + ".png"));
 		ruleStrTex.push_back(TextureManager::Load("SpriteTexture/rule/rule_str_" + to_string(i) + ".png"));
@@ -171,7 +172,7 @@ void Stage::Load()
 	lineModel = Model::CreateFromOBJ("lineModel", true);
 	lineModelTexture = TextureManager::Load("lineModel/lineModel2.png");
 
-	for (int i = 1; i <= 13; i++)
+	for (int i = 0; i <= 13; i++)
 	{
 		stageNumberTextures.push_back(
 			TextureManager::Load(
@@ -201,6 +202,15 @@ void Stage::Init()
 	tutorialScaleEase.ReSet();
 	tutorialScaleEase.SetEaseTimer(60);
 	tutorialScaleEase.SetPowNum(5);
+
+	tutorialRule.ReSet();
+	tutorialRule.SetEaseTimer(60);
+	tutorialRule.SetPowNum(5);
+
+
+
+	tutorialAttackCount = 0;
+	isChangeTutorialSprite = false;
 
 	// エンドレス関連のカウント
 	isEndlessCountDown = false;
@@ -284,11 +294,13 @@ void Stage::Init()
 	sizeExrate = 0;
 	rotAngel = 0;
 	alpha = 1;
+	stageNumberSprite->SetPosition({ 960,270 });
 	stageNumberSprite->SetSize({ 0,0 });
 	stageNumberSprite->SetRotation(0);
 	stageNumberSprite->SetColor({ 1,1,1,1 });
 
 	// ルール関連
+	ruleSprite->SetPosition({ 960,675 });
 	ruleSprite->SetSize({ 0,0 });
 	ruleSprite->SetRotation(0);
 	ruleSprite->SetColor({ 1,1,1,1 });
@@ -313,7 +325,6 @@ void Stage::Init()
 	endlessAttackCount = 0;
 	endlessAttackMaxCount = 60;
 }
-
 void Stage::Update()
 {
 	//if (gameClear == true || gameOver == true) return;
@@ -339,6 +350,19 @@ void Stage::Update()
 				ruleSprite->SetTextureHandle(ruleTex[2]);
 				ruleStrSprite->SetTextureHandle(ruleStrTex[2]);
 			}
+			if (stageType == TutorialStage)
+			{
+				if (isChangeTutorialSprite == false)
+				{
+					ruleSprite->SetTextureHandle(ruleTex[3]);
+					ruleStrSprite->SetTextureHandle(ruleStrTex[3]);
+				}
+				else
+				{
+					ruleSprite->SetTextureHandle(ruleTex[4]);
+					ruleStrSprite->SetTextureHandle(ruleStrTex[4]);
+				}
+			}
 		}
 	}
 
@@ -353,12 +377,14 @@ void Stage::Update()
 
 	if (stagePcrogress == Play || stagePcrogress == Staging)
 	{
-		if (ruleStrEase.GetisEnd() == false)
-		{
-			ruleStrEase.Update();
-			ruleStrSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 300,45 }));
-		}
+		//// 左上のルール
+		//if (ruleStrEase.GetisEnd() == false)
+		//{
+		//	ruleStrEase.Update();
+		//	ruleStrSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 300,45 }));
+		//}
 
+		// 右端に説明コツブ
 		if (tutorialMoveEase.GetisEnd() == false)
 		{
 			tutorialMoveEase.Update();
@@ -369,7 +395,6 @@ void Stage::Update()
 			tutorialScaleEase.Update();
 			tutorial1Sprite->SetSize(tutorialScaleEase.Out({ 0,0 }, { 190,150 }));
 		}
-
 
 		StarUpdate();
 		BlockUpdate();
@@ -382,6 +407,10 @@ void Stage::Update()
 		else if (stageType == RaceStage)
 		{
 			RaceUpdate();
+		}
+		else if (stageType == TutorialStage)
+		{
+			TutorialUpdate();
 		}
 		if (isEndurance == true)
 		{
@@ -616,9 +645,18 @@ void Stage::DrawSprite()
 	// ステージ表示
 	if (isShowStageNumber == true)
 	{
-		stageNumberSprite->Draw2();
+		if (stageType == TutorialStage)
+		{
+			if (isChangeTutorialSprite == false)
+			{
+				stageNumberSprite->Draw2();
+			}
+		}
+		else
+		{
+			stageNumberSprite->Draw2();
+		}
 	}
-
 	// ルール
 	ruleStrSprite->Draw2();
 	ruleSprite->Draw2();
@@ -631,7 +669,7 @@ void Stage::DrawSprite()
 	if (gameClear)
 	{
 		clearStrSprite->Draw2();
-		if (isEndurance == false)
+		if (isEndurance == false && stageType != TutorialStage)
 		{
 			for (int i = 0; i < dightsNumber.size(); i++)
 			{
@@ -680,6 +718,8 @@ void Stage::DrawEffectBack()
 
 void Stage::ShowStageNumberUpdate()
 {
+	static Vector2 numberNowSize = {};
+	static Vector2 strNowSize = {};
 	if (isShowStageNumber == true)
 	{
 		// ステージナンバー
@@ -703,22 +743,45 @@ void Stage::ShowStageNumberUpdate()
 		stageNumberSprite->SetRotation(DegreeToRad(rotAngel));
 		ruleSprite->SetRotation(DegreeToRad(rotAngel));
 
+		numberNowSize = stageNumberSprite->GetSize();
+		strNowSize = ruleSprite->GetSize();
+
 		if (sizeExrate >= 2.00005 && rotAngel == 360)
 		{
 			static int timer = 0;
 			timer++;
 			if (timer >= 60)
 			{
-				alpha -= 0.05f;
-				if (alpha <= 0)
+				tutorialRule.Update();
+				stageNumberSprite->SetPosition(tutorialRule.Out({ 960,270 }, { 214,178 }));
+				stageNumberSprite->SetSize(tutorialRule.Out(numberNowSize, { 0,0 }));
+				ruleSprite->SetPosition(tutorialRule.Out({ 960,675 }, { 214,178 }));
+				ruleSprite->SetSize(tutorialRule.Out(strNowSize, { 0,0 }));
+
+				if (tutorialRule.GetisEnd())
 				{
-					alpha = 0;
 					isShowStageNumber = false;
 					isStartTextEnd = false;
 					timer = 0;
 				}
-				stageNumberSprite->SetColor({ 1,1,1,alpha });
-				ruleSprite->SetColor({ 1,1,1,alpha });
+
+				// 左上のルール
+				if (ruleStrEase.GetisEnd() == false)
+				{
+					ruleStrEase.Update();
+					ruleStrSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 300,45 }));
+				}
+
+				//alpha -= 0.05f;
+				//if (alpha <= 0)
+				//{
+				//	alpha = 0;
+				//	isShowStageNumber = false;
+				//	isStartTextEnd = false;
+				//	timer = 0;
+				//}
+				//stageNumberSprite->SetColor({ 1,1,1,alpha });
+				//ruleSprite->SetColor({ 1,1,1,alpha });
 			}
 		}
 	}
@@ -754,13 +817,41 @@ void Stage::CountDownUpdate()
 		startTextAlpha -= 1 / (float)startTextMaxTimer;
 		startTextSprites[startTextIndex]->SetColor({ 1,1,1,startTextAlpha });
 
-		startTextTimer++;
-		if (startTextTimer >= startTextMaxTimer)
+
+		if (stageType == TutorialStage)
 		{
-			startTextIndex = 4;
-			isStartTextEnd = true;
-			startTime = GetNowTime();
+			if (isChangeTutorialSprite == false)
+			{
+				startTextTimer++;
+				if (startTextTimer >= startTextMaxTimer)
+				{
+					startTextIndex = 3;
+					isStartTextEnd = true;
+					startTime = GetNowTime();
+				}
+			}
+			else
+			{
+				startTextTimer++;
+				if (startTextTimer >= startTextMaxTimer)
+				{
+					startTextIndex = 4;
+					isStartTextEnd = true;
+					startTime = GetNowTime();
+				}
+			}
 		}
+		else
+		{
+			startTextTimer++;
+			if (startTextTimer >= startTextMaxTimer)
+			{
+				startTextIndex = 4;
+				isStartTextEnd = true;
+				startTime = GetNowTime();
+			}
+		}
+
 	}
 }
 void Stage::ClearTimeUpdate()
@@ -1022,11 +1113,17 @@ void Stage::PlayerUpdate()
 						}
 						else
 						{
-							ground->Damage(player->GetHaveStarNum() * 5);
+							if (stageType != TutorialStage)
+							{
+								ground->Damage(player->GetHaveStarNum() * 5);
+							}
 						}
 
-						damageEffect->Generate(
-							player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 5));
+						if (stageType != TutorialStage)
+						{
+							damageEffect->Generate(
+								player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 5));
+						}
 
 						viewProjection_.SetShakeValue(2, 20, 2);
 					}
@@ -1039,10 +1136,17 @@ void Stage::PlayerUpdate()
 						}
 						else
 						{
-							ground->Damage(player->GetHaveStarNum() * 10);
+							if (stageType != TutorialStage)
+							{
+								ground->Damage(player->GetHaveStarNum() * 10);
+							}
 						}
-						damageEffect->Generate(
-							player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 10));
+
+						if (stageType != TutorialStage)
+						{
+							damageEffect->Generate(
+								player->GetPos(), GetDightsNumber(player->GetHaveStarNum() * 10));
+						}
 						viewProjection_.SetShakeValue(3, 30, 2);
 					}
 					temp->SetisDestroy(true);
@@ -1058,6 +1162,23 @@ void Stage::PlayerUpdate()
 // 床
 void Stage::FloorUpdate()
 {
+	// 回復できるかどうか
+	if (stageType == TutorialStage)
+	{
+		if (ground->GetScale().y >= 13)
+		{
+			ground->SetisCanAddHP(false);
+		}
+		else
+		{
+			ground->SetisCanAddHP(true);
+		}
+	}
+	else
+	{
+		ground->SetisCanAddHP(true);
+	}
+
 	SquareCollider groundCollider =
 	{
 		{ ground->GetPos().x, ground->GetPos().y },
@@ -1122,44 +1243,107 @@ void Stage::FloorUpdate()
 			}
 			else
 			{
-				ground->LargeDamage(
-					player->GetWeakAttackDamage() +
-					player->GetHaveStarNum() *
-					player->GetStarAttackDamage());
+				if (stageType == TutorialStage)
+				{
+					ground->LargeDamage(0);
+				}
+				else
+				{
+					ground->LargeDamage(
+						player->GetWeakAttackDamage() +
+						player->GetHaveStarNum() *
+						player->GetStarAttackDamage());
+				}
 			}
 			player->SetHaveStarNum(0);
 			ground->SetisHit(2);
-
 		}
 		else
 		{
 			if (player->GetisHeavyAttack())
 			{
-				if (isEndurance == true)
+				if (stageType == TutorialStage)
 				{
-					endlessAttackCount++;
-					ground->LargeDamage(0);
+					if (isChangeTutorialSprite == true)
+					{
+						//ground->LargeDamage(player->GetHeavyAttackDamage());
+						damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetHeavyAttackDamage()));
+						PlayerGenerateStar(player->GetPos());
+						ground->LargeDamage(0);
+					}
+					else
+					{
+						ground->LargeDamage(0);
+					}
 				}
 				else
 				{
-					ground->LargeDamage(player->GetHeavyAttackDamage());
+					if (isEndurance == true)
+					{
+						endlessAttackCount++;
+						ground->LargeDamage(0);
+					}
+					else
+					{
+						ground->LargeDamage(player->GetHeavyAttackDamage());
+					}
+					damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetHeavyAttackDamage()));
+					PlayerGenerateStar(player->GetPos());
 				}
-				damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetHeavyAttackDamage()));
-				PlayerGenerateStar(player->GetPos());
 				ground->SetisHit(2);
 
 			}
 			else if (player->GetisWeakAttack())
 			{
-				if (isEndurance == true)
+				if (stageType == TutorialStage)
 				{
-					ground->Damage(0);
+					// チュートリアル関連
+					if (isChangeTutorialSprite == false)
+					{
+						tutorialAttackCount++;
+						if (tutorialAttackCount == 3)
+						{
+							ruleSprite->SetPosition({ 960,675 });
+							ruleStrSprite->SetSize({ 0,0 });
+							isShowStageNumber = true;
+							sizeExrate = 0;
+							rotAngel = 0;
+							isChangeTutorialSprite = true;
+							//tutorialAttackCount = 0;
+							tutorialRule.ReSet();
+							ruleStrEase.ReSet();
+
+							player->Init();
+							stagePcrogress = Start;
+							startTextExrate = 0;
+							startTextAlpha = 1;
+							startTextTimer = 0;
+							startTextAngle = -180;
+						}
+					}
+
+					if (isChangeTutorialSprite == false)
+					{
+						ground->Damage(5);
+						damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetWeakAttackDamage()));
+					}
+					else
+					{
+						ground->Damage(0);
+					}
 				}
 				else
 				{
-					ground->Damage(player->GetWeakAttackDamage());
+					if (isEndurance == true)
+					{
+						ground->Damage(0);
+					}
+					else
+					{
+						ground->Damage(player->GetWeakAttackDamage());
+					}
+					damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetWeakAttackDamage()));
 				}
-				damageEffect->Generate(player->GetPos(), GetDightsNumber(player->GetWeakAttackDamage()));
 				ground->SetisHit(2);
 			}
 		}
@@ -1254,33 +1438,81 @@ void Stage::StarUpdate()
 						//windPressureEffect->Generate(tempStar->GetPos(), tempStar->GetDir());
 						if (tempStar->GetisChangeColor() == false)
 						{
-							if (isEndurance == true)
+							// チュートリアル関連
+							if (stageType == TutorialStage)
 							{
-								endlessAttackCount += 5;
-								ground->Damage(0);
+								if (isChangeTutorialSprite == true)
+								{
+									tutorialAttackCount++;
+									if (tutorialAttackCount == 6)
+									{
+										ground->SetHP(0);
+									}
+									ground->Damage(5);
+									damageEffect->Generate(
+										tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage()));
+									viewProjection_.SetShakeValue(2, 20, 2);
+								}
+								else
+								{
+									ground->Damage(0);
+								}
+
 							}
 							else
 							{
-								ground->Damage(player->GetStarAttackDamage());
+								if (isEndurance == true)
+								{
+									endlessAttackCount += 5;
+									ground->Damage(0);
+								}
+								else
+								{
+									ground->Damage(player->GetStarAttackDamage());
+								}
+								damageEffect->Generate(
+									tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage()));
+								viewProjection_.SetShakeValue(2, 20, 2);
 							}
-							damageEffect->Generate(
-								tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage()));
-							viewProjection_.SetShakeValue(2, 20, 2);
+
 						}
 						else
 						{
-							if (isEndurance == true)
+							// チュートリアル関連
+							if (stageType == TutorialStage)
 							{
-								endlessAttackCount += 10;
-								ground->Damage(0);
+								if (isChangeTutorialSprite == true)
+								{
+									tutorialAttackCount++;
+									if (tutorialAttackCount == 6)
+									{
+										ground->SetHP(0);
+									}
+									ground->Damage(5);
+									damageEffect->Generate(
+										tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage()));
+									viewProjection_.SetShakeValue(2, 20, 2);
+								}
+								else
+								{
+									ground->Damage(0);
+								}
 							}
 							else
 							{
-								ground->Damage(player->GetStarAttackDamage() * 2);
+								if (isEndurance == true)
+								{
+									endlessAttackCount += 10;
+									ground->Damage(0);
+								}
+								else
+								{
+									ground->Damage(player->GetStarAttackDamage() * 2);
+								}
+								damageEffect->Generate(
+									tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage() * 2));
+								viewProjection_.SetShakeValue(3, 30, 2);
 							}
-							damageEffect->Generate(
-								tempStar->GetPos(), GetDightsNumber(player->GetStarAttackDamage() * 2));
-							viewProjection_.SetShakeValue(3, 30, 2);
 						}
 
 					}
@@ -1938,4 +2170,11 @@ void Stage::WaveUpdate()
 // チュートリアル
 void Stage::TutorialUpdate()
 {
+	//if (isChangeTutorialSprite == true)
+	//{
+	//	ShowStageNumberUpdate();
+	//}
+
+	//ruleStrSprite2->
+
 }

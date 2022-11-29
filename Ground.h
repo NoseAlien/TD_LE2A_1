@@ -47,6 +47,7 @@ private:
 	bool isDanger;	// 星が八個になっているか
 	bool isSuctionStar;	// 星を吸収するフラグ
 	int isHit;
+	bool isCanAddHP;
 
 private:
 	// 表情関連
@@ -120,8 +121,11 @@ public:
 	{
 		if (isAlive == true)
 		{
-			hp += addhp;
-			trans->scale_.y += 1.2f / 15;
+			if (isCanAddHP == true)
+			{
+				hp += addhp;
+				trans->scale_.y += 1.2f / 15;
+			}
 			audio->PlayWave(recoverySE);
 		}
 	}
@@ -162,6 +166,8 @@ public:
 	inline void SetisHit(const int& isHit) { this->isHit = isHit; }
 	inline void SetScale(const Vector3& scale) { trans->scale_ = scale; }
 	inline void SetisIron(const bool& isIron) { this->isIron = isIron; }
+	inline void SetHP(const int& hp) { this->hp = hp; }
+	inline void SetisCanAddHP(const bool& isCanAddHP) { this->isCanAddHP = isCanAddHP; }
 
 public:
 	static Ground* GetInstance();

@@ -132,11 +132,11 @@ void GameScene::Initialize()
 	slowMotion->Init();
 
 	stages.clear();
+	stages.emplace_back(move(make_unique<Stage>(TutorialStage, 0)));	// デフォルト
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));	// デフォルト
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 2)));	// 星３
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 3)));	// 星４
 
-	//stages.emplace_back(move(make_unique<Stage>(CannonStage, 4)));	// ボーナス
 	stages.emplace_back(move(make_unique<Stage>(BaseStage, 4)));	// ボーナス
 
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 5)));	// 砲台
@@ -152,7 +152,6 @@ void GameScene::Initialize()
 	stages.emplace_back(move(make_unique<Stage>(CannonStage, 12)));	// ボーナス
 	stages.emplace_back(move(make_unique<Stage>(RaceStage, 13)));	// レース
 
-	//stages.emplace_back(move(make_unique<Stage>(BaseStage, 1)));
 	LoadData();
 
 	stageSelect = move(make_unique<StageSelect>(stages.size()));
@@ -230,20 +229,21 @@ void GameScene::Update()
 			if (stages[currentStage]->GetGameClear() == true)
 			{
 				currentStage += 1;
-				if (currentStage >= stages.size())
+				//if (currentStage >= stages.size())
+				//{
+				//	currentStage = stages.size() - 1;
+				//}
+				if (currentStage == stages.size())
 				{
-					currentStage = stages.size() - 1;
-				}
-				stageSelect->SetCurrentStage(currentStage);
-				stageSelect->ResetObjPos();
-				if (currentStage == 12)
-				{
+					currentStage = 0;
 					gameState = isSelect;
 				}
 				else
 				{
 					CurrentStageInit();
 				}
+				stageSelect->SetCurrentStage(currentStage);
+				stageSelect->ResetObjPos();
 			}
 			if (stages[currentStage]->GetGameOver() == true)
 			{
@@ -440,11 +440,14 @@ void GameScene::CurrentStageInit()
 
 	switch (currentStage)
 	{
-	case 0:	//	デフォルト
+	case 0:	// チュートリアル
+		ground->Init(25);
+		break;
+	case 1: // デフォルト
 		ground->Init(10);
 		break;
 
-	case 1:	// 星三つ
+	case 2:	// 星三つ
 		ground->Init(25);
 		for (int i = 0; i < 3; i++)
 		{
@@ -452,7 +455,7 @@ void GameScene::CurrentStageInit()
 		}
 		break;
 
-	case 2:	// 星四つ
+	case 3:	// 星四つ
 		ground->Init(65);
 		for (int i = 0; i < 4; i++)
 		{
@@ -467,7 +470,7 @@ void GameScene::CurrentStageInit()
 		}
 		break;
 
-	case 3:	 // ボーナス
+	case 4:	 // ボーナス
 		stages[currentStage]->SetisEndurance(true);
 		stages[currentStage]->SetEndurancePrameter(40, 10, 100);
 		//stages[currentStage]->SetEndurancePrameter(5, 10, 100);
@@ -490,20 +493,20 @@ void GameScene::CurrentStageInit()
 		//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 
-	case 4:	// 砲台
+	case 5:	// 砲台
 		ground->Init(80);
 		stages[currentStage]->GenerateCannon({ 35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-35) });
 		stages[currentStage]->GenerateCannon({ -35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(35) });
 		break;
 
-	case 5: // 砲台ライン
+	case 6: // 砲台ライン
 		ground->Init(55);
 		ground->SetThickness(14);
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 
-	case 6:	// レース
+	case 7:	// レース
 		ground->Init(55);
 		stages[currentStage]->GenerateGoal({ 150,20,0 });
 
@@ -518,7 +521,7 @@ void GameScene::CurrentStageInit()
 		}
 		break;
 
-	case 7: // ボーナス
+	case 8: // ボーナス
 		stages[currentStage]->SetisEndurance(true);
 		stages[currentStage]->SetEndurancePrameter(60, 20, 200);
 		ground->Init(5000);
@@ -540,12 +543,12 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 
-	case 8:	// ブロック
+	case 9:	// ブロック
 		ground->Init(50);
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		break;
 
-	case 9:	// ボロック＊４
+	case 10:	// ボロック＊４
 		ground->Init(90);
 		stages[currentStage]->GenerateBlock({ +20,+2,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ +20,-2,0 }, true, { 2,2,2 });
@@ -553,7 +556,7 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateBlock({ -20,-2,0 }, true, { 2,2,2 });
 		break;
 
-	case 10: // ブロック砲台
+	case 11: // ブロック砲台
 		ground->Init(80);
 		stages[currentStage]->GenerateBlock({ +15,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ -15,0,0 }, true, { 2,2,2 });
@@ -561,9 +564,9 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 
-	case 11:// ボーナス
+	case 12:// ボーナス
 		stages[currentStage]->SetisEndurance(true);
-		stages[currentStage]->SetEndurancePrameter(60, 50, 400);
+		stages[currentStage]->SetEndurancePrameter(60, 30, 300);
 		ground->Init(5000);
 		ground->SetisIron(true);
 		player->SetMoveType(true);
@@ -584,7 +587,7 @@ void GameScene::CurrentStageInit()
 		stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
 		break;
 
-	case 12:
+	case 13:
 		ground->Init(55);
 		stages[currentStage]->GenerateBlock({ 30,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ 50,-10,0 }, true, { 2,2,2 });
@@ -622,10 +625,10 @@ void GameScene::CurrentStageInit()
 			stages[currentStage]->GenerateThorn({ 300,21.5f - float(i) * 3,0 }, false, { 0,0,DegreeToRad(-90) });
 		}
 		break;
+
 		//case 10:	// デバッグ用のステージ
 		//	ground->Init(10000);
 		//	stages[currentStage]->GenerateBlock({ 20,-10,0 }, true, { 2,2,2 });
-
 		//	//stages[currentStage]->SetisEndurance(true);
 		//	//stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
 		//	//stages[currentStage]->GenerateCannon({ -40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(45) });
