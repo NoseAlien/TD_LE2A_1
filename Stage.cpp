@@ -23,6 +23,7 @@ vector<uint32_t> Stage::ruleTex = {};
 vector<uint32_t> Stage::ruleStrTex = {};
 uint32_t Stage::tutorial1Tex = 0;
 uint32_t Stage::tutorial2Tex = 0;
+uint32_t Stage::arrowkeyTutorialTex = 0;
 
 uint32_t Stage::overStrTexture;
 uint32_t Stage::gameOverBGM;
@@ -104,17 +105,17 @@ Stage::Stage(const int& stageType, const int& stageNumber) :
 	ruleSprite.reset(Sprite::Create(ruleTex[0], { 960,675 }));
 	ruleSprite->SetAnchorPoint({ 0.5f,0.5f });
 	ruleStrSprite.reset(Sprite::Create(ruleStrTex[0], { 214,178 }));
-	//ruleStrSprite.reset(Sprite::Create(ruleStrTex[0], { 370,178 }));
 	ruleStrSprite->SetAnchorPoint({ 0.5f,0.5f });
 
-	//tutorial1Sprite.reset(Sprite::Create(tutorial1Tex, { 1814,654 }));
 	tutorial1Sprite.reset(Sprite::Create(tutorial1Tex, { 1838,622 }));
 	tutorial1Sprite->SetAnchorPoint({ 1,1 });
-	//tutorial1Sprite->SetSize({ 0,0 });
 
 	tutorial2Sprite.reset(Sprite::Create(tutorial2Tex, { 2200,600 }));
 	tutorial2Sprite->SetAnchorPoint({ 0.5f,0.5f });
 	tutorial2Sprite->SetSize({ 172,166 });
+
+	arrowkeyTutorialSprite.reset(Sprite::Create(arrowkeyTutorialTex, { 166,288 }));
+	arrowkeyTutorialSprite->SetAnchorPoint({ 0.5f,0.5f });
 
 }
 Stage::~Stage()
@@ -182,6 +183,8 @@ void Stage::Load()
 	tutorial1Tex = TextureManager::Load("SpriteTexture/tutorial_1.png");
 	tutorial2Tex = TextureManager::Load("SpriteTexture/tutorial_2.png");
 
+	arrowkeyTutorialTex = TextureManager::Load("SpriteTexture/arrowkey.png");
+
 	gameOverBGM = Audio::GetInstance()->LoadWave("bgm/gameover.wav");
 	gameClearBGM = Audio::GetInstance()->LoadWave("bgm/clear.wav");
 	grainDiedSE = Audio::GetInstance()->LoadWave("se/bonn.wav");
@@ -206,8 +209,6 @@ void Stage::Init()
 	tutorialRule.ReSet();
 	tutorialRule.SetEaseTimer(60);
 	tutorialRule.SetPowNum(5);
-
-
 
 	tutorialAttackCount = 0;
 	isChangeTutorialSprite = false;
@@ -310,6 +311,8 @@ void Stage::Init()
 	ruleStrEase.SetPowNum(5);
 	ruleStrSprite->SetSize({ 0,0 });
 
+	arrowkeyTutorialSprite->SetSize({ 0,0 });
+
 	// 星復活関連
 	overStrSprite->SetPosition({ 960,1500 });
 
@@ -385,15 +388,18 @@ void Stage::Update()
 		//}
 
 		// 右端に説明コツブ
-		if (tutorialMoveEase.GetisEnd() == false)
+		if (isEndurance == true)
 		{
-			tutorialMoveEase.Update();
-			tutorial2Sprite->SetPosition(tutorialMoveEase.Out({ 2200,600 }, { 1880, 600 }));
-		}
-		if (tutorialMoveEase.GetisEnd() == true && tutorialScaleEase.GetisEnd() == false)
-		{
-			tutorialScaleEase.Update();
-			tutorial1Sprite->SetSize(tutorialScaleEase.Out({ 0,0 }, { 190,150 }));
+			if (tutorialMoveEase.GetisEnd() == false)
+			{
+				tutorialMoveEase.Update();
+				tutorial2Sprite->SetPosition(tutorialMoveEase.Out({ 2200,600 }, { 1880, 600 }));
+			}
+			if (tutorialMoveEase.GetisEnd() == true && tutorialScaleEase.GetisEnd() == false)
+			{
+				tutorialScaleEase.Update();
+				tutorial1Sprite->SetSize(tutorialScaleEase.Out({ 0,0 }, { 190,150 }));
+			}
 		}
 
 		StarUpdate();
@@ -662,8 +668,12 @@ void Stage::DrawSprite()
 	ruleSprite->Draw2();
 
 	// 説明
-	//tutorial2Sprite->Draw();
-	//tutorial1Sprite->Draw();
+	if (isEndurance == true)
+	{
+		tutorial2Sprite->Draw();
+		tutorial1Sprite->Draw();
+		arrowkeyTutorialSprite->Draw();
+	}
 
 	// クリア描画
 	if (gameClear)
@@ -770,6 +780,10 @@ void Stage::ShowStageNumberUpdate()
 				{
 					ruleStrEase.Update();
 					ruleStrSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 300,45 }));
+					if (isEndurance == true)
+					{
+						arrowkeyTutorialSprite->SetSize(ruleStrEase.Out({ 0,0 }, { 245,100 }));
+					}
 				}
 
 				//alpha -= 0.05f;

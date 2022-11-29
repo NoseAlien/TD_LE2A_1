@@ -46,6 +46,9 @@ private:
 	int tutorialAttackCount;
 	bool isChangeTutorialSprite;
 
+	static uint32_t arrowkeyTutorialTex;
+	std::unique_ptr<Sprite> arrowkeyTutorialSprite;
+
 private:
 	// エンドレスのカウント
 	bool isEndlessCountDown;
