@@ -662,8 +662,8 @@ void Stage::DrawSprite()
 	ruleSprite->Draw2();
 
 	// à–¾
-	tutorial2Sprite->Draw();
-	tutorial1Sprite->Draw();
+	//tutorial2Sprite->Draw();
+	//tutorial1Sprite->Draw();
 
 	// ƒNƒŠƒA•`‰æ
 	if (gameClear)
