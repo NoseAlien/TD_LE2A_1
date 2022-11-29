@@ -320,12 +320,6 @@ void Player::Draw(const ViewProjection& viewProjection_)
 }
 void Player::DrawSpriteFront()
 {
-	if (moveType == true)
-	{
-		leftArrow->Draw2();
-		rightArrow->Draw2();
-	}
-
 	weakAttackEffect->Draw();
 	heavyAttackEffect->Draw();
 	playerDieEffect->Draw();
@@ -337,6 +331,12 @@ void Player::DrawSpriteFront()
 }
 void Player::DrawSpriteBack()
 {
+	if (moveType == true)
+	{
+		leftArrow->Draw2();
+		rightArrow->Draw2();
+	}
+
 	playerMoveEffect->Draw();
 	//if (isGround == false && isAttack == false)
 	//{

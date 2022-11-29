@@ -705,18 +705,22 @@ void Stage::ShowStageNumberUpdate()
 
 		if (sizeExrate >= 2.00005 && rotAngel == 360)
 		{
-			alpha -= 0.01;
-			if (alpha <= 0)
+			static int timer = 0;
+			timer++;
+			if (timer >= 60)
 			{
-				alpha = 0;
-				isShowStageNumber = false;
-				isStartTextEnd = false;
+				alpha -= 0.05f;
+				if (alpha <= 0)
+				{
+					alpha = 0;
+					isShowStageNumber = false;
+					isStartTextEnd = false;
+					timer = 0;
+				}
+				stageNumberSprite->SetColor({ 1,1,1,alpha });
+				ruleSprite->SetColor({ 1,1,1,alpha });
 			}
-			stageNumberSprite->SetColor({ 1,1,1,alpha });
-			ruleSprite->SetColor({ 1,1,1,alpha });
 		}
-
-
 	}
 }
 void Stage::CountDownUpdate()
@@ -1929,4 +1933,9 @@ void Stage::WaveUpdate()
 		}
 	}
 
+}
+
+// チュートリアル
+void Stage::TutorialUpdate()
+{
 }

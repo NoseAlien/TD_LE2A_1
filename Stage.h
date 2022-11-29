@@ -17,6 +17,7 @@
 
 enum StageType
 {
+	TutorialStage,
 	BaseStage,
 	RaceStage,
 	CannonStage,
@@ -214,6 +215,7 @@ private:
 	void EnduranceUpdate();
 	void WaveUpdate();
 	void EndlessUpdate();
+	void TutorialUpdate();
 
 	void GameOverCameraUpdate();
 	void GroundOverLineUpdate();

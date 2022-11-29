@@ -182,8 +182,6 @@ void GameScene::Initialize()
 }
 void GameScene::Update()
 {
-	//audio_->SetVolume(bgmPlaying, 0);
-
 	BackGroundUpdate();
 
 	if (gameState == isGame)
@@ -1096,6 +1094,9 @@ void GameScene::BackGroundUpdate()
 				{
 					buttonSprite1->SetPosition({ buttonSprite1->GetPosition().x,850 });
 					//isButtonReverce = true;
+					isButtonReverce = false;
+					isButtonPush = false;
+
 				}
 			}
 		}

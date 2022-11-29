@@ -24,7 +24,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow();
+	win->CreateGameWindow("2108_ユニバリン");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
@@ -69,9 +69,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	GameScene::audio = audio;
 	sceneManager->Initialize();
 
-	//uint32_t tex = TextureManager::Load("TD1_1.png");
-	//Sprite* spr = Sprite::Create(tex, { 960,540 });
-
 	// メインループ
 	while (true) {
 		// メッセージ処理
@@ -97,9 +94,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// プリミティブ描画のリセット
 		primitiveDrawer->Reset();
 
-		//Sprite::PreDraw(dxCommon->GetCommandList());
-		//spr->Draw2();
-		//Sprite::PostDraw();
 		// 描画終了
 		dxCommon->PostDraw();
 	}
