@@ -444,11 +444,11 @@ void GameScene::CurrentStageInit()
 		ground->Init(25);
 		break;
 	case 1: // デフォルト
-		ground->Init(10);
+		ground->Init(50);
 		break;
 
 	case 2:	// 星三つ
-		ground->Init(25);
+		ground->Init(80);
 		for (int i = 0; i < 3; i++)
 		{
 			stages[currentStage]->GenerateStar({ (float)(-20 + i * 20),0,0 });
@@ -456,7 +456,7 @@ void GameScene::CurrentStageInit()
 		break;
 
 	case 3:	// 星四つ
-		ground->Init(65);
+		ground->Init(80);
 		for (int i = 0; i < 4; i++)
 		{
 			if (i == 0 || i == 3)
@@ -494,7 +494,7 @@ void GameScene::CurrentStageInit()
 		break;
 
 	case 5:	// 砲台
-		ground->Init(80);
+		ground->Init(100);
 		stages[currentStage]->GenerateCannon({ 35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-35) });
 		stages[currentStage]->GenerateCannon({ -35,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(35) });
 		break;
@@ -544,12 +544,12 @@ void GameScene::CurrentStageInit()
 		break;
 
 	case 9:	// ブロック
-		ground->Init(50);
+		ground->Init(150);
 		stages[currentStage]->GenerateBlock({ 0,0,0 }, true, { 2,2,2 });
 		break;
 
 	case 10:	// ボロック＊４
-		ground->Init(90);
+		ground->Init(200);
 		stages[currentStage]->GenerateBlock({ +20,+2,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ +20,-2,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ -20,+2,0 }, true, { 2,2,2 });
@@ -557,7 +557,7 @@ void GameScene::CurrentStageInit()
 		break;
 
 	case 11: // ブロック砲台
-		ground->Init(80);
+		ground->Init(200);
 		stages[currentStage]->GenerateBlock({ +15,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateBlock({ -15,0,0 }, true, { 2,2,2 });
 		stages[currentStage]->GenerateCannon({ 40,-5,0 }, { 0,DegreeToRad(180),DegreeToRad(-45) });
