@@ -8,6 +8,7 @@ using namespace std;
 
 Model* Star::starModel = nullptr;
 unique_ptr<Model> Star::powerUpModel = nullptr;
+unique_ptr<Model> Star::kotubuLightModel = nullptr;
 
 Star::Star() :
 	gravity(2), collisionRadius(1),
@@ -19,6 +20,8 @@ Star::Star() :
 	trans = new WorldTransform();
 	trans->Initialize();
 	suckedCurve = move(make_unique<BezierCurve>(60));
+
+	kotubuLightTrans = move(make_unique<WorldTransform>());
 }
 
 Star::~Star()
@@ -31,6 +34,7 @@ void Star::Load()
 {
 	starModel = Model::CreateFromOBJ("star", true);
 	powerUpModel.reset(Model::CreateFromOBJ("player_kotubu", true));
+	kotubuLightModel.reset(Model::CreateFromOBJ("KotubuLight", false));
 }
 
 void Star::UnLoad()
@@ -51,6 +55,10 @@ void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& genera
 	trans->scale_ = { 0,0,0 };
 	trans->rotation_ = { 0,DegreeToRad(180),0 };
 	trans->UpdateMatrix();
+
+	kotubuLightTrans->scale_ = trans->scale_;
+	kotubuLightTrans->translation_ = pos;
+	kotubuLightTrans->Initialize();
 
 	if (generateType != 0)
 	{
@@ -97,13 +105,10 @@ void Star::GenerateUpdate()
 		geneAddScaleEase.Update();
 		trans->scale_ = geneAddScaleEase.Out({ 0,0,0 }, { 1.5f,1.5f,1.5f });
 		trans->rotation_.z = Random::RangeF(-0.15f, 0.15f);
-		//if (geneAddScaleEase.GetisEnd() == true)
-		//{
-		//	trans->scale_ = { 1.5f,1.5f,1.5f };
-		//	trans->rotation_ = { 0,DegreeToRad(180),0 };
-		//	isGenerate = false;
-		//	geneAddScaleEase.ReSet();
-		//}
+		//kotubuLightTrans->scale_ = trans->scale_;
+		//kotubuLightTrans->translation_ = trans->translation_;
+		//kotubuLightTrans->translation_.y = trans->translation_.y - 1.49f;
+
 		if (trans->scale_.x >= 1.4f)
 		{
 			trans->scale_ = { 1.5f,1.5f,1.5f };
@@ -116,6 +121,10 @@ void Star::GenerateUpdate()
 
 void Star::Update()
 {
+	kotubuLightTrans->scale_ = trans->scale_;
+	kotubuLightTrans->translation_ = trans->translation_;
+	kotubuLightTrans->translation_.y = trans->translation_.y - 1.49f;
+
 	if (revival->isRevival == true)
 	{
 		revival->timer++;
@@ -243,12 +252,12 @@ void Star::Update()
 			}
 		}
 
-
 		AttackUpdate();
 
 		SuckedUpdate();
 	}
 	trans->UpdateMatrix();
+	kotubuLightTrans->UpdateMatrix();
 }
 
 void Star::AttackUpdate()
@@ -367,6 +376,11 @@ void Star::Draw(const ViewProjection& viewProjection_)
 		else
 		{
 			powerUpModel->Draw(*trans, viewProjection_);
+		}
+
+		if (isAttack == false && isSucked == false)
+		{
+			kotubuLightModel->Draw(*kotubuLightTrans, viewProjection_);
 		}
 	}
 }

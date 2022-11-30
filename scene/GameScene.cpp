@@ -443,6 +443,7 @@ void GameScene::CurrentStageInit()
 	case 0:	// チュートリアル
 		ground->Init(25);
 		break;
+
 	case 1: // デフォルト
 		ground->Init(50);
 		break;

@@ -475,8 +475,8 @@ void Player::AttackUpdate()
 				else
 				{
 					trans->scale_ += 1 / (float)maxPushKeyFream;
-					trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 				}
+				trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 				isReverse = false;
 				trans->translation_.y = 20;
 			}

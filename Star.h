@@ -29,6 +29,9 @@ private:
 	static Model* starModel; //= nullptr;		// ƒ‚ƒfƒ‹
 	uint32_t starTexture;
 	static std::unique_ptr<Model> powerUpModel;
+	static std::unique_ptr<Model> kotubuLightModel;
+
+	std::unique_ptr<WorldTransform> kotubuLightTrans;
 
 	float speed;
 	bool isCanHit;
