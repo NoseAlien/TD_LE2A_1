@@ -441,7 +441,7 @@ void GameScene::CurrentStageInit()
 	switch (currentStage)
 	{
 	case 0:	// チュートリアル
-		ground->Init(25);
+		ground->Init(40);
 		break;
 
 	case 1: // デフォルト

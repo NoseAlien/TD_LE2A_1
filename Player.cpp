@@ -351,13 +351,13 @@ void Player::EffectGenerate(const Vector3& pos)
 {
 	if (isWeakAttack == true)
 	{
-		viewProjection_.SetShakeValue(0.5, 10);
+		viewProjection_.SetShakeValue(0.5f, 10);
 		weakAttackEffect->Generate({ pos.x,pos.y + 2 - radius,pos.z });
 	}
 	if (isHeavyAttack == true)
 	{
 		audio->PlayWave(pasteSE);
-		viewProjection_.SetShakeValue(1, 20);
+		viewProjection_.SetShakeValue(0.75f, 20);
 		heavyAttackEffect->Generate({ pos.x,pos.y + 2 - radius,pos.z });
 	}
 }
@@ -738,7 +738,7 @@ void Player::SetisDamage(const bool& isDamage)
 		pushKeyFream = 0;
 		life--;
 
-		viewProjection_.SetShakeValue(2, 15, 2);
+		viewProjection_.SetShakeValue(1.75f, 15, 2);
 		audio->PlayWave(damageSE);
 	}
 }

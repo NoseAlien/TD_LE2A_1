@@ -44,7 +44,7 @@ private:
 	Easing tutorialScaleEase;
 
 	int tutorialAttackCount;
-	bool isChangeTutorialSprite;
+	int changeTutorialTexCount;
 
 	static uint32_t arrowkeyTutorialTex;
 	std::unique_ptr<Sprite> arrowkeyTutorialSprite;
@@ -218,7 +218,6 @@ private:
 	void EnduranceUpdate();
 	void WaveUpdate();
 	void EndlessUpdate();
-	void TutorialUpdate();
 
 	void GameOverCameraUpdate();
 	void GroundOverLineUpdate();
