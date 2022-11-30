@@ -354,6 +354,16 @@ void GameScene::Draw()
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
+	//dxCommon_->ClearDepthBuffer();
+
+	Sprite::PreDraw(commandList, Sprite::BlendMode::kAdd);
+	if (gameState == isGame)
+	{
+		stages[currentStage]->DrawBackLight();
+	}
+	// スプライト描画後処理
+	Sprite::PostDraw();
+	// 深度バッファクリア
 	dxCommon_->ClearDepthBuffer();
 
 	// ------------------------------------------------------------------ //

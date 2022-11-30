@@ -233,6 +233,7 @@ public:
 	void DrawSprite();
 	void DrawEffectFront();
 	void DrawEffectBack();
+	void DrawBackLight();
 
 	void GenerateStar(const Vector3& pos, const bool& alwaysChangeColor = false);
 	void GenerateThorn(const Vector3& pos, const bool& isReverseVertical,

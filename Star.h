@@ -27,12 +27,16 @@ public:
 private:
 	WorldTransform* trans = nullptr;
 	static Model* starModel; //= nullptr;		// ƒ‚ƒfƒ‹
-	uint32_t starTexture;
 	static std::unique_ptr<Model> powerUpModel;
 	static std::unique_ptr<Model> kotubuLightModel;
 
 	std::unique_ptr<WorldTransform> kotubuLightTrans;
 
+	std::unique_ptr<Sprite> kotubuLightSprite;
+public:
+	static uint32_t kotubuLightTex;
+
+private:
 	float speed;
 	bool isCanHit;
 	int canHitTimer;
@@ -96,6 +100,7 @@ public:
 
 	void UpdateEffect();
 	void DrawEffectBack();
+	void DrawBackLight();
 
 	WorldTransform* GetTrans() { return trans; }
 	inline bool GetisCanHit() { return isCanHit; }

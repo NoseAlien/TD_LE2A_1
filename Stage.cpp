@@ -731,6 +731,14 @@ void Stage::DrawEffectBack()
 		temp->DrawEffectBack();
 	}
 }
+void Stage::DrawBackLight()
+{
+	for (const auto& temp : stars)
+	{
+		temp->DrawBackLight();
+	}
+	player->DrawBackLight();
+}
 
 void Stage::ShowStageNumberUpdate()
 {

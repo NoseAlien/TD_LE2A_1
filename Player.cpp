@@ -5,6 +5,7 @@
 #include "Ground.h"
 #include "WindPressureEffect.h"
 #include "SceneChange.h"
+#include "Star.h"
 #include <string>
 using namespace std;
 
@@ -87,7 +88,6 @@ void Player::Load()
 	rightArrow->SetAnchorPoint({ 0.5f,0.5f });
 	rightArrow->SetSize({ 100,42 });
 	rightArrow->SetIsFlipX(true);
-
 }
 
 static int tempTimer = 0; // ƒQ[ƒ€ŠJŽn‚Æ“¯Žž‚ÉUŒ‚‚µ‚È‚¢‚½‚ß
@@ -165,6 +165,12 @@ void Player::Init()
 	leftArrow->SetPosition({ tempPos.x + 128,tempPos.y + 64 });
 	rightArrow->SetPosition({ tempPos.x - 128,tempPos.y + 64 });
 
+	backRight1.reset(Sprite::Create(Star::kotubuLightTex, { 0,0 }));
+	backRight2.reset(Sprite::Create(Star::kotubuLightTex, { 0,0 }));
+	backRight3.reset(Sprite::Create(Star::kotubuLightTex, { 0,0 }));
+	backRight1->SetAnchorPoint({ 0.5f,0.5f });
+	backRight2->SetAnchorPoint({ 0.5f,0.5f });
+	backRight3->SetAnchorPoint({ 0.5f,0.5f });
 }
 void Player::Update()
 {
@@ -344,6 +350,36 @@ void Player::DrawSpriteBack()
 	//	{
 	//		pushKeySprite->Draw();
 	//	}
+	//}
+}
+void Player::DrawBackLight()
+{
+	//if (isGround == true && isJump == false)
+	//{
+	//	const Vector2 pos1 = WorldToScreen(
+	//		{ trans->translation_.x + 0,trans->translation_.y - 3.5f,trans->translation_.z }, viewProjection_);
+	//	const Vector2 pos2 = WorldToScreen(
+	//		{ trans->translation_.x + 4.f,trans->translation_.y - 4.f,trans->translation_.z }, viewProjection_);
+	//	const Vector2 pos3 = WorldToScreen(
+	//		{ trans->translation_.x - 4.f,trans->translation_.y - 4.f,trans->translation_.z }, viewProjection_);
+	//	backRight1->SetPosition(pos1);
+	//	backRight2->SetPosition(pos2);
+	//	backRight3->SetPosition(pos3);
+
+	//	const Vector2 size1 = { 128 * trans->scale_.x,128 * trans->scale_.y };
+	//	const Vector2 size2 = { 96 * trans->scale_.x,96 * trans->scale_.y };
+	//	const Vector2 size3 = { 96 * trans->scale_.x,96 * trans->scale_.y };
+	//	backRight1->SetSize(size1);
+	//	backRight2->SetSize(size2);
+	//	backRight3->SetSize(size3);
+
+	//	backRight1->SetColor({ 1,1,1,0.5f });
+	//	backRight2->SetColor({ 1,1,1,0.5f });
+	//	backRight3->SetColor({ 1,1,1,0.5f });
+
+	//	backRight1->Draw2();
+	//	backRight2->Draw2();
+	//	backRight3->Draw2();
 	//}
 }
 

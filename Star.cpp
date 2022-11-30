@@ -3,12 +3,14 @@
 #include "Stage.h"
 #include "SlowMotion.h"
 #include "Player.h"
+#include "GameScene.h"
 using namespace MathUtility;
 using namespace std;
 
 Model* Star::starModel = nullptr;
 unique_ptr<Model> Star::powerUpModel = nullptr;
 unique_ptr<Model> Star::kotubuLightModel = nullptr;
+uint32_t Star::kotubuLightTex = 0;
 
 Star::Star() :
 	gravity(2), collisionRadius(1),
@@ -35,6 +37,7 @@ void Star::Load()
 	starModel = Model::CreateFromOBJ("star", true);
 	powerUpModel.reset(Model::CreateFromOBJ("player_kotubu", true));
 	kotubuLightModel.reset(Model::CreateFromOBJ("KotubuLight", false));
+	kotubuLightTex = TextureManager::Load("SpriteTexture/kotubuLight.png");
 }
 
 void Star::UnLoad()
@@ -44,6 +47,9 @@ void Star::UnLoad()
 
 void Star::Generate(const Vector3& pos, const Vector3& dirVec, const int& generateType)
 {
+	kotubuLightSprite.reset(Sprite::Create(kotubuLightTex, { 0,0 }));
+	kotubuLightSprite->SetAnchorPoint({ 0.5f,0.5f });
+
 	// アニメーション関連
 	animeIndex = 0;
 	fream = 0;
@@ -378,16 +384,30 @@ void Star::Draw(const ViewProjection& viewProjection_)
 			powerUpModel->Draw(*trans, viewProjection_);
 		}
 
-		if (isAttack == false && isSucked == false)
-		{
-			kotubuLightModel->Draw(*kotubuLightTrans, viewProjection_);
-		}
+		//if (isAttack == false && isSucked == false)
+		//{
+		//	kotubuLightModel->Draw(*kotubuLightTrans, viewProjection_);
+		//}
 	}
 }
 
 void Star::DrawEffectBack()
 {
 	grainMoveEffect->Draw();
+}
+
+void Star::DrawBackLight()
+{
+	const Vector2 pos = WorldToScreen(trans->translation_, viewProjection_);
+	kotubuLightSprite->SetPosition(pos);
+	const float size = 128 * trans->scale_.x;
+	kotubuLightSprite->SetSize({ size ,size });
+	kotubuLightSprite->SetColor({ 1,1,1,0.5f });
+
+	if (isAttack == false && isSucked == false)
+	{
+		kotubuLightSprite->Draw2();
+	}
 }
 
 void Star::UpdateEffect()

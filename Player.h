@@ -115,6 +115,9 @@ private:
 	std::unique_ptr<WorldTransform> spawnTrans = nullptr;	// トランスフォーム
 
 	static std::unique_ptr<Model> spawn2Model;
+	std::unique_ptr<Sprite> backRight1;
+	std::unique_ptr<Sprite> backRight2;
+	std::unique_ptr<Sprite> backRight3;
 
 private:
 	void MoveUpdate();
@@ -131,6 +134,7 @@ public:
 	void Draw(const ViewProjection& viewProjection_);
 	void DrawSpriteBack();
 	void DrawSpriteFront();
+	void DrawBackLight();
 
 	void EffectGenerate(const Vector3& pos);
 	void EffectUpdate();
@@ -182,9 +186,9 @@ public:
 	inline void SetAttackMoveSpeed(const float& attackMoveSpeed) { this->attackMoveSpeed = attackMoveSpeed; }
 	inline void SetisHitGround(const bool& isHitGround) { this->isHitGround = isHitGround; }
 	inline void SetisAttackBlock(const bool& isAttackBlock) { this->isAttackBlock = isAttackBlock; }
-	inline void SetMoveType(const bool& moveType) 
+	inline void SetMoveType(const bool& moveType)
 	{
-		this->moveType = moveType; 
+		this->moveType = moveType;
 		spawnTrans->scale_ = { 1,1,1 };
 		spawnTrans->UpdateMatrix();
 	}
