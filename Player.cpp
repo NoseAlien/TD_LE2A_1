@@ -48,6 +48,8 @@ void Player::Load()
 	damageSE = audio->LoadWave("se/damage.wav");
 	pasteSE = audio->LoadWave("se/paste.wav");
 	returnSE = audio->LoadWave("se/return.wav");
+	chargingSE = audio->LoadWave("se/charging.wav");
+	chargedSE = audio->LoadWave("se/charged.wav");
 
 	string str;
 	for (int i = 0; i < 9; i++)
@@ -515,6 +517,18 @@ void Player::AttackUpdate()
 				trans->rotation_.z = DegreeToRad(Random::Range(-10, 10));
 				isReverse = false;
 				trans->translation_.y = 20;
+				if (pushKeyFream < maxPushKeyFream)
+				{
+					const int value = 4;
+					if (pushKeyFream % value < 1)
+					{
+						audio->PlayWave(chargingSE);
+					}
+				}
+				if (pushKeyFream == maxPushKeyFream)
+				{
+					audio->PlayWave(chargedSE);
+				}
 			}
 		}
 

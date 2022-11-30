@@ -43,6 +43,8 @@ private:
 	uint32_t damageSE = 0;
 	uint32_t pasteSE = 0;
 	uint32_t returnSE = 0;
+	uint32_t chargingSE = 0;
+	uint32_t chargedSE = 0;
 
 private:
 	// –îˆó
